@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 
@@ -15,8 +16,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 public class MainActivity extends FragmentActivity {
+
+    public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private DBAdapter database;
@@ -35,10 +39,9 @@ public class MainActivity extends FragmentActivity {
 
         openDatabase();
         this.exhibitSet = new ExhibitSet(database.getAllRows());
+        this.exhibitSet.orderByDistance(this.paderborn);
 
-        setUpMapIfNeeded();
-
-        mMap.setMyLocationEnabled(true);
+        //setUpMapIfNeeded();
 
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -54,6 +57,18 @@ public class MainActivity extends FragmentActivity {
         // specify an adapter (see also next example)
         mAdapter = new RecyclerAdapter(this.exhibitSet);
         mRecyclerView.setAdapter(mAdapter);
+
+        mRecyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        // do whatever
+//                        if(view.getElevation() == 5) view.setElevation(0);
+//                        else view.setElevation(5);
+                        Log.i("Elevation", view.getElevation() + ".");
+                        //getWindow().setExitTransition(new Explode());
+                    }
+                })
+        );
     }
 
     @Override
@@ -103,6 +118,8 @@ public class MainActivity extends FragmentActivity {
                 setUpMap();
             }
         }
+
+        mMap.setMyLocationEnabled(true);
     }
 
     /**
@@ -112,15 +129,11 @@ public class MainActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        LatLng paderborn = new LatLng(51.7276064, 8.7684325);
-
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(paderborn, 12);
-
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(this.paderborn, 12);
         mMap.animateCamera(update);
-
         exhibitSet.addMarker(mMap);
-    }
 
+    }
 
     public void onClick_add() {
         database.deleteAll();

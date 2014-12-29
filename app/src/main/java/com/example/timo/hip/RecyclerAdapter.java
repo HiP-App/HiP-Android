@@ -1,10 +1,15 @@
 package com.example.timo.hip;
 
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private ExhibitSet exhibitSet;
@@ -51,7 +56,25 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         if(exhibit.description.length() > 64) description = exhibit.description.substring(0,64).concat("...");
         else description = exhibit.description;
         holder.mDescription.setText(description);
-        //holder.mDistance.setText('0');
+
+        // TODO: Actual Position
+        LatLng paderborn = new LatLng(51.7276064, 8.7684325);
+        double doubleDistance = SphericalUtil.computeDistanceBetween(paderborn, exhibit.latlng);
+
+        int intDistance;
+        String distance;
+        if(doubleDistance > 1000) {
+            if(doubleDistance < 10000) {
+                intDistance = (int)(doubleDistance/100);
+                distance = (double)(intDistance)/10 + "km";
+            } else {
+                distance = (int)doubleDistance/1000 + "km";
+            }
+        } else {
+            distance = (int)doubleDistance + "m";
+        }
+
+        holder.mDistance.setText(distance);
 
     }
 

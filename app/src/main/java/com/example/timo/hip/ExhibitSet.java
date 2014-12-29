@@ -1,10 +1,12 @@
 package com.example.timo.hip;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,7 +15,8 @@ import java.util.List;
 
 public class ExhibitSet {
 
-    private List<Exhibit> exhibits = new ArrayList<Exhibit>();
+    private List<Exhibit> exhibits = new ArrayList<>();
+    private LatLng position;
 
     public ExhibitSet (Cursor cursor){
         if(cursor.moveToFirst()) {
@@ -32,6 +35,76 @@ public class ExhibitSet {
         }
     }
 
+/*    TODO: Refactor ListSort!
+            BAD Performance
+*/
+    public void orderByDistance(LatLng position) {
+        this.position = position;
+        List<Exhibit> tmpList = new ArrayList<>();
+
+        double minDistance = 0;
+        int minPosition = 0;
+        double currentDistance;
+        int i = 0;
+
+        while(this.exhibits.size() > 0) {
+            currentDistance = SphericalUtil.computeDistanceBetween(this.position, this.exhibits.get(i).latlng);
+            if(minDistance == 0) {
+                minDistance = currentDistance;
+                minPosition = i;
+            }
+            if(currentDistance < minDistance) {
+                minDistance = currentDistance;
+                minPosition = i;
+            }
+            if(i == this.exhibits.size()-1) {
+                tmpList.add(this.exhibits.remove(minPosition));
+                minDistance = 0;
+                i = 0;
+            } else i++;
+        }
+
+        this.exhibits = tmpList;
+
+        //this.exhibits = this.mergeSort(this.exhibits);
+    }
+
+    private List<Exhibit> mergeSort(List<Exhibit> list) {
+        if (list.size() < 2) {
+            return list;
+        }
+        else {
+            List<Exhibit> left = list.subList(0, list.size()/2);
+            List<Exhibit> right = list.subList(list.size()/2, list.size());
+            left = this.mergeSort(left);
+            right = this.mergeSort(right);
+            return this.merge(left, right);
+        }
+    }
+
+    private List<Exhibit> merge(List<Exhibit> left, List<Exhibit> right) {
+        double leftDistance, rightDistance;
+        List<Exhibit> list = new ArrayList<>();
+        while(left.size() > 0 && right.size() > 0){
+            leftDistance = SphericalUtil.computeDistanceBetween(this.position, left.get(0).latlng);
+            rightDistance = SphericalUtil.computeDistanceBetween(this.position, right.get(0).latlng);
+            if(leftDistance < rightDistance) {
+                list.add(left.remove(0));
+            } else {
+                list.add(right.remove(0));
+            }
+        }
+        while(left.size() > 0) {
+            list.add(left.get(0));
+            left.remove(0);
+        }
+        while(right.size() > 0) {
+            list.add(right.get(0));
+            right.remove(0);
+        }
+        return list;
+    }
+
     public void addMarker(GoogleMap mMap) {
         mMap.clear();
 
@@ -39,7 +112,7 @@ public class ExhibitSet {
 
         while(iterator.hasNext()) {
             Exhibit exhibit = iterator.next();
-            mMap.addMarker(new MarkerOptions().position(new LatLng(exhibit.lat, exhibit.lng)).title(exhibit.name));
+            mMap.addMarker(new MarkerOptions().position(exhibit.latlng).title(exhibit.name));
         }
     }
 

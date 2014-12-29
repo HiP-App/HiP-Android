@@ -1,12 +1,13 @@
 package com.example.timo.hip;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Exhibit {
 
     public int id;
     public String name;
     public String description;
-    public double lat;
-    public double lng;
+    public LatLng latlng;
     public String[] categories;
     public String[] tags;
 
@@ -14,8 +15,7 @@ public class Exhibit {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.lat = lat;
-        this.lng = lng;
+        this.latlng = new LatLng(lat, lng);
         this.categories = categories.split(",");
         this.tags = tags.split(",");
     }
