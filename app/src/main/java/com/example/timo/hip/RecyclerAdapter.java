@@ -1,6 +1,7 @@
 package com.example.timo.hip;
 
 import android.content.DialogInterface;
+import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,17 +14,20 @@ import com.google.maps.android.SphericalUtil;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private ExhibitSet exhibitSet;
+    private LatLng position;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
+        public View mView;
         public TextView mName;
         public TextView mDescription;
         public TextView mDistance;
         public ViewHolder(View v) {
             super(v);
+            this.mView = v;
             this.mName = (TextView) v.findViewById(R.id.txtName);
             this.mDescription = (TextView) v.findViewById(R.id.txtDescription);
             this.mDistance = (TextView) v.findViewById(R.id.txtDistance);
@@ -31,7 +35,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerAdapter(ExhibitSet exhibitSet) {
+    public RecyclerAdapter(ExhibitSet exhibitSet, Location location) {
+        this.position = new LatLng(location.getLatitude(), location.getLongitude());
         this.exhibitSet = exhibitSet;
     }
 
@@ -57,9 +62,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         else description = exhibit.description;
         holder.mDescription.setText(description);
 
-        // TODO: Actual Position
-        LatLng paderborn = new LatLng(51.7276064, 8.7684325);
-        double doubleDistance = SphericalUtil.computeDistanceBetween(paderborn, exhibit.latlng);
+        double doubleDistance = SphericalUtil.computeDistanceBetween(this.position, exhibit.latlng);
 
         int intDistance;
         String distance;
@@ -73,6 +76,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         } else {
             distance = (int)doubleDistance + "m";
         }
+
+        holder.mView.setId(exhibit.id);
 
         holder.mDistance.setText(distance);
 

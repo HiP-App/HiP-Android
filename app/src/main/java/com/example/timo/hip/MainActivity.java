@@ -1,11 +1,19 @@
 package com.example.timo.hip;
 
 
+import android.app.ActivityOptions;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 
@@ -13,7 +21,9 @@ import android.view.View;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
@@ -37,6 +47,10 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Location Manager
+        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, new ExtendedLocationListener(this));
+
         openDatabase();
         this.exhibitSet = new ExhibitSet(database.getAllRows());
         this.exhibitSet.orderByDistance(this.paderborn);
@@ -55,20 +69,29 @@ public class MainActivity extends FragmentActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new RecyclerAdapter(this.exhibitSet);
+        mAdapter = new RecyclerAdapter(this.exhibitSet, locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
         mRecyclerView.setAdapter(mAdapter);
+
+        getWindow().setExitTransition(new Explode());
 
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        // do whatever
-//                        if(view.getElevation() == 5) view.setElevation(0);
-//                        else view.setElevation(5);
-                        Log.i("Elevation", view.getElevation() + ".");
-                        //getWindow().setExitTransition(new Explode());
+                        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                        intent.putExtra("exhibit-id", view.getId());
+                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
                     }
                 })
         );
+
+
+
+    }
+
+    public void updatePosition(LatLng position) {
+        Log.i("Location", position.toString());
+        this.exhibitSet.orderByDistance(position);
+        this.mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -120,6 +143,8 @@ public class MainActivity extends FragmentActivity {
         }
 
         mMap.setMyLocationEnabled(true);
+        UiSettings settings = mMap.getUiSettings();
+        settings.setZoomControlsEnabled(true);
     }
 
     /**

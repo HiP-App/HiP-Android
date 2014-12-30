@@ -35,9 +35,8 @@ public class ExhibitSet {
         }
     }
 
-/*    TODO: Refactor ListSort!
-            BAD Performance
-*/
+//   TODO: Refactor ListSort! BAD Performance
+
     public void orderByDistance(LatLng position) {
         this.position = position;
         List<Exhibit> tmpList = new ArrayList<>();
