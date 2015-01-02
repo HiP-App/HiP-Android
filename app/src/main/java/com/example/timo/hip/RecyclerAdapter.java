@@ -9,12 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
-
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private ExhibitSet exhibitSet;
-    private LatLng position;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -35,8 +31,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerAdapter(ExhibitSet exhibitSet, Location location) {
-        this.position = new LatLng(location.getLatitude(), location.getLongitude());
+    public RecyclerAdapter(ExhibitSet exhibitSet) {
         this.exhibitSet = exhibitSet;
     }
 
@@ -62,7 +57,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         else description = exhibit.description;
         holder.mDescription.setText(description);
 
-        double doubleDistance = SphericalUtil.computeDistanceBetween(this.position, exhibit.latlng);
+        double doubleDistance = exhibit.distance;
 
         int intDistance;
         String distance;

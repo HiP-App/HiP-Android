@@ -17,7 +17,6 @@ public class ExtendedLocationListener implements LocationListener {
     }
 
     public void onLocationChanged(Location location) {
-        Log.i("Location", "Test");
         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
         this.mActivity.updatePosition(latlng);
     }

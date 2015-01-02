@@ -18,7 +18,8 @@ public class ExhibitSet {
     private List<Exhibit> exhibits = new ArrayList<>();
     private LatLng position;
 
-    public ExhibitSet (Cursor cursor){
+    public ExhibitSet (Cursor cursor, LatLng position){
+        this.position = position;
         if(cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(DBAdapter.COL_ROWID);
@@ -29,16 +30,32 @@ public class ExhibitSet {
                 String categories = cursor.getString(DBAdapter.COL_CATEGORIES);
                 String tags = cursor.getString(DBAdapter.COL_TAGS);
 
-                this.exhibits.add(new Exhibit(id, name, description, lat, lng, categories, tags));
+                Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
+                exhibit.setDistance(this.position);
+
+                this.exhibits.add(exhibit);
             } while (cursor.moveToNext());
             cursor.close();
         }
+
+        this.orderByDistance();
+    }
+
+    public void updatePosition (LatLng position) {
+        this.position = position;
+
+        Iterator<Exhibit> iterator = exhibits.iterator();
+
+        while(iterator.hasNext()) {
+            Exhibit exhibit = iterator.next();
+            exhibit.setDistance(this.position);
+        }
+
+        this.orderByDistance();
     }
 
 //   TODO: Refactor ListSort! BAD Performance
-
-    public void orderByDistance(LatLng position) {
-        this.position = position;
+    private void orderByDistance() {
         List<Exhibit> tmpList = new ArrayList<>();
 
         double minDistance = 0;
@@ -47,7 +64,7 @@ public class ExhibitSet {
         int i = 0;
 
         while(this.exhibits.size() > 0) {
-            currentDistance = SphericalUtil.computeDistanceBetween(this.position, this.exhibits.get(i).latlng);
+            currentDistance = this.exhibits.get(i).distance;
             if(minDistance == 0) {
                 minDistance = currentDistance;
                 minPosition = i;

@@ -1,6 +1,8 @@
 package com.example.timo.hip;
 
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -49,48 +51,51 @@ public class MainActivity extends FragmentActivity {
 
         // Location Manager
         LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, new ExtendedLocationListener(this));
 
         openDatabase();
-        this.exhibitSet = new ExhibitSet(database.getAllRows());
-        this.exhibitSet.orderByDistance(this.paderborn);
+        this.exhibitSet = new ExhibitSet(database.getAllRows(), this.paderborn);
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, new ExtendedLocationListener(this));
 
-        //setUpMapIfNeeded();
+        setUpMapIfNeeded();
 
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // specify an adapter (see also next example)
-        mAdapter = new RecyclerAdapter(this.exhibitSet, locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        // specify an adapter
+        mAdapter = new RecyclerAdapter(this.exhibitSet);
         mRecyclerView.setAdapter(mAdapter);
 
-        getWindow().setExitTransition(new Explode());
+        //getWindow().setExitTransition(new Explode());
 
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
+//                        ObjectAnimator anim = ObjectAnimator.ofFloat(view, View.SCALE_Y, 5);
+//
+//                        anim.setRepeatCount(1);
+//                        anim.setRepeatMode(ValueAnimator.REVERSE);
+//                        anim.setDuration(1000);
+//                        anim.start();
+
+                        final View txtName = view.findViewById(R.id.txtName);
                         Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, txtName, "txtName");
+
                         intent.putExtra("exhibit-id", view.getId());
-                        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this).toBundle());
+                        startActivity(intent, options.toBundle());
                     }
                 })
         );
-
-
-
     }
 
     public void updatePosition(LatLng position) {
-        Log.i("Location", position.toString());
-        this.exhibitSet.orderByDistance(position);
+        this.exhibitSet.updatePosition(position);
         this.mAdapter.notifyDataSetChanged();
     }
 

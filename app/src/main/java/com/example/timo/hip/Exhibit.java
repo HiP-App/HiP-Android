@@ -3,6 +3,7 @@ package com.example.timo.hip;
 import android.database.Cursor;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 public class Exhibit {
 
@@ -12,6 +13,7 @@ public class Exhibit {
     public LatLng latlng;
     public String[] categories;
     public String[] tags;
+    public double distance;
 
     public Exhibit (Cursor cursor) {
         if(cursor.moveToFirst()) {
@@ -39,5 +41,9 @@ public class Exhibit {
         this.latlng = new LatLng(lat, lng);
         this.categories = categories.split(",");
         this.tags = tags.split(",");
+    }
+
+    public void setDistance (LatLng position) {
+        this.distance = SphericalUtil.computeDistanceBetween(position, this.latlng);
     }
 }
