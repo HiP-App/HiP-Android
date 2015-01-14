@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class ExtendedLocationListener implements LocationListener {
+public class ExtendedLocationListener implements com.google.android.gms.location.LocationListener {
     MainActivity mActivity;
 
     public ExtendedLocationListener (MainActivity mActivity) {
@@ -17,8 +17,10 @@ public class ExtendedLocationListener implements LocationListener {
     }
 
     public void onLocationChanged(Location location) {
-        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-        this.mActivity.updatePosition(latlng);
+        Log.i("Location", location.toString());
+        Log.i("Location", location.getLatitude() + "LAT");
+        Log.i("Location", location.getLongitude() + "LNG");
+        this.mActivity.updatePosition(location);
     }
 
     public void onProviderDisabled(String provider) {

@@ -18,8 +18,13 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,11 +35,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
     private DBAdapter database;
     private ExhibitSet exhibitSet;
 
@@ -50,11 +57,13 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         // Location Manager
-        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
+        mGoogleApiClient.connect();
+        //LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
         openDatabase();
         this.exhibitSet = new ExhibitSet(database.getAllRows(), this.paderborn);
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, new ExtendedLocationListener(this));
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, new ExtendedLocationListener(this));
 
         setUpMapIfNeeded();
 
@@ -82,6 +91,7 @@ public class MainActivity extends FragmentActivity {
 //                        anim.setDuration(1000);
 //                        anim.start();
 
+
                         final View txtName = view.findViewById(R.id.txtName);
                         Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
 
@@ -94,8 +104,31 @@ public class MainActivity extends FragmentActivity {
         );
     }
 
-    public void updatePosition(LatLng position) {
-        this.exhibitSet.updatePosition(position);
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Toast.makeText(this, "Connection connected!", Toast.LENGTH_LONG);
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if(mLastLocation != null) this.updatePosition(mLastLocation);
+        startLocationUpdates();
+    }
+
+    protected void startLocationUpdates() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(500);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        Log.i("Location", "start Update");
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, new ExtendedLocationListener(this));
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Toast.makeText(this, "Connection Suspended!", Toast.LENGTH_LONG);
+    }
+
+    public void updatePosition(Location position) {
+        this.exhibitSet.updatePosition(new LatLng(position.getLatitude(), position.getLongitude()));
         this.mAdapter.notifyDataSetChanged();
     }
 
@@ -170,5 +203,11 @@ public class MainActivity extends FragmentActivity {
         database.insertRow("Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
         database.insertRow("Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
         database.insertRow("Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Toast.makeText(this, "Connection Failed!", Toast.LENGTH_LONG);
+
     }
 }
