@@ -19,7 +19,7 @@ public class ExhibitSet {
     private List<Exhibit> initSet = new ArrayList<>();
     private List<Exhibit> activeSet = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
-    private String[] activeFilter;
+    private List<String> activeFilter;
     private LatLng position;
 
     public ExhibitSet (Cursor cursor, LatLng position){
@@ -55,18 +55,18 @@ public class ExhibitSet {
         return categories;
     }
 
-    public void updateCategories(String[] strArray) {
+    public void updateCategories(List<String> strArray) {
 
         this.activeFilter = strArray;
         this.activeSet = new ArrayList<>();
 
-        for(int i=0; i < strArray.length; i++ ){
+        for(int i=0; i < strArray.size(); i++ ){
             Iterator<Exhibit> iterator = initSet.iterator();
 
             while(iterator.hasNext()) {
                 Exhibit exhibit = iterator.next();
 
-                if(Arrays.asList(exhibit.categories).contains(strArray[i])) {
+                if(Arrays.asList(exhibit.categories).contains(strArray.get(i))) {
                     this.activeSet.add(exhibit);
                 }
             }

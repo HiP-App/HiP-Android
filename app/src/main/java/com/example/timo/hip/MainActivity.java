@@ -17,8 +17,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -38,6 +40,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
@@ -47,13 +52,19 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private Location mLastLocation;
     private DBAdapter database;
     private ExhibitSet exhibitSet;
+    private List<String> activeFilter = new ArrayList<>();
 
     private ExtendedLocationListener mLocationListener = new ExtendedLocationListener(this);
 
-    // Recycler View
+    // Recycler View: MainList
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    // Recycler View: Filter
+    private RecyclerView mFilterRecyclerView;
+    private RecyclerView.Adapter mFilterAdapter;
+    private RecyclerView.LayoutManager mFilterLayoutManager;
 
 
     @Override
@@ -115,6 +126,29 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 //        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, this.exhibitSet.getCategories());
 //        ListView listView = (ListView) findViewById(R.id.filter_list_view);
 //        listView.setAdapter(adapter);
+
+        mFilterRecyclerView = (RecyclerView) findViewById(R.id.filter_recycler_view);
+        mFilterRecyclerView.setHasFixedSize(true);
+        mFilterLayoutManager = new LinearLayoutManager(this);
+        mFilterRecyclerView.setLayoutManager(mFilterLayoutManager);
+        List<String> categories = this.exhibitSet.getCategories();
+        for(String item: categories) this.activeFilter.add(item);
+        mFilterAdapter = new FilterRecyclerAdapter(categories, this.activeFilter);
+        mFilterRecyclerView.setAdapter(mFilterAdapter);
+        mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
+
+    }
+
+    public void updateCategories(String categorie) {
+        if(categorie != null) {
+            if(this.activeFilter.contains(categorie)) this.activeFilter.remove(categorie);
+            else this.activeFilter.add(categorie);
+            this.mFilterAdapter.notifyDataSetChanged();
+            this.exhibitSet.updateCategories(this.activeFilter);
+            this.mAdapter.notifyDataSetChanged();
+            this.exhibitSet.addMarker(this.mMap);
+        }
+
     }
 
     @Override
@@ -169,7 +203,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     }
 
     protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
+        if(mGoogleApiClient.isConnected()) LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
     }
 
     private void closeDatabase() {
