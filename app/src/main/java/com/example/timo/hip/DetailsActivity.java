@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.transition.Explode;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +30,10 @@ public class DetailsActivity extends Activity {
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
         txtDescription.setText(exhibit.description);
 
-        getWindow().setEnterTransition(new Explode());
+//        ImageView image = (ImageView) findViewById(R.id.imageView);
+//        image.setImageResource(R.drawable.dom);
+
+        //getWindow().setEnterTransition(new Explode());
 
         //Toast.makeText(this, "Test Toast", Toast.LENGTH_LONG).show();
 

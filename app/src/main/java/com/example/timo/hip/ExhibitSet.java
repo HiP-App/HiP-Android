@@ -9,13 +9,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 
 public class ExhibitSet {
 
-    private List<Exhibit> exhibits = new ArrayList<>();
+    private List<Exhibit> initSet = new ArrayList<>();
+    private List<Exhibit> activeSet = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
+    private String[] activeFilter;
     private LatLng position;
 
     public ExhibitSet (Cursor cursor, LatLng position){
@@ -33,18 +37,49 @@ public class ExhibitSet {
                 Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
                 exhibit.setDistance(this.position);
 
-                this.exhibits.add(exhibit);
+                for(String categorie: exhibit.categories) {
+                    if(!this.categories.contains(categorie)) this.categories.add(categorie);
+                }
+
+                this.initSet.add(exhibit);
             } while (cursor.moveToNext());
             cursor.close();
         }
 
+        for(Exhibit item: initSet) activeSet.add(item);
+
         this.orderByDistance();
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void updateCategories(String[] strArray) {
+
+        this.activeFilter = strArray;
+        this.activeSet = new ArrayList<>();
+
+        for(int i=0; i < strArray.length; i++ ){
+            Iterator<Exhibit> iterator = initSet.iterator();
+
+            while(iterator.hasNext()) {
+                Exhibit exhibit = iterator.next();
+
+                if(Arrays.asList(exhibit.categories).contains(strArray[i])) {
+                    this.activeSet.add(exhibit);
+                }
+            }
+        }
+
+        this.orderByDistance();
+
     }
 
     public void updatePosition (LatLng position) {
         this.position = position;
 
-        Iterator<Exhibit> iterator = exhibits.iterator();
+        Iterator<Exhibit> iterator = initSet.iterator();
 
         while(iterator.hasNext()) {
             Exhibit exhibit = iterator.next();
@@ -63,8 +98,8 @@ public class ExhibitSet {
         double currentDistance;
         int i = 0;
 
-        while(this.exhibits.size() > 0) {
-            currentDistance = this.exhibits.get(i).distance;
+        while(this.activeSet.size() > 0) {
+            currentDistance = this.activeSet.get(i).distance;
             if(minDistance == 0) {
                 minDistance = currentDistance;
                 minPosition = i;
@@ -73,14 +108,14 @@ public class ExhibitSet {
                 minDistance = currentDistance;
                 minPosition = i;
             }
-            if(i == this.exhibits.size()-1) {
-                tmpList.add(this.exhibits.remove(minPosition));
+            if(i == this.activeSet.size()-1) {
+                tmpList.add(this.activeSet.remove(minPosition));
                 minDistance = 0;
                 i = 0;
             } else i++;
         }
 
-        this.exhibits = tmpList;
+        this.activeSet = tmpList;
 
         //this.exhibits = this.mergeSort(this.exhibits);
     }
@@ -124,7 +159,7 @@ public class ExhibitSet {
     public void addMarker(GoogleMap mMap) {
         mMap.clear();
 
-        Iterator<Exhibit> iterator = exhibits.iterator();
+        Iterator<Exhibit> iterator = activeSet.iterator();
 
         while(iterator.hasNext()) {
             Exhibit exhibit = iterator.next();
@@ -133,10 +168,10 @@ public class ExhibitSet {
     }
 
     public Exhibit getExhibit(int position) {
-        return exhibits.get(position);
+        return activeSet.get(position);
     }
 
     public int getSize() {
-        return exhibits.size();
+        return activeSet.size();
     }
 }

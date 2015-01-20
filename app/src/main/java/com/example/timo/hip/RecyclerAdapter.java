@@ -53,9 +53,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         holder.mName.setText(exhibit.name);
         String description;
-        if(exhibit.description.length() > 64) description = exhibit.description.substring(0,64).concat("...");
+        if(exhibit.description.length() > 32) description = exhibit.description.substring(0,32).concat("...");
         else description = exhibit.description;
-        holder.mDescription.setText(description);
+        //holder.mDescription.setText(description);
 
         double doubleDistance = exhibit.distance;
 

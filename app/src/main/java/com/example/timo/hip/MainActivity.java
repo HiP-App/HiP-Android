@@ -18,6 +18,9 @@ import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -44,6 +47,8 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private Location mLastLocation;
     private DBAdapter database;
     private ExhibitSet exhibitSet;
+
+    private ExtendedLocationListener mLocationListener = new ExtendedLocationListener(this);
 
     // Recycler View
     private RecyclerView mRecyclerView;
@@ -95,18 +100,25 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                         final View txtName = view.findViewById(R.id.txtName);
                         Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
 
-                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, txtName, "txtName");
+                        ImageView imageView = (ImageView) view.findViewById(R.id.imageViewMain);
+                        //getWindow().setExitTransition(new Explode());
+
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, imageView, "imageViewDetail");
+                        //ActivityOptions options = ActivityOptions.makeScaleUpAnimation(view, 0,0, view.getWidth(), view.getHeight());
 
                         intent.putExtra("exhibit-id", view.getId());
                         startActivity(intent, options.toBundle());
                     }
                 })
         );
+
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, this.exhibitSet.getCategories());
+//        ListView listView = (ListView) findViewById(R.id.filter_list_view);
+//        listView.setAdapter(adapter);
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        Toast.makeText(this, "Connection connected!", Toast.LENGTH_LONG);
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if(mLastLocation != null) this.updatePosition(mLastLocation);
         startLocationUpdates();
@@ -117,14 +129,12 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        Log.i("Location", "start Update");
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, new ExtendedLocationListener(this));
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Toast.makeText(this, "Connection Suspended!", Toast.LENGTH_LONG);
+
     }
 
     public void updatePosition(Location position) {
@@ -136,6 +146,9 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        if (mGoogleApiClient.isConnected()) {
+            startLocationUpdates();
+        }
     }
 
     @Override
@@ -147,6 +160,16 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private void openDatabase() {
         database = new DBAdapter(this);
         database.open();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
     }
 
     private void closeDatabase() {
@@ -207,7 +230,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(this, "Connection Failed!", Toast.LENGTH_LONG);
 
     }
 }
