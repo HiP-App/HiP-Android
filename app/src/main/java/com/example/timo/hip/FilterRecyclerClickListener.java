@@ -19,7 +19,6 @@ public class FilterRecyclerClickListener implements RecyclerView.OnItemTouchList
     @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if(childView != null && e.getAction() == e.ACTION_DOWN) {
-            int position = view.getChildPosition(childView);
             TextView txtName = (TextView) childView.findViewById(R.id.txtName);
             mMainActivity.updateCategories(txtName.getText().toString());
 
