@@ -78,9 +78,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-//        imgLoader.clearCache();
-
         // Location Manager
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
         mGoogleApiClient.connect();
@@ -126,6 +123,8 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                ImageLoader imgLoader = new ImageLoader(mMainActivity);
+                imgLoader.clearCache();
                 new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
