@@ -48,11 +48,11 @@ public class DBAdapter {
     public static final String DATABASE_NAME = "HiP";
     public static final String DATABASE_TABLE = "exhibit";
     // Track DB version if a new version of your app changes the format.
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     private static final String DATABASE_CREATE_SQL =
             "create table " + DATABASE_TABLE
-                    + " (" + KEY_ROWID + " integer primary key autoincrement, "
+                    + " (" + KEY_ROWID + " integer primary key, "
 
 			/*
 			 * CHANGE 2:
@@ -101,7 +101,7 @@ public class DBAdapter {
     }
 
     // Add a new set of values to the database.
-    public long insertRow(String name, String description, double lat, double lng, String categories, String tags) {
+    public long insertRow(int id, String name, String description, double lat, double lng, String categories, String tags) {
 		/*
 		 * CHANGE 3:
 		 */
@@ -109,6 +109,7 @@ public class DBAdapter {
         // TODO: Also change the function's arguments to be what you need!
         // Create row's data:
         ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_ROWID, id);
         initialValues.put(KEY_NAME, name);
         initialValues.put(KEY_DESCRIPTION, description);
         initialValues.put(KEY_LAT, lat);

@@ -13,6 +13,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
@@ -45,6 +46,8 @@ import java.util.List;
 
 public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
+
     public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -66,11 +69,17 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private RecyclerView.Adapter mFilterAdapter;
     private RecyclerView.LayoutManager mFilterLayoutManager;
 
+    // Refresh
+    private SwipeRefreshLayout mSwipeLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+//        imgLoader.clearCache();
 
         // Location Manager
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
@@ -92,40 +101,12 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new RecyclerAdapter(this.exhibitSet);
+        mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
         //getWindow().setExitTransition(new Explode());
 
-        mRecyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-//                        ObjectAnimator anim = ObjectAnimator.ofFloat(view, View.SCALE_Y, 5);
-//
-//                        anim.setRepeatCount(1);
-//                        anim.setRepeatMode(ValueAnimator.REVERSE);
-//                        anim.setDuration(1000);
-//                        anim.start();
-
-
-                        final View txtName = view.findViewById(R.id.txtName);
-                        Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-
-                        ImageView imageView = (ImageView) view.findViewById(R.id.imageViewMain);
-                        //getWindow().setExitTransition(new Explode());
-
-                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, imageView, "imageViewDetail");
-                        //ActivityOptions options = ActivityOptions.makeScaleUpAnimation(view, 0,0, view.getWidth(), view.getHeight());
-
-                        intent.putExtra("exhibit-id", view.getId());
-                        startActivity(intent, options.toBundle());
-                    }
-                })
-        );
-
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, this.exhibitSet.getCategories());
-//        ListView listView = (ListView) findViewById(R.id.filter_list_view);
-//        listView.setAdapter(adapter);
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this));
 
         mFilterRecyclerView = (RecyclerView) findViewById(R.id.filter_recycler_view);
         mFilterRecyclerView.setHasFixedSize(true);
@@ -137,6 +118,27 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mFilterRecyclerView.setAdapter(mFilterAdapter);
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
 
+        if(this.exhibitSet.getSize() == 0) new HttpAsyncTask(this).execute(BASE_URL);
+
+        //swipe_container
+        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        final MainActivity mMainActivity = this;
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new HttpAsyncTask(mMainActivity).execute(BASE_URL);
+            }
+        });
+
+    }
+
+    public void notifyExhibitSetChanged() {
+        mSwipeLayout.setRefreshing(false);
+        this.exhibitSet = new ExhibitSet(database.getAllRows(), this.paderborn);
+        mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
+        mRecyclerView.setAdapter(mAdapter);
+        this.mAdapter.notifyDataSetChanged();
+        this.exhibitSet.addMarker(this.mMap);
     }
 
     public void updateCategories(String categorie) {
@@ -251,15 +253,16 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private void setUpMap() {
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(this.paderborn, 12);
         mMap.animateCamera(update);
+
         exhibitSet.addMarker(mMap);
 
     }
 
     public void onClick_add() {
         database.deleteAll();
-        database.insertRow("Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
-        database.insertRow("Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
-        database.insertRow("Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
+        database.insertRow(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
+        database.insertRow(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
+        database.insertRow(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
     }
 
     @Override

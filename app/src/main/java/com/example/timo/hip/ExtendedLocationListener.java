@@ -17,9 +17,6 @@ public class ExtendedLocationListener implements com.google.android.gms.location
     }
 
     public void onLocationChanged(Location location) {
-        Log.i("Location", location.toString());
-        Log.i("Location", location.getLatitude() + "LAT");
-        Log.i("Location", location.getLongitude() + "LNG");
         this.mActivity.updatePosition(location);
     }
 

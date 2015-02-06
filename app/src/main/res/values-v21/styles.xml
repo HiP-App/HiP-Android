@@ -5,12 +5,23 @@
         <!-- Main theme colors -->
         <!--   your app's branding color (for the app bar) -->
         <item name="android:colorPrimary">#3F51B5</item>
-
         <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
-
         <item name="android:colorPrimaryDark">#303F9F</item>
-
         <!--   theme UI controls like checkboxes and text fields -->
         <item name="android:colorAccent">#FF4081</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="android:Theme.Material.Light.DarkActionBar">
+        <item name="android:colorPrimary">#3F51B5</item>
+        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
+        <item name="android:colorPrimaryDark">#303F9F</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="android:colorAccent">#FF4081</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 </resources>

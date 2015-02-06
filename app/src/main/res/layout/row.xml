@@ -7,7 +7,8 @@
     android:elevation="5dp"
     android:focusable="true"
     android:background="?android:attr/selectableItemBackground"
-    android:clickable="true">
+    android:clickable="true"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:orientation="vertical"
@@ -18,8 +19,7 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/imageViewMain"
-            android:src="@drawable/dom" />
+            android:id="@+id/imageViewMain" />
     </LinearLayout>
 
     <LinearLayout

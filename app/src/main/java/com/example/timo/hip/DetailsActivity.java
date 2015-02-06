@@ -24,6 +24,14 @@ public class DetailsActivity extends Activity {
         Exhibit exhibit = new Exhibit(cursor);
         cursor.close();
 
+        ImageView imageView = (ImageView) findViewById(R.id.imageViewDetail);
+
+        imageView.getWidth();
+        int loader = R.drawable.loader;
+        String image_url = "http://tboegeholz.de/ba/pictures/" + exhibit.id + ".jpg";
+        ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+        imgLoader.DisplayImage(image_url, loader, imageView);
+
         TextView txtName = (TextView) findViewById(R.id.txtName);
         txtName.setText(exhibit.name);
 

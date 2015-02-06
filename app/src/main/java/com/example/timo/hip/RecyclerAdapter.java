@@ -1,16 +1,33 @@
 package com.example.timo.hip;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.net.URL;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private ExhibitSet exhibitSet;
+    private Context context;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -18,12 +35,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public View mView;
+        public ImageView mImage;
         public TextView mName;
         public TextView mDescription;
         public TextView mDistance;
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
+            this.mImage = (ImageView) v.findViewById(R.id.imageViewMain);
             this.mName = (TextView) v.findViewById(R.id.txtName);
             this.mDescription = (TextView) v.findViewById(R.id.txtDescription);
             this.mDistance = (TextView) v.findViewById(R.id.txtDistance);
@@ -31,8 +50,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public RecyclerAdapter(ExhibitSet exhibitSet) {
+    public RecyclerAdapter(ExhibitSet exhibitSet, Context context) {
         this.exhibitSet = exhibitSet;
+        this.context = context;
     }
 
     // Create new views (invoked by the layout manager)
@@ -76,6 +96,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         holder.mDistance.setText(distance);
 
+        int loader = R.drawable.loader;
+        String image_url = "http://tboegeholz.de/ba/pictures/" + exhibit.id + ".jpg";
+        ImageLoader imgLoader = new ImageLoader(this.context);
+        imgLoader.DisplayImageThumbnail(image_url, loader, holder.mImage);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
