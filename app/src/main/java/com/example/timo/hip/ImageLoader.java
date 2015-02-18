@@ -53,9 +53,8 @@ public class ImageLoader {
         }
     }
 
-    public void DisplayImage(String url, int loader, ImageView imageView)
+    public void DisplayImage(String url, ImageView imageView)
     {
-        stub_id = loader;
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap!=null)
@@ -64,8 +63,12 @@ public class ImageLoader {
         else
         {
             queuePhoto(url, imageView, false);
-            imageView.setImageResource(loader);
+            //imageView.setImageResource(loader);
         }
+    }
+
+    public Bitmap quickLoad(String url) {
+        return this.getBitmap(url);
     }
  
     private void queuePhoto(String url, ImageView imageView, boolean thumbnail)

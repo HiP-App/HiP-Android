@@ -2,14 +2,14 @@
 <transitionManager xmlns:android="http://schemas.android.com/apk/res/android">
     <changeBounds>
         <targets>
-            <target android:targetId="@id/imageViewMain" />
-            <target android:targetId="@id/imageViewDetail" />
+            <target android:targetId="@id/txtName" />
+            <target android:targetId="@id/txtName" />
         </targets>
     </changeBounds>
     <changeImageTransform>
         <targets>
-            <target android:targetId="@id/imageViewMain" />
-            <target android:targetId="@id/imageViewDetail" />
+            <target android:targetId="@id/txtName" />
+            <target android:targetId="@id/txtName" />
         </targets>
     </changeImageTransform>
 </transitionManager>
