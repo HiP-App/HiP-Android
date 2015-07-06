@@ -2,5 +2,12 @@
 
 This is the frontend Android app for https://hip.upb.de/
 
-You can use ```./gradlew test``` to execute the tests. Right now there's only a "sanity check"
-that checks if 1+2 equals 2.
+# How to get started
+
+ 1. Clone this project
+ 2. Import it into Android studio
+
+# Branching model
+
+See  [http://jira-hip.cs.upb.de:8090/display/DOC/Conventions+for+git] 
+# Testing and CI
