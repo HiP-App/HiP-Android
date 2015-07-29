@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.couchbase.lite.Document;
+
 public class DetailsActivity extends Activity {
 
     private DBAdapter database;
@@ -58,9 +60,8 @@ public class DetailsActivity extends Activity {
         ImageLoader imgLoader = new ImageLoader(getApplicationContext());
         mImageView.setImageBitmap(imgLoader.quickLoad(image_url));
 
-        Cursor cursor = database.getRow(exhibitId);
-        Exhibit exhibit = new Exhibit(cursor);
-        cursor.close();
+        Document document = database.getRow(exhibitId);
+        Exhibit exhibit = new Exhibit(document);
 
         mTextView.setText(exhibit.name);
 
@@ -150,10 +151,6 @@ public class DetailsActivity extends Activity {
 
     private void openDatabase() {
         database = new DBAdapter(this);
-        database.open();
     }
 
-    private void closeDatabase() {
-        database.close();
-    }
 }

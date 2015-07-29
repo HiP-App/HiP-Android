@@ -37,11 +37,9 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         Log.i("Http", "onPostExecute");
-        this.database = new DBAdapter(this.mActivity);
-        this.database.open();
+        DBAdapter database = new DBAdapter(this.mActivity);
         Log.i("Http", result);
 
-        database.deleteAll();
 
         try {
             JSONObject jsonObj = new JSONObject(result);
@@ -59,7 +57,6 @@ public class HttpAsyncTask extends AsyncTask<String, Void, String> {
                 Log.i("Http", "Inserted ID: " + id);
             }
             this.mActivity.notifyExhibitSetChanged();
-            database.close();
         } catch (JSONException e) {
             e.printStackTrace();
         }

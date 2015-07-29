@@ -5,6 +5,10 @@ import android.database.Cursor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.Map;
+
+import com.couchbase.lite.Document;
+
 public class Exhibit {
 
     public int id;
@@ -15,23 +19,23 @@ public class Exhibit {
     public String[] tags;
     public double distance;
 
-    public Exhibit (Cursor cursor) {
-        if(cursor.moveToFirst()) {
-            int id = cursor.getInt(DBAdapter.COL_ROWID);
-            String name = cursor.getString(DBAdapter.COL_NAME);
-            String description = cursor.getString(DBAdapter.COL_DESCRIPTION);
-            double lat = cursor.getDouble(DBAdapter.COL_LAT);
-            double lng = cursor.getDouble(DBAdapter.COL_LNG);
-            String categories = cursor.getString(DBAdapter.COL_CATEGORIES);
-            String tags = cursor.getString(DBAdapter.COL_TAGS);
+    public Exhibit (Document document) {
 
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.latlng = new LatLng(lat, lng);
-            this.categories = categories.split(",");
-            this.tags = tags.split(",");
-        }
+        Map<String, Object> properties = document.getProperties();
+        int id = Integer.valueOf(document.getId());
+        String name = (String)properties.get(DBAdapter.KEY_NAME);
+        String description = (String)properties.get(DBAdapter.KEY_DESCRIPTION);
+        double lat = (double)properties.get(DBAdapter.KEY_LAT);
+        double lng = (double)properties.get(DBAdapter.KEY_LNG);
+        String categories = (String)properties.get(DBAdapter.KEY_CATEGORIES);
+        String tags = (String)properties.get(DBAdapter.KEY_TAGS);
+
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.latlng = new LatLng(lat, lng);
+        this.categories = categories.split(",");
+        this.tags = tags.split(",");
     }
 
     public Exhibit (int id, String name, String description, double lat, double lng, String categories, String tags) {
