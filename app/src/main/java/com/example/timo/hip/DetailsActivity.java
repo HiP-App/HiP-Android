@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.transition.Explode;
@@ -56,9 +57,9 @@ public class DetailsActivity extends Activity {
 
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        String image_url = "http://tboegeholz.de/ba/pictures/" + exhibitId + ".jpg";
-        ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-        mImageView.setImageBitmap(imgLoader.quickLoad(image_url));
+
+        Drawable d = DBAdapter.getImage(exhibitId);
+        mImageView.setImageDrawable(d);
 
         Document document = database.getRow(exhibitId);
         Exhibit exhibit = new Exhibit(document);
@@ -97,9 +98,8 @@ public class DetailsActivity extends Activity {
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     // As the transition has ended, we can now load the full-size image
-                    String image_url = "http://tboegeholz.de/ba/pictures/" + exhibitId + ".jpg";
-                    ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-                    imgLoader.DisplayImage(image_url, mImageView);
+                    Drawable d = DBAdapter.getImage(exhibitId);
+                    mImageView.setImageDrawable(d);
 
                     // Make sure we remove ourselves as a listener
                     transition.removeListener(this);
@@ -146,11 +146,10 @@ public class DetailsActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //closeDatabase();
     }
 
     private void openDatabase() {
-        database = new DBAdapter(this);
+       database = new DBAdapter(this);
     }
 
 }
