@@ -96,10 +96,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         holder.mDistance.setText(distance);
 
-        int loader = R.drawable.loader;
-        String image_url = "http://tboegeholz.de/ba/pictures/" + exhibit.id + ".jpg";
-        ImageLoader imgLoader = new ImageLoader(this.context);
-        imgLoader.DisplayImageThumbnail(image_url, loader, holder.mImage);
+        Drawable d = DBAdapter.getImage(exhibit.id);
+        holder.mImage.setImageDrawable(d);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
