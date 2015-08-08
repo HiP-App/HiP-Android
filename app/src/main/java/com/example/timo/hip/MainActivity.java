@@ -115,7 +115,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mFilterRecyclerView.setAdapter(mFilterAdapter);
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
 
-        if(this.exhibitSet.getSize() == 0) new HttpAsyncTask(this).execute(BASE_URL);
+        // if(this.exhibitSet.getSize() == 0) new HttpAsyncTask(this).execute(BASE_URL);
 
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -125,7 +125,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             public void onRefresh() {
                 ImageLoader imgLoader = new ImageLoader(mMainActivity);
                 imgLoader.clearCache();
-                new HttpAsyncTask(mMainActivity).execute(BASE_URL);
+                // new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
 
@@ -189,12 +189,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        closeDatabase();
     }
 
     private void openDatabase() {
         database = new DBAdapter(this);
-        database.open();
     }
 
     @Override
@@ -207,9 +205,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         if(mGoogleApiClient.isConnected()) LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
     }
 
-    private void closeDatabase() {
-        database.close();
-    }
+
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -255,13 +251,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
         exhibitSet.addMarker(mMap);
 
-    }
-
-    public void onClick_add() {
-        database.deleteAll();
-        database.insertRow(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
-        database.insertRow(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
-        database.insertRow(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
     }
 
     @Override
