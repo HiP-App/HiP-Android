@@ -4,4 +4,6 @@
     <string name="app_name">History in Paderborn</string>
     <string name="title_activity_main">History in Paderborn</string>
 
+    <string name="no_location_detected">No Connection</string>
+
 </resources>
