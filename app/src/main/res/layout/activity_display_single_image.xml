@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="10dp">
+
+    <ImageView
+        android:id="@+id/ImageView01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/busdorfkirche_aussen" />
+    <TextView
+        android:text="Das Bild zeigt das barocke Portal der Busdorfkirche. Es  wurde 1667 von Ambrosius von Oelde während der Amtszeit von Bischof Ferdinand von Fürstenberg erbaut."
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ImageView01"
+        android:layout_margin="20dp"/>
+    <Button
+        android:id="@+id/Button01"
+        android:layout_below="@id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Bildansicht schließen" />
+
+</RelativeLayout>
