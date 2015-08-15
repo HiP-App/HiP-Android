@@ -3,5 +3,9 @@
 
     <string name="app_name">History in Paderborn</string>
     <string name="title_activity_main">History in Paderborn</string>
+    <string name="title_activity_showcase">Showcases</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
