@@ -1,31 +1,36 @@
 package com.example.timo.hip;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.drawable.Drawable;
+import android.os.StrictMode;
 import android.util.Log;
 
+import com.couchbase.lite.Attachment;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.Manager;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryEnumerator;
+import com.couchbase.lite.QueryRow;
+import com.couchbase.lite.Revision;
+import com.couchbase.lite.UnsavedRevision;
+import com.couchbase.lite.android.AndroidContext;
 
-// TO USE:
-// Change the package (at top) to match your project.
-// Search for "TODO", and make the appropriate changes.
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+
+/* Class for the connection between app and database */
 public class DBAdapter {
 
-    /////////////////////////////////////////////////////////////////////
-    //	Constants & Data
-    /////////////////////////////////////////////////////////////////////
-    // For logging:
-    private static final String TAG = "DBAdapter";
-
-    // DB Fields
+    /* field descriptions in database */
     public static final String KEY_ROWID = "_id";
-    public static final int COL_ROWID = 0;
-    /*
-     * CHANGE 1:
-     */
-    // TODO: Setup your fields here:
     public static final String KEY_NAME = "name";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_LAT = "lat";
@@ -33,191 +38,132 @@ public class DBAdapter {
     public static final String KEY_CATEGORIES = "categories";
     public static final String KEY_TAGS = "tags";
 
-    // TODO: Setup your field numbers here (0 = KEY_ROWID, 1=...)
-    public static final int COL_NAME = 1;
-    public static final int COL_DESCRIPTION = 2;
-    public static final int COL_LAT = 3;
-    public static final int COL_LNG = 4;
-    public static final int COL_CATEGORIES = 5;
-    public static final int COL_TAGS = 6;
-
-
-    public static final String[] ALL_KEYS = new String[] {KEY_ROWID, KEY_NAME, KEY_DESCRIPTION, KEY_LAT, KEY_LNG, KEY_CATEGORIES, KEY_TAGS};
-
-    // DB info: it's name, and the table we are using (just one).
-    public static final String DATABASE_NAME = "HiP";
-    public static final String DATABASE_TABLE = "exhibit";
-    // Track DB version if a new version of your app changes the format.
-    public static final int DATABASE_VERSION = 3;
-
-    private static final String DATABASE_CREATE_SQL =
-            "create table " + DATABASE_TABLE
-                    + " (" + KEY_ROWID + " integer primary key, "
-
-			/*
-			 * CHANGE 2:
-			 */
-                    // TODO: Place your fields here!
-                    // + KEY_{...} + " {type} not null"
-                    //	- Key is the column name you created above.
-                    //	- {type} is one of: text, integer, real, blob
-                    //		(http://www.sqlite.org/datatype3.html)
-                    //  - "not null" means it is a required field (must be given a value).
-                    // NOTE: All must be comma separated (end of line!) Last one must have NO comma!!
-                    + KEY_NAME + " text not null, "
-                    + KEY_DESCRIPTION + " text not null, "
-                    + KEY_LAT + " real not null, "
-                    + KEY_LNG + " real not null, "
-                    + KEY_CATEGORIES + " text not null, "
-                    + KEY_TAGS + " text not null"
-
-                    // Rest  of creation:
-                    + ");";
+    public static final String DB_NAME = "exhibit"; // database name
+    public static final String TAG = "DBAdapter"; // for logging
 
     // Context of application who uses us.
     private final Context context;
 
-    private DatabaseHelper myDBHelper;
-    private SQLiteDatabase db;
+    private Manager manager = null;
+    private static Database database = null;
 
-    /////////////////////////////////////////////////////////////////////
-    //	Public methods:
-    /////////////////////////////////////////////////////////////////////
 
+    /* Constructor */
     public DBAdapter(Context ctx) {
         this.context = ctx;
-        myDBHelper = new DatabaseHelper(context);
-    }
-
-    // Open the database connection.
-    public DBAdapter open() {
-        db = myDBHelper.getWritableDatabase();
-        return this;
-    }
-
-    // Close the database connection.
-    public void close() {
-        myDBHelper.close();
-    }
-
-    // Add a new set of values to the database.
-    public long insertRow(int id, String name, String description, double lat, double lng, String categories, String tags) {
-		/*
-		 * CHANGE 3:
-		 */
-        // TODO: Update data in the row with new fields.
-        // TODO: Also change the function's arguments to be what you need!
-        // Create row's data:
-        ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_ROWID, id);
-        initialValues.put(KEY_NAME, name);
-        initialValues.put(KEY_DESCRIPTION, description);
-        initialValues.put(KEY_LAT, lat);
-        initialValues.put(KEY_LNG, lng);
-        initialValues.put(KEY_CATEGORIES, categories);
-        initialValues.put(KEY_TAGS, tags);
-
-        // Insert it into the database.
-        return db.insert(DATABASE_TABLE, null, initialValues);
-    }
-
-    // Delete a row from the database, by rowId (primary key)
-    public boolean deleteRow(long rowId) {
-        String where = KEY_ROWID + "=" + rowId;
-        return db.delete(DATABASE_TABLE, where, null) != 0;
-    }
-
-    public void deleteAll() {
-        Cursor c = getAllRows();
-        long rowId = c.getColumnIndexOrThrow(KEY_ROWID);
-        if (c.moveToFirst()) {
-            do {
-                deleteRow(c.getLong((int) rowId));
-            } while (c.moveToNext());
-        }
-        c.close();
-    }
-
-    // Return all data in the database.
-    public Cursor getAllRows() {
-        String where = null;
-        Cursor c = 	db.query(true, DATABASE_TABLE, ALL_KEYS,
-                where, null, null, null, null, null);
-        if (c != null) {
-            c.moveToFirst();
-        }
-        return c;
-    }
-
-    // Get a specific row (by rowId)
-    public Cursor getRow(long rowId) {
-        String where = KEY_ROWID + "=" + rowId;
-        Cursor c = 	db.query(true, DATABASE_TABLE, ALL_KEYS,
-                where, null, null, null, null, null);
-        if (c != null) {
-            c.moveToFirst();
-        }
-        return c;
-    }
-
-    // Change an existing row to be equal to new data.
-    public boolean updateRow(long rowId, String name, String description, double lat, double lng, String categories, String tags) {
-        String where = KEY_ROWID + "=" + rowId;
-
-		/*
-		 * CHANGE 4:
-		 */
-        // TODO: Update data in the row with new fields.
-        // TODO: Also change the function's arguments to be what you need!
-        // Create row's data:
-        ContentValues newValues = new ContentValues();
-        newValues.put(KEY_NAME, name);
-        newValues.put(KEY_NAME, name);
-        newValues.put(KEY_DESCRIPTION, description);
-        newValues.put(KEY_LAT, lat);
-        newValues.put(KEY_LNG, lng);
-        newValues.put(KEY_CATEGORIES, categories);
-        newValues.put(KEY_TAGS, tags);
-
-        // Insert it into the database.
-        return db.update(DATABASE_TABLE, newValues, where, null) != 0;
-    }
-
-
-
-    /////////////////////////////////////////////////////////////////////
-    //	Private Helper Classes:
-    /////////////////////////////////////////////////////////////////////
-
-    /**
-     * Private class which handles database creation and upgrading.
-     * Used to handle low-level database access.
-     */
-    private static class DatabaseHelper extends SQLiteOpenHelper
-    {
-        DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase _db) {
-            _db.execSQL(DATABASE_CREATE_SQL);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase _db, int oldVersion, int newVersion) {
-            Log.w(TAG, "Upgrading application's database from version " + oldVersion
-                    + " to " + newVersion + ", which will destroy all old data!");
-
-            // Destroy old database:
-            _db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
-
-            // Recreate new database:
-            onCreate(_db);
-        }
-
-        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            onUpgrade(db, oldVersion, newVersion);
+        if (database==null) {
+            initDatabase();
         }
     }
+
+
+    /* initialize the database */
+    public void initDatabase() {
+        /* Get the database and the manager */
+        try {
+            manager = new Manager(new AndroidContext(context), Manager.DEFAULT_OPTIONS);
+            database = manager.getDatabase(DB_NAME);
+            database.delete(); // ToDo: Just for testing purposes, remove if synchronization with real DB is working!
+            database = manager.getDatabase(DB_NAME); // ToDo: Just for testing purposes, remove if synchronization with real DB is working!
+        } catch (CouchbaseLiteException e) {
+            Log.e(TAG, "Error getting database", e);
+            return;
+        } catch (IOException e) {
+            Log.e(TAG, "Error getting database", e);
+            return;
+        }
+
+        /* test if database is empty, if it is, insert dummy data. ToDo: Remove this workaround, when the backend database synchronization works */
+        Boolean db_is_empty;
+        db_is_empty = database.getDocumentCount() == 0;
+        if (db_is_empty) {
+
+            /* insert text */
+            insertRow(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
+            insertRow(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
+            insertRow(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
+            insertRow(4, "Irgendwo in der Nähe des HNF", "Dies ist ein Testeintrag um sicherzustellen, dass wirklich die korrekten Datenbankeinträge verwendet werden.", 51.7292000, 8.7434000, "Test", "Test");
+
+            /* insert images */
+            for (int i=1; i<=database.getDocumentCount(); i++) {
+                InputStream image = context.getResources().openRawResource(+ R.drawable.databasetest); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
+                Document doc = database.getDocument(String.valueOf(i));
+                UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
+                newRev.setAttachment("image.jpg", "image/jpeg", image);
+                try {
+                    newRev.save();
+                } catch (CouchbaseLiteException e) {
+                    Log.e(TAG, "Error attaching image", e);
+                }
+            }
+        }
+    }
+
+
+    /* insert a row in the database */
+    public void insertRow(int id, String name, String description, double lat, double lng, String categories, String tags) {
+        Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("name", name);
+        properties.put("description", description);
+        properties.put("categories", categories);
+        properties.put("tags", tags);
+        properties.put("lat", lat);
+        properties.put("lng", lng);
+
+        try {
+            // Save the properties to the document
+            document.putProperties(properties);
+        } catch (CouchbaseLiteException e) {
+            Log.e(TAG, "Error putting properties", e);
+        }
+
+    }
+
+
+    /* returns an image from the database */
+    public static Drawable getImage(int id) {
+        Document doc = database.getDocument(String.valueOf(id));
+        Revision rev = doc.getCurrentRevision();
+        Attachment att = rev.getAttachment("image.jpg");
+        Drawable d = null;
+        if (att != null) {
+            try {
+                InputStream is = att.getContent();
+                d = Drawable.createFromStream(is, "image.jpg");
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
+
+
+    /* gets all rows from the database */
+    public List<Map<String, Object>> getAllRows() {
+        Query query = database.createAllDocumentsQuery();
+        query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
+        QueryEnumerator enumerator = null;
+        try {
+            enumerator = query.run();
+        } catch (CouchbaseLiteException e) {
+            Log.e(TAG, "Error getting all rows", e);
+        }
+        List<Map<String,Object>> result = new ArrayList<>();
+        while (enumerator.hasNext()) {
+            QueryRow row = enumerator.next();
+            Map<String, Object> properties = database.getDocument(row.getDocumentId()).getProperties();
+            result.add(properties);
+        }
+        return result;
+    }
+
+
+    /* gets one row (specified by id) from database */
+    public Document getRow(int id) {
+        return database.getDocument(String.valueOf(id));
+    }
+
 }

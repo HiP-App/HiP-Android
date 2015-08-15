@@ -3,6 +3,8 @@ package com.example.timo.hip;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.couchbase.lite.QueryEnumerator;
+import com.couchbase.lite.QueryRow;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -10,8 +12,10 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 public class ExhibitSet {
@@ -22,28 +26,27 @@ public class ExhibitSet {
     private List<String> activeFilter;
     private LatLng position;
 
-    public ExhibitSet (Cursor cursor, LatLng position){
+    public ExhibitSet (List<Map<String, Object>> list, LatLng position){
         this.position = position;
-        if(cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(DBAdapter.COL_ROWID);
-                String name = cursor.getString(DBAdapter.COL_NAME);
-                String description = cursor.getString(DBAdapter.COL_DESCRIPTION);
-                double lat = cursor.getDouble(DBAdapter.COL_LAT);
-                double lng = cursor.getDouble(DBAdapter.COL_LNG);
-                String categories = cursor.getString(DBAdapter.COL_CATEGORIES);
-                String tags = cursor.getString(DBAdapter.COL_TAGS);
 
-                Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
-                exhibit.setDistance(this.position);
+        for (int i=0; i<list.size(); i++) {
+            Map<String, Object> properties = list.get(i);
+            int id = Integer.valueOf((String)properties.get("_id"));
+            String name = (String)properties.get(DBAdapter.KEY_NAME);
+            String description = (String)properties.get(DBAdapter.KEY_DESCRIPTION);
+            double lat = (double)properties.get(DBAdapter.KEY_LAT);
+            double lng = (double)properties.get(DBAdapter.KEY_LNG);
+            String categories = (String)properties.get(DBAdapter.KEY_CATEGORIES);
+            String tags = (String)properties.get(DBAdapter.KEY_TAGS);
 
-                for(String categorie: exhibit.categories) {
-                    if(!this.categories.contains(categorie)) this.categories.add(categorie);
-                }
+            Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
+            exhibit.setDistance(this.position);
 
-                this.initSet.add(exhibit);
-            } while (cursor.moveToNext());
-            cursor.close();
+            for(String categorie: exhibit.categories) {
+                if(!this.categories.contains(categorie)) this.categories.add(categorie);
+            }
+
+            this.initSet.add(exhibit);
         }
 
         for(Exhibit item: initSet) activeSet.add(item);
