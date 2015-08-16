@@ -1,0 +1,55 @@
+<TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tableLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="2">
+
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ViewFlipper
+                    android:id="@+id/view_flipper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/busdorfkirche_aussen" />
+
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/busdorfkirche_innen" />
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/kreuzgang_busdorfkirche" />
+                </ViewFlipper>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <WebView
+                    android:id="@+id/webView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+        </TableLayout>
