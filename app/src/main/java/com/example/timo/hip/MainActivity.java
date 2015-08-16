@@ -413,25 +413,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_imageview:
-                openImageView();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     protected void openImageView() {
         Intent intent = new Intent(this, DisplayImageView.class);
         startActivity(intent);
