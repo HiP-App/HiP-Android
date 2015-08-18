@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Outline;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
@@ -18,6 +19,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.couchbase.lite.Document;
 
 public class DetailsMediaActivity extends Activity {
 
@@ -60,13 +63,11 @@ public class DetailsMediaActivity extends Activity {
 
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        String image_url = "http://tboegeholz.de/ba/pictures/" + exhibitId + ".jpg";
-        ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-        mImageView.setImageBitmap(imgLoader.quickLoad(image_url));
+        Drawable d = DBAdapter.getImage(exhibitId);
+        mImageView.setImageDrawable(d);
 
-        Cursor cursor = database.getRow(exhibitId);
-        Exhibit exhibit = new Exhibit(cursor);
-        cursor.close();
+        Document document = database.getRow(exhibitId);
+        Exhibit exhibit = new Exhibit(document);
 
         //String uri = "android.resouce://" + getPackageName() + "/" + R.raw.video;
         //mVideoView.setVideoURI(Uri.parse(uri));
@@ -182,11 +183,6 @@ public class DetailsMediaActivity extends Activity {
 
     private void openDatabase() {
         database = new DBAdapter(this);
-        database.open();
-    }
-
-    private void closeDatabase() {
-        database.close();
     }
 
     @Override

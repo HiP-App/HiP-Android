@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.couchbase.lite.Document;
 
 /**
  * Created by Hagen Stahl on 13.08.2015.
@@ -61,9 +64,9 @@ public class MediaActivity extends Activity implements SurfaceHolder.Callback{
     public void initializeViews(){
         if(mediaType != MediaTypes.NONE) {
 
-            Cursor cursor = database.getRow(exhibitId);
-            Exhibit exhibit = new Exhibit(cursor);
-            cursor.close();
+            Document document = database.getRow(exhibitId);
+            Exhibit exhibit = new Exhibit(document);
+
 
             mMediaTitle = (TextView) findViewById(R.id.mediaTitle);
             mMediaTitle.setText(exhibit.name);
@@ -72,9 +75,9 @@ public class MediaActivity extends Activity implements SurfaceHolder.Callback{
                 findViewById(R.id.videoImageView).setVisibility(View.GONE);
                 mImageView = (ImageView) findViewById(R.id.audioImageView);
 
-                String image_url = "http://tboegeholz.de/ba/pictures/" + exhibitId + ".jpg";
-                ImageLoader imgLoader = new ImageLoader(getApplicationContext());
-                mImageView.setImageBitmap(imgLoader.quickLoad(image_url));
+
+                Drawable d = DBAdapter.getImage(exhibitId);
+                mImageView.setImageDrawable(d);
                 mImageView.setVisibility(View.VISIBLE);
 
                 mediaPlayer = MediaPlayer.create(this, this.media);
@@ -174,12 +177,8 @@ public class MediaActivity extends Activity implements SurfaceHolder.Callback{
 
     private void openDatabase() {
         database = new DBAdapter(this);
-        database.open();
     }
 
-    private void closeDatabase() {
-        database.close();
-    }
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
