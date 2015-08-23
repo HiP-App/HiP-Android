@@ -4,7 +4,9 @@ package com.example.timo.hip;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -65,11 +67,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
 
-    public LatLng myStartLocation = new LatLng(51.712979, 8.740505); // Paderborn Hbf
-
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
+    private LocationManager locationManager;
     private DBAdapter database;
     private ExhibitSet exhibitSet;
     private List<String> activeFilter = new ArrayList<>();
@@ -101,20 +102,8 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
         mGoogleApiClient.connect();
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setAltitudeRequired(false);
-        String provider = locationManager.getBestProvider(criteria, false);
-
-        if( Build.PRODUCT.matches(".*_?sdk_?.*")) {
-            mLastLocation = new Location(provider);
-            mLastLocation.setLatitude(myStartLocation.latitude);
-            mLastLocation.setLongitude(myStartLocation.longitude);
-        }
-        else{
-            mLastLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
-        }
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        mLastLocation = getLastKnownLocation();
 
         openDatabase();
         this.exhibitSet = new ExhibitSet(database.getAllRows(), new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude()));
@@ -161,6 +150,14 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 // new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            int value = extras.getInt("SHOW_ROUTE");
+            if (value == 1){
+                onShowRoute();
+            }
+        }
 
     }
 
@@ -215,6 +212,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     }
 
     public void onShowRoute() {
+        if (mLastLocation == null){
+            return;
+        }
+
         LatLng myLastLoc = new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude());
 
         for(int i = 0 ; i < this.exhibitSet.getSize(); i++)
@@ -246,17 +247,11 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        mLastLocation = getLastKnownLocation();
 
-        if( !Build.PRODUCT.matches(".*_?sdk_?.*")) {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        }
-
-        if (mLastLocation != null) {
+        if (mLastLocation != null){
             this.updatePosition(mLastLocation);
-        } else {
-            Toast.makeText(this, R.string.no_location_detected, Toast.LENGTH_LONG).show();
         }
-
         startLocationUpdates();
     }
 
@@ -363,6 +358,60 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 .position(new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude()))
                 .title("I'm here")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+    }
+
+    public Location getLastKnownLocation() {
+        if ( !locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
+
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+
+        if (Build.PRODUCT.matches(".*_?sdk_?.*")) {
+            // set dummy location
+            LatLng myStartLocation = new LatLng(51.712979, 8.740505); // Paderborn Hbf
+            if( bestLocation == null) {
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                criteria.setAltitudeRequired(false);
+                String provider = locationManager.getBestProvider(criteria, false);
+                bestLocation = new Location(provider);
+
+                bestLocation.setLatitude(myStartLocation.latitude);
+                bestLocation.setLongitude(myStartLocation.longitude);
+            }
+        }
+
+        return bestLocation;
+    }
+
+    public void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
