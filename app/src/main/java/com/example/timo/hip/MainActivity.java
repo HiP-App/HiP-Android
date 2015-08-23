@@ -147,6 +147,11 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
                 new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            showRoute = extras.getBoolean("SHOW_ROUTE");
+        }
     }
 
     public void notifyExhibitSetChanged() {
@@ -251,12 +256,8 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
         startLocationUpdates();
 
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            showRoute = extras.getBoolean("SHOW_ROUTE");
-            if (showRoute){
-                onShowRoute();
-            }
+        if (showRoute){
+            onShowRoute();
         }
 
         if ( (Build.PRODUCT.matches(".*_?sdk_?.*")) && (mLastLocation != null)) {
