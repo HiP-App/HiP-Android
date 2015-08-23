@@ -13,7 +13,7 @@ import java.util.List;
 public class CustomSeekBar extends SeekBar {
     private Paint selected, unselected;
     private RectF position;
-    private int halfSize = 15;
+    private final int halfSize = 15;
     private List<Integer> mProgressList = new ArrayList<>();
 
     public CustomSeekBar(Context context) {
@@ -31,9 +31,9 @@ public class CustomSeekBar extends SeekBar {
         init();
     }
 
-    public void setProgress(List<Integer> array){
+    public void setProgress(List<Integer> list){
         //update the instance variable
-        mProgressList = array;
+        mProgressList = list;
     }
 
     private void init(){

@@ -1,19 +1,13 @@
 package com.example.timo.hip;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ShowcaseAdapter extends BaseAdapter {
     private Context mContext;
@@ -72,7 +66,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     /* Including image throws an OutOfMemoryException, don't know why
                     R.drawable.showcase_imageview */
                     R.drawable.showcase_main,
-                    R.drawable.showcase_main
+                    R.drawable.time_line
 
             };
 
