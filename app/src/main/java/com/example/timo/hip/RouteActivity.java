@@ -10,7 +10,7 @@ public class RouteActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Intent intent = new Intent(RouteActivity.this, MainActivity.class);
-        intent.putExtra("SHOW_ROUTE", 1);
+        intent.putExtra("SHOW_ROUTE", true);
         startActivity(intent);
         finish();
     }

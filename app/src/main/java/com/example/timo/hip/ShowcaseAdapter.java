@@ -72,7 +72,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     /* Including image throws an OutOfMemoryException, don't know why
                     R.drawable.showcase_imageview */
                     R.drawable.showcase_main,
-                    R.drawable.showcase_main
+                    R.drawable.showcase_showroute
 
             };
 
