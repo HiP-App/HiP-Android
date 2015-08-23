@@ -66,6 +66,7 @@ import android.view.MenuItem;
 public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
+    public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
@@ -75,7 +76,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     private ExhibitSet exhibitSet;
     private List<String> activeFilter = new ArrayList<>();
     private Polyline newPolyline;
-    private LatLngBounds latlngBounds;
     private String routeMode = GMapV2Direction.MODE_WALKING;
 
     private ExtendedLocationListener mLocationListener = new ExtendedLocationListener(this);
@@ -103,10 +103,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         mGoogleApiClient.connect();
 
         locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
-        mLastLocation = getLastKnownLocation();
 
         openDatabase();
-        this.exhibitSet = new ExhibitSet(database.getAllRows(), new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude()));
+
+        this.exhibitSet = new ExhibitSet(database.getAllRows(), paderborn);
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, new ExtendedLocationListener(this));
 
         setUpMapIfNeeded();
@@ -147,7 +147,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             public void onRefresh() {
                 ImageLoader imgLoader = new ImageLoader(mMainActivity);
                 imgLoader.clearCache();
-                // new HttpAsyncTask(mMainActivity).execute(BASE_URL);
+                new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
 
@@ -163,13 +163,22 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     public void notifyExhibitSetChanged() {
         mSwipeLayout.setRefreshing(false);
-        this.exhibitSet = new ExhibitSet(database.getAllRows(), new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude()));
+
+        LatLng latLang;
+        if (mLastLocation == null){
+            latLang = paderborn;
+        }
+        else{
+            latLang = new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude());
+        }
+
+        this.exhibitSet = new ExhibitSet(database.getAllRows(), latLang);
         mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();
         this.exhibitSet.addMarker(this.mMap);
 
-        if( Build.PRODUCT.matches(".*_?sdk_?.*")) {
+        if( Build.PRODUCT.matches(".*_?ssdk_?.*")) {
             mMap.addMarker(getCurrentLocationMarkerOptions());
         }
     }
@@ -213,6 +222,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     public void onShowRoute() {
         if (mLastLocation == null){
+            Toast.makeText(this, "mLastLocation is null!", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -247,12 +257,17 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
 
     @Override
     public void onConnected(Bundle connectionHint) {
+        //mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient); 
         mLastLocation = getLastKnownLocation();
 
-        if (mLastLocation != null){
+        if(mLastLocation != null)
             this.updatePosition(mLastLocation);
-        }
+
         startLocationUpdates();
+
+        if (Build.PRODUCT.matches(".*_?sdk_?.*")) {
+            mMap.addMarker(getCurrentLocationMarkerOptions());
+        }
     }
 
     protected void startLocationUpdates() {
@@ -269,6 +284,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     }
 
     public void updatePosition(Location position) {
+        mLastLocation = position;
         this.exhibitSet.updatePosition(new LatLng(position.getLatitude(), position.getLongitude()));
         this.mAdapter.notifyDataSetChanged();
     }
@@ -342,14 +358,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude()), 12);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(paderborn, 12);
         mMap.animateCamera(update);
 
         exhibitSet.addMarker(mMap);
-
-        if (Build.PRODUCT.matches(".*_?sdk_?.*")) {
-            mMap.addMarker(getCurrentLocationMarkerOptions());
-        }
     }
 
     private MarkerOptions getCurrentLocationMarkerOptions()
@@ -378,7 +390,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             }
         }
 
-        if (Build.PRODUCT.matches(".*_?sdk_?.*")) {
+        if (Build.PRODUCT.matches(".*_?ssdk_?.*")) {
             // set dummy location
             LatLng myStartLocation = new LatLng(51.712979, 8.740505); // Paderborn Hbf
             if( bestLocation == null) {
@@ -417,7 +429,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
 
         PolylineOptions rectLine = new PolylineOptions();
-        LatLng myLastLoc = new LatLng(this.mLastLocation.getLatitude(), this.mLastLocation.getLongitude());
 
         if (newPolyline != null)
         {
@@ -439,22 +450,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             }
 
             newPolyline = mMap.addPolyline(rectLine);
-            latlngBounds = createLatLngBoundsObject(myLastLoc, directionPoints.get(i));
-
-            myLastLoc = directionPoints.get(i);
         }
-    }
-
-    private LatLngBounds createLatLngBoundsObject(LatLng firstLocation, LatLng secondLocation)
-    {
-        if (firstLocation != null && secondLocation != null)
-        {
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            builder.include(firstLocation).include(secondLocation);
-
-            return builder.build();
-        }
-        return null;
     }
 
     @Override
