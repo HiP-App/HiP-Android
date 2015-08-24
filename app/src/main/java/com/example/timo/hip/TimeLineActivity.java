@@ -15,8 +15,7 @@ public class TimeLineActivity extends Activity {
     private int exhibitId;
     private ImageView mImageViewTimeLine;
     private TextView txtMiddleSeekBar;
-    private SeekBar mSeekBarTimeLine;
-    private CustomSeekBar mSeekBar = null;
+    private CustomSeekBar mSeekBar;
 
     private List<PictureDataTemp> mPicDataList = new ArrayList<>();
 
@@ -25,27 +24,21 @@ public class TimeLineActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        init();
-
         // TODO read and set data from Database
-        /*exhibitId = getIntent().getIntExtra("exhibit-id", 1);
-        Drawable d = DBAdapter.getImage(exhibitId);
-        mImageViewTimeLine.setImageDrawable(d);*/
+        setDataShowCase();
+
+        init();
     }
 
     private void init(){
-        setDataShowCase();
         calcProgressSeekBarAccordingToPicDate(mPicDataList);
 
         mSeekBar = (CustomSeekBar)findViewById(R.id.seekBar);
         mSeekBar.setProgress(getPicDataProgressList(mPicDataList));
+        mSeekBar.setProgressDrawable(getResources().getDrawable(R.drawable.customseekbar));
 
         mImageViewTimeLine = (ImageView) findViewById(R.id.imageViewTimeLine);
         mImageViewTimeLine.setImageResource(mPicDataList.get(0).getPicID());
-        mImageViewTimeLine.setImageResource(mPicDataList.get(0).getPicID());
-
-        mSeekBarTimeLine   = (CustomSeekBar) findViewById(R.id.seekBar);
-        mSeekBarTimeLine.setProgressDrawable(getResources().getDrawable(R.drawable.customseekbar));
 
         TextView txtStartSeekBar = (TextView) findViewById(R.id.txtStartSeekBar);
         txtStartSeekBar.setTextColor(Color.WHITE);
@@ -84,7 +77,7 @@ public class TimeLineActivity extends Activity {
 
     private void addSeekBarListner() {
 
-        mSeekBarTimeLine.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
 
             @Override
