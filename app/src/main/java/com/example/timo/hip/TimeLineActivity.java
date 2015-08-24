@@ -25,6 +25,8 @@ public class TimeLineActivity extends Activity {
         setContentView(R.layout.activity_timeline);
 
         // TODO read and set data from Database
+
+
         setDataShowCase();
 
         init();
