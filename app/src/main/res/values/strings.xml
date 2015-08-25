@@ -10,4 +10,9 @@
 
     <string name="no_location_detected">No Connection</string>
 
+    <string name="compass_accuracy_low">Please re-calibrate compass by waving your device in a figure 8 motion.</string>
+    <string name="title_activity_display_message">My Message</string>
+    <string name="button_StartIR">Start Image Recognition</string>
+    <string name="action_settings">Settings</string>
+
 </resources>
