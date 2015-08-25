@@ -69,9 +69,7 @@ public class ShowcaseAdapter extends BaseAdapter {
     private Integer[] mThumbIds =
             {
                     R.drawable.showcase_main,
-                    /* Including image throws an OutOfMemoryException, don't know why
-                    R.drawable.showcase_imageview */
-                    R.drawable.showcase_main,
+                    R.drawable.showcase_imageview,
                     R.drawable.showcase_main
 
             };
