@@ -71,6 +71,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     R.drawable.showcase_main,
                     /* Including image throws an OutOfMemoryException, don't know why
                     R.drawable.showcase_imageview */
+                    R.drawable.showcase_main,
                     R.drawable.showcase_main
 
             };
@@ -78,12 +79,14 @@ public class ShowcaseAdapter extends BaseAdapter {
     private Class[] mActivitys =
             {
                     MainActivity.class,
-                    DisplayImageView.class
+                    DisplayImageView.class,
+                    ImageBoundariesActivity.class
             };
 
     private String[] mDescriptions =
             {
                     "Main Activity",
-                    "Image View"
+                    "Image View",
+                    "ImageBoundaries"
             };
 }
