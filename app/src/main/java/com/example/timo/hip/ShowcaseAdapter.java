@@ -68,8 +68,9 @@ public class ShowcaseAdapter extends BaseAdapter {
 
     private Integer[] mThumbIds =
             {
-                    R.drawable.showcase_main,
+                    R.drawable.showcase_main,                    
                     R.drawable.showcase_imageview,
+                    R.drawable.showcase_main,
                     R.drawable.showcase_main
 
             };
@@ -78,13 +79,15 @@ public class ShowcaseAdapter extends BaseAdapter {
             {
                     MainActivity.class,
                     DisplayImageView.class,
-                    ArExampleActivity.class
+                    ArExampleActivity.class,
+                    ImageBoundariesActivity.class
             };
 
     private String[] mDescriptions =
             {
                     "Main Activity",
                     "Image View",
-                    "AR Example"
+                    "AR Example",
+                    "ImageBoundaries"
             };
 }
