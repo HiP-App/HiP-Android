@@ -1,6 +1,7 @@
 package com.example.timo.hip;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
@@ -80,6 +81,24 @@ public class DetailsActivity extends Activity {
         };
         fab.setOutlineProvider(viewOutlineProvider);
 
+    }
+
+    public void onClick_video(View view){
+        Intent intent = new Intent(this, MediaActivity.class);
+
+        intent.putExtra("exhibit-id", this.exhibitId);
+        intent.putExtra("exhibit-media-type", MediaTypes.VIDEO);
+        intent.putExtra("exhibit-media", R.raw.video);
+        startActivity(intent);
+    }
+
+    public void onClick_audio(View view){
+        Intent intent = new Intent(this, MediaActivity.class);
+
+        intent.putExtra("exhibit-id", this.exhibitId);
+        intent.putExtra("exhibit-media-type", MediaTypes.AUDIO);
+        intent.putExtra("exhibit-media", R.raw.audio);
+        startActivity(intent);
     }
 
     /**
