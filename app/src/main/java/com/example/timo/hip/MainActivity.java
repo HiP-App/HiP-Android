@@ -57,6 +57,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.view.MenuInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+
 public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
@@ -407,5 +411,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    protected void openImageView() {
+        Intent intent = new Intent(this, DisplayImageView.class);
+        startActivity(intent);
     }
 }

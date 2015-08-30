@@ -69,18 +69,28 @@ public class ShowcaseAdapter extends BaseAdapter {
     private Integer[] mThumbIds =
             {
                 R.drawable.showcase_main,
+                R.drawable.showcase_main,
+                R.drawable.showcase_main,
+                R.drawable.showcase_imageview,
+                R.drawable.showcase_main,
                 R.drawable.showcase_main
             };
 
     private Class[] mActivitys =
             {
-                MainActivity.class,
-                GMapOldActivity.class
+                    MainActivity.class,
+                    DisplayImageView.class,
+                    ArExampleActivity.class,
+                    ImageBoundariesActivity.class,
+                    GMapOldActivity.class
             };
 
     private String[] mDescriptions =
             {
                     "Main Activity",
+                    "Image View",
+                    "AR Example",
+                    "ImageBoundaries",
                     "Old Map"
             };
 }
