@@ -24,6 +24,8 @@ public class ArExampleActivity extends Activity {
     public static final String EXTRAS_KEY_ACTIVITY_ARCHITECT_WORLD_URL = "activityArchitectWorldUrl";
     public static final String EXTRAS_KEY_ACTIVITY_IR = "activityIr";
 
+    public final String className = "com.example.timo.hip.SampleCamActivity";
+
     private Map<Integer, List<SampleMeta>> samples;
 
     @Override
@@ -42,10 +44,14 @@ public class ArExampleActivity extends Activity {
         boolean includeIR = (ArchitectView.getSupportedFeaturesForDevice(getApplicationContext()) & StartupConfiguration.Features.Tracking2D) != 0;
         samples = new HashMap<Integer, List<SampleMeta>>();
         if(includeIR){
-            String asset = "Image$Recognition_Image$With$Labels";
-            SampleMeta sampleMeta = new SampleMeta(asset, true);
+            String assetOne = "Image$Recognition_Image$With$Labels";
+            String assetTwo = "Image$Recognition_Labels$With$OnClick";
+            SampleMeta sampleMetaOne = new SampleMeta(assetOne, true);
+            SampleMeta sampleMetaTwo = new SampleMeta(assetTwo, true);
             samples.put(0, new ArrayList<SampleMeta>());
-            samples.get(0).add(sampleMeta);
+            samples.get(0).add(sampleMetaOne);
+            samples.put(1, new ArrayList<SampleMeta>());
+            samples.get(1).add(sampleMetaTwo);
         }
     }
 
@@ -99,7 +105,39 @@ public class ArExampleActivity extends Activity {
         String newActivityUrl = meta.path;
         boolean newActivitieIr = meta.hasIr;
 
-        final String className = ("com.example.timo.hip.SampleCamActivity");
+        try {
+
+            final Intent intent = new Intent(this, Class.forName(className));
+            intent.putExtra(EXTRAS_KEY_ACTIVITY_TITLE_STRING, newActivityTitle);
+            intent.putExtra(EXTRAS_KEY_ACTIVITY_ARCHITECT_WORLD_URL, "samples"
+                    + File.separator + newActivityUrl
+                    + File.separator + "index.html");
+            intent.putExtra(EXTRAS_KEY_ACTIVITY_IR, newActivitieIr);
+
+			/* launch activity */
+            this.startActivity(intent);
+
+        } catch (Exception e) {
+			/*
+			 * may never occur, as long as all SampleActivities exist and are
+			 * listed in manifest
+			 */
+            Toast.makeText(this, className + "\nnot defined/accessible",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void startArExampleWithOnClick(View view) {
+
+        final List<SampleMeta> activitiesToLaunch = samples.get(1);
+
+        final SampleMeta meta = activitiesToLaunch.get(0);
+
+        String newActivityTitle = ( meta.sampleName.replace("$", " "));
+        String newActivityUrl = meta.path;
+        boolean newActivitieIr = meta.hasIr;
+
         try {
 
             final Intent intent = new Intent(this, Class.forName(className));
