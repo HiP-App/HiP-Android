@@ -46,12 +46,16 @@ public class ArExampleActivity extends Activity {
         if(includeIR){
             String assetOne = "Image$Recognition_Image$With$Labels";
             String assetTwo = "Image$Recognition_Labels$With$OnClick";
+            String assetThree = "Image$Recognition_Image$Overlay";
             SampleMeta sampleMetaOne = new SampleMeta(assetOne, true);
             SampleMeta sampleMetaTwo = new SampleMeta(assetTwo, true);
+            SampleMeta sampleMetaThree = new SampleMeta(assetThree, true);
             samples.put(0, new ArrayList<SampleMeta>());
             samples.get(0).add(sampleMetaOne);
             samples.put(1, new ArrayList<SampleMeta>());
             samples.get(1).add(sampleMetaTwo);
+            samples.put(2, new ArrayList<SampleMeta>());
+            samples.get(2).add(sampleMetaThree);
         }
     }
 
@@ -131,6 +135,39 @@ public class ArExampleActivity extends Activity {
     public void startArExampleWithOnClick(View view) {
 
         final List<SampleMeta> activitiesToLaunch = samples.get(1);
+
+        final SampleMeta meta = activitiesToLaunch.get(0);
+
+        String newActivityTitle = ( meta.sampleName.replace("$", " "));
+        String newActivityUrl = meta.path;
+        boolean newActivitieIr = meta.hasIr;
+
+        try {
+
+            final Intent intent = new Intent(this, Class.forName(className));
+            intent.putExtra(EXTRAS_KEY_ACTIVITY_TITLE_STRING, newActivityTitle);
+            intent.putExtra(EXTRAS_KEY_ACTIVITY_ARCHITECT_WORLD_URL, "samples"
+                    + File.separator + newActivityUrl
+                    + File.separator + "index.html");
+            intent.putExtra(EXTRAS_KEY_ACTIVITY_IR, newActivitieIr);
+
+			/* launch activity */
+            this.startActivity(intent);
+
+        } catch (Exception e) {
+			/*
+			 * may never occur, as long as all SampleActivities exist and are
+			 * listed in manifest
+			 */
+            Toast.makeText(this, className + "\nnot defined/accessible",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void startArExampleWithOverlay(View view) {
+
+        final List<SampleMeta> activitiesToLaunch = samples.get(2);
 
         final SampleMeta meta = activitiesToLaunch.get(0);
 
