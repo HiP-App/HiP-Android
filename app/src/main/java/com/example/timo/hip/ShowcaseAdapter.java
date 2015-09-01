@@ -82,7 +82,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     DisplayImageView.class,
                     ArExampleActivity.class,
                     ImageBoundariesActivity.class,
-                    GMapOldActivity.class
+                    GMapOldActivity.class,
             };
 
     private String[] mDescriptions =
