@@ -18,6 +18,8 @@
     <string name="compass_accuracy_low">Please re-calibrate compass by waving your device in a figure 8 motion.</string>
     <string name="title_activity_display_message">My Message</string>
     <string name="button_StartIR">Start Image Recognition</string>
+    <string name="button_StartIRWithOnClick">Start Image Recognition with OnClick</string>
+    <string name="action_settings">Settings</string>
 
     <string name="title_activity_image_boundaries">ImageBoundaries</string>
     <string name="StKilian">St. Kilian</string>
