@@ -212,6 +212,10 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     }
 
     public void onShowRoute() {
+        ImageLoader imgLoader = new ImageLoader(this);
+        imgLoader.clearCache();
+        new HttpAsyncTask(this).execute(BASE_URL);
+
         if (mLastLocation == null){
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("No location was detected. Impossible to calculate the route!")
