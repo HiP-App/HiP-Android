@@ -66,6 +66,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     /* Including image throws an OutOfMemoryException, don't know why
                     R.drawable.showcase_imageview */
                     R.drawable.showcase_main,
+                    R.drawable.time_line,
                     R.drawable.time_line
 
             };
@@ -74,13 +75,15 @@ public class ShowcaseAdapter extends BaseAdapter {
             {
                     MainActivity.class,
                     DisplayImageView.class,
-                    TimeLineActivity.class
+                    TimeLineActivity.class,
+                    FontActivity.class
             };
 
     private String[] mDescriptions =
             {
                     "Main Activity",
                     "Image View",
-                    "Time Line"
+                    "Time Line",
+                    "Font Time Line"
             };
 }

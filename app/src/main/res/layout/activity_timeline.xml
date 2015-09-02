@@ -19,6 +19,13 @@
             android:cropToPadding="false"
             android:scaleType="fitCenter" />
 
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageViewTimeLine2"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter" />
+
     </FrameLayout>
 
     <FrameLayout

@@ -47,6 +47,11 @@
             android:theme="@style/Theme.Transparent" >
         </activity>
         <activity
+            android:name=".FontActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.Transparent" >
+        </activity>
+        <activity
             android:name=".ShowcaseActivity"
             android:label="@string/title_activity_showcase" >
             <intent-filter>
