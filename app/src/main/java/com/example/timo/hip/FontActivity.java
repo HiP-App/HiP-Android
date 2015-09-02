@@ -14,15 +14,9 @@ public class FontActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Intent intent = new Intent(FontActivity.this, TimeLineActivity.class);
-        intent.putExtra("SHOW_FONT", true);
+        intent.putExtra("FONT_FADING", true);
         startActivity(intent);
+        finish();
     }
-
-    @Override
-    protected void onResume() {super.onResume();}
-
-    @Override
-    protected void onDestroy() {super.onDestroy();}
-
 }
 

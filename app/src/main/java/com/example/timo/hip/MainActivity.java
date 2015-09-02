@@ -158,7 +158,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
             public void onRefresh() {
                 ImageLoader imgLoader = new ImageLoader(mMainActivity);
                 imgLoader.clearCache();
-                // new HttpAsyncTask(mMainActivity).execute(BASE_URL);
+                new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
 

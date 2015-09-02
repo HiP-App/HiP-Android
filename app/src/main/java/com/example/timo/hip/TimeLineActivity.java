@@ -19,6 +19,8 @@ public class TimeLineActivity extends Activity {
     private ImageView mImageViewTimeLine2;
     private TextView txtMiddleSeekBar;
     private CustomSeekBar mSeekBar;
+    private boolean fontFading = false;
+    private TimeLineActivity mTimeLineActivity;
 
     private List<PictureDataHelp> mPicDataList = new ArrayList<>();
 
@@ -28,6 +30,13 @@ public class TimeLineActivity extends Activity {
         setContentView(R.layout.activity_timeline);
 
         // TODO read and set data from Database
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            fontFading = extras.getBoolean("FONT_FADING");
+        }
+
+        mTimeLineActivity = this;
 
         setDataShowCase();
 
@@ -44,10 +53,11 @@ public class TimeLineActivity extends Activity {
         mImageViewTimeLine = (ImageView) findViewById(R.id.imageViewTimeLine);
         mImageViewTimeLine.setImageResource(mPicDataList.get(0).picID);
 
-        mImageViewTimeLine2 = (ImageView) findViewById(R.id.imageViewTimeLine2);
-        mImageViewTimeLine2.setImageResource(mPicDataList.get(1).picID);
-
-        mImageViewTimeLine.bringToFront();
+        if (fontFading) {
+            mImageViewTimeLine2 = (ImageView) findViewById(R.id.imageViewTimeLine2);
+            mImageViewTimeLine2.setImageResource(mPicDataList.get(1).picID);
+            mImageViewTimeLine.bringToFront();
+        }
 
         TextView txtStartSeekBar = (TextView) findViewById(R.id.txtStartSeekBar);
         txtStartSeekBar.setTextColor(Color.WHITE);
@@ -89,10 +99,11 @@ public class TimeLineActivity extends Activity {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progressStart = 0;
             boolean forward   = true;
+            int nearest = 0;
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-                int startNode = 0, nextNode = 0, nearest = 0;
+                int startNode = 0, nextNode = 0;
 
                 // deсide the direction (forward or backward)
                 if (progressStart > progresValue){
@@ -107,34 +118,25 @@ public class TimeLineActivity extends Activity {
                 startNode = result[0];
                 nextNode  = result[1];
 
-                int actProgressAccordingStartNextNode = Math.abs(progresValue - mPicDataList.get(startNode).picProgress);
-                int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).picProgress - mPicDataList.get(startNode).picProgress);
-                float alpha = (float) actProgressAccordingStartNextNode / differenceStartNextNode;
+                if (fontFading) {
+                    int actProgressAccordingStartNextNode = Math.abs(progresValue - mPicDataList.get(startNode).picProgress);
+                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).picProgress - mPicDataList.get(startNode).picProgress);
+                    float alpha = (float) actProgressAccordingStartNextNode / differenceStartNextNode;
 
-                mImageViewTimeLine.setImageResource(mPicDataList.get(startNode).picID);
-                mImageViewTimeLine.setAlpha(1 - alpha);
+                    mImageViewTimeLine.setImageResource(mPicDataList.get(startNode).picID);
+                    mImageViewTimeLine.setAlpha(1 - alpha);
 
-                mImageViewTimeLine2.setImageResource(mPicDataList.get(nextNode).picID);
-                mImageViewTimeLine2.setAlpha(alpha);
+                    mImageViewTimeLine2.setImageResource(mPicDataList.get(nextNode).picID);
+                    mImageViewTimeLine2.setAlpha(alpha);
 
-                mImageViewTimeLine.bringToFront();
-
-
-                // for showcase image: get the closest node to actual progress
-                if ( startNode != 0 && startNode != (mPicDataList.size() - 1) &&
-                     nextNode  != 0 && nextNode  != (mPicDataList.size() - 1) ){
-
-                    if (Math.abs(progresValue - mPicDataList.get(startNode).picProgress)
-                            > Math.abs(progresValue - mPicDataList.get(nextNode).picProgress)) {
-                        nearest = startNode;
-                    }
-                    else{
-                        nearest = nextNode;
-                    }
+                    mImageViewTimeLine.bringToFront();
                 }
 
-                // set image year over thumb except first and last position
-                if ((nearest > 0) && (nearest < mPicDataList.size() - 1)) {
+                // for showcase image: get the closest node to actual progress
+                nearest = findClosestNode(result, progresValue);
+
+                // set year over the thumb except first and last picture
+                if (progresValue != 0 && progresValue != 100) {
                     int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) * seekBar.getProgress();
                     txtMiddleSeekBar.setPadding(xPos, 0, 0, 0);
                     txtMiddleSeekBar.setText(String.valueOf(mPicDataList.get(nearest).picYear));
@@ -152,6 +154,10 @@ public class TimeLineActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                if ( !fontFading) {
+                    seekBar.setProgress(mPicDataList.get(nearest).picProgress);
+                    mImageViewTimeLine.setImageResource(mPicDataList.get(nearest).picID);
+                }
             }
 
             private void showCaseImage(int progresValue){
@@ -177,7 +183,43 @@ public class TimeLineActivity extends Activity {
                         }
                     }
                 }
-                return new int[]{0,0};
+                return new int[]{0, 0};
+            }
+
+            private int findClosestNode(int[] array, int progress) {
+                int min = 0, max = 0, closestNode;
+
+                for(int i = 0; i < array.length; i++) {
+                    if(mPicDataList.get(array[i]).picProgress < progress) {
+                        if(min == 0) {
+                            min = array[i];
+                        }
+                        else if(mPicDataList.get(array[i]).picProgress > mPicDataList.get(min).picProgress) {
+                            min = array[i];
+                        }
+                    }
+                    else if(mPicDataList.get(array[i]).picProgress > progress) {
+                        if(max == 0) {
+                            max = array[i];
+                        }
+                        else if(mPicDataList.get(array[i]).picProgress < mPicDataList.get(max).picProgress) {
+                            max = array[i];
+                        }
+                    }
+                    else {
+                        return array[i];
+                    }
+                }
+
+                if(Math.abs(progress - mPicDataList.get(min).picProgress) <
+                        Math.abs(progress - mPicDataList.get(max).picProgress)) {
+                    closestNode = min;
+                }
+                else {
+                    closestNode = max;
+                }
+
+                return closestNode;
             }
         });
     }
@@ -198,11 +240,18 @@ public class TimeLineActivity extends Activity {
 
     // set test data to show images and calculate progress
     private void setDataShowCase(){
-        mPicDataList.add(new PictureDataHelp("busdorfkirche_aussen", 2002));
-        mPicDataList.add(new PictureDataHelp("busdorfkirche_innen", 2005));
-        mPicDataList.add(new PictureDataHelp("dom", 2007));
-        mPicDataList.add(new PictureDataHelp("kreuzgang_busdorfkirche", 2011));
-        mPicDataList.add(new PictureDataHelp("databasetest", 2015));
+        if (fontFading){
+            mPicDataList.add(new PictureDataHelp("monotype_1913", 1913));
+            mPicDataList.add(new PictureDataHelp("monotype_1931", 1931));
+            mPicDataList.add(new PictureDataHelp("monotype_1957", 1957));
+        }
+        else{
+            mPicDataList.add(new PictureDataHelp("busdorfkirche_aussen", 2002));
+            mPicDataList.add(new PictureDataHelp("databasetest", 2005));
+            mPicDataList.add(new PictureDataHelp("busdorfkirche_innen", 2007));
+            mPicDataList.add(new PictureDataHelp("dom", 2011));
+            mPicDataList.add(new PictureDataHelp("kreuzgang_busdorfkirche", 2015));
+        }
     }
 
     // create list for setting dots on seekbar
