@@ -1,19 +1,12 @@
 package com.example.timo.hip;
 
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.v4.app.FragmentActivity;
@@ -21,19 +14,9 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
-import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -43,16 +26,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,6 +184,7 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.show_route:
+                clearRoute();
                 onShowRoute();
                 return true;
             default:
@@ -211,11 +192,21 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         }
     }
 
-    public void onShowRoute() {
-        ImageLoader imgLoader = new ImageLoader(this);
-        imgLoader.clearCache();
-        new HttpAsyncTask(this).execute(BASE_URL);
+    private void clearRoute() {
 
+        if (newPolyline != null){
+            newPolyline.remove();
+        }
+
+        mMap.clear();
+        this.exhibitSet.addMarker(this.mMap);
+
+        if ( (Build.PRODUCT.matches(".*_?sdk_?.*")) && (mLastLocation != null)) {
+            mMap.addMarker(getCurrentLocationMarkerOptions());
+        }
+    }
+
+    public void onShowRoute() {
         if (mLastLocation == null){
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("No location was detected. Impossible to calculate the route!")
@@ -435,7 +426,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         for(int i = 0 ; i < directionPoints.size() ; i++)
         {
             rectLine.add(directionPoints.get(i));
-            newPolyline = mMap.addPolyline(rectLine);
 
             if (routeMode.equals(GMapV2Direction.MODE_DRIVING))
             {
