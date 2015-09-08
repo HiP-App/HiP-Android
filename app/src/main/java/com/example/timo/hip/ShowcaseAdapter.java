@@ -62,28 +62,31 @@ public class ShowcaseAdapter extends BaseAdapter {
 
     private Integer[] mThumbIds =
             {
-                    R.drawable.showcase_main,
-                    /* Including image throws an OutOfMemoryException, don't know why
-                    R.drawable.showcase_imageview */
-                    R.drawable.showcase_main,
-                    R.drawable.time_line,
-                    R.drawable.time_line
-
+                R.drawable.showcase_main,
+                R.drawable.showcase_main,
+                R.drawable.showcase_main,
+                R.drawable.showcase_imgview,
+                R.drawable.showcase_imgboundaries,
+                R.drawable.showcase_main
             };
 
     private Class[] mActivitys =
             {
                     MainActivity.class,
                     DisplayImageView.class,
-                    TimeLineActivity.class,
-                    FontActivity.class
+                    ArExampleActivity.class,
+                    ImageBoundariesActivity.class,
+                    GMapOldActivity.class,
+                    RouteActivity.class
             };
 
     private String[] mDescriptions =
             {
                     "Main Activity",
                     "Image View",
-                    "Time Line",
-                    "Font Time Line"
+                    "AR Example",
+                    "ImageBoundaries",
+                    "Old Map",
+                    "Show Route"
             };
 }
