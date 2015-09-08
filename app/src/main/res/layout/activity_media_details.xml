@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true">
+
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:onClick="onClick_back"
+        android:nestedScrollingEnabled="false">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageViewDetail"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/dom" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:transitionName="changeBounds"
+            android:id="@+id/txtName"
+            android:layout_gravity="center_horizontal|bottom"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"
+            android:textSize="20dp"
+            android:textColor="#FFFFFF" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1">
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="New Text"
+                    android:id="@+id/txtDescription"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="20dp"
+                    android:scrollbars="vertical"/>
+                <FrameLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:onClick="onClick_video"
+                        android:background="#bebebe">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/abc_ic_go_search_api_mtrl_alpha"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Play Video about this exhibit"/>
+                    </LinearLayout>
+                </FrameLayout>
+                <!-- TODO: remove this TextView placeholder -->
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text=""
+                    android:id="@+id/txtPlaceholder"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="0dp"
+                    android:paddingRight="20dp"
+                    android:scrollbars="vertical"/>
+                <FrameLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:onClick="onClick_audio"
+                        android:background="#bebebe">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/abc_ic_go_search_api_mtrl_alpha"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Play Audio about this exhibit"/>
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
+        </ScrollView>
+        <ImageButton
+            android:id="@+id/fab"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="@dimen/fab_size"
+            android:layout_height="@dimen/fab_size"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/ripple"
+            android:stateListAnimator="@anim/anim"
+            android:src="@drawable/ic_action_reply"
+            android:elevation="4dp"
+            android:onClick="onClick_back"
+            android:nestedScrollingEnabled="false" />
+     </FrameLayout>
+
+</LinearLayout>
