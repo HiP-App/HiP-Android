@@ -52,7 +52,8 @@
         <activity
             android:name=".RouteActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Transparent" >
+            android:theme="@style/Theme.Transparent"
+            android:parentActivityName=".ShowcaseActivity">
         </activity>
         <activity
             android:name=".ShowcaseActivity"
