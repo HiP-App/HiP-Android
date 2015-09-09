@@ -64,7 +64,7 @@ public class ShowcaseAdapter extends BaseAdapter {
             {
                 R.drawable.showcase_main,
                 R.drawable.showcase_main,
-                R.drawable.showcase_main,
+                R.drawable.showcase_ar,
                 R.drawable.showcase_imgview,
                 R.drawable.showcase_imgboundaries,
                 R.drawable.showcase_main,
