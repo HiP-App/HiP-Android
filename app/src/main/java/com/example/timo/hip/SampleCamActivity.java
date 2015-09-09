@@ -1,10 +1,18 @@
 package com.example.timo.hip;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.hardware.SensorManager;
+import android.location.LocationListener;
+import android.net.Uri;
+import android.os.Environment;
 import android.widget.Toast;
 
 import com.wikitude.architect.ArchitectView;
 import com.wikitude.architect.StartupConfiguration;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class SampleCamActivity extends AbstractArchitectCamActivity {
 
@@ -58,6 +66,22 @@ public class SampleCamActivity extends AbstractArchitectCamActivity {
         };
     }
 
+    @Override
+    public ILocationProvider getLocationProvider(final LocationListener locationListener) {
+        return new LocationProvider(this, locationListener);
+    }
+
+    @Override
+    public float getInitialCullingDistanceMeters() {
+        // you need to adjust this in case your POIs are more than 50km away from user here while loading or in JS code (compare 'AR.context.scene.cullingDistance')
+        return ArchitectViewHolderInterface.CULLING_DISTANCE_DEFAULT_METERS;
+    }
+
+    @Override
+    protected boolean hasGeo() {
+        return getIntent().getExtras().getBoolean(
+                ArExampleActivity.EXTRAS_KEY_ACTIVITY_GEO);
+    }
 
     @Override
     protected boolean hasIR() {
