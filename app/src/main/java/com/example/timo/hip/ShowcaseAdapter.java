@@ -67,7 +67,9 @@ public class ShowcaseAdapter extends BaseAdapter {
                 R.drawable.showcase_main,
                 R.drawable.showcase_imgview,
                 R.drawable.showcase_imgboundaries,
-                R.drawable.showcase_main
+                R.drawable.showcase_main,
+                R.drawable.time_line,
+                R.drawable.time_line
             };
 
     private Class[] mActivitys =
@@ -77,6 +79,9 @@ public class ShowcaseAdapter extends BaseAdapter {
                     ArExampleActivity.class,
                     ImageBoundariesActivity.class,
                     GMapOldActivity.class,
+                    RouteActivity.class,
+                    TimeLineActivity.class,
+                    FontActivity.class
             };
 
     private String[] mDescriptions =
@@ -85,6 +90,9 @@ public class ShowcaseAdapter extends BaseAdapter {
                     "Image View",
                     "AR Example",
                     "ImageBoundaries",
-                    "Old Map"
+                    "Old Map",
+                    "Show Route",
+                    "Time Line",
+                    "Time Line Font"
             };
 }
