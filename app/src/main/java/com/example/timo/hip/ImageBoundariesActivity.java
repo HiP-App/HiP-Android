@@ -24,7 +24,7 @@ public class ImageBoundariesActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        nametext.setPadding(148,0,0,0);
+                        nametext.setPadding(100,0,0,0);
                         nametext.setText(R.string.StKilian);
                         descriptiontext.setText(R.string.StKilianText);
                     }
@@ -35,7 +35,7 @@ public class ImageBoundariesActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        nametext.setPadding(320,0,0,0);
+                        nametext.setPadding(220,0,0,0);
                         nametext.setText(R.string.Madonna);
                         descriptiontext.setText(R.string.MadonnaText);
                     }
@@ -46,7 +46,7 @@ public class ImageBoundariesActivity extends Activity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        nametext.setPadding(748,0,0,0);
+                        nametext.setPadding(505,0,0,0);
                         nametext.setText(R.string.StLiborius);
                         descriptiontext.setText(R.string.StLiboriusText);
                     }

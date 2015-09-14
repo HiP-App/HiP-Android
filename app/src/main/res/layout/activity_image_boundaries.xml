@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/ImageViewBoundaries"
-        android:paddingLeft="148px" />
+        android:paddingLeft="100px" />
     <TextView
         android:id="@+id/DescriptionText"
         android:layout_width="wrap_content"
