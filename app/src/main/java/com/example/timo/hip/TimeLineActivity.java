@@ -241,9 +241,10 @@ public class TimeLineActivity extends Activity {
     // set test data to show images and calculate progress
     private void setDataShowCase(){
         if (fontFading){
-            mPicDataList.add(new PictureDataHelp("monotype_1913", 1913));
-            mPicDataList.add(new PictureDataHelp("monotype_1931", 1931));
-            mPicDataList.add(new PictureDataHelp("monotype_1957", 1957));
+            mPicDataList.add(new PictureDataHelp("newsweek_1949", 1949));
+            mPicDataList.add(new PictureDataHelp("newsweek_1970", 1970));
+            mPicDataList.add(new PictureDataHelp("newsweek_1986", 1986));
+            mPicDataList.add(new PictureDataHelp("newsweek_2011", 2011));
         }
         else{
             mPicDataList.add(new PictureDataHelp("busdorfkirche_aussen", 2002));
