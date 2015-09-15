@@ -24,10 +24,10 @@ public class GMapOldActivity extends FragmentActivity {
 
     public LatLng myStartLocation = new LatLng(51.7276064, 8.7684326); // Paderborn Hbf
     GroundOverlay mImageOverlay;
-    GroundOverlayOptions mOverlay; // noch nach rechts
-    double lat = 51.719391; // decrease = nach unten
+    GroundOverlayOptions mOverlay;
+    double lat = 51.719391; // increase = move to north
     double lng = 8.754148;
-    float zoom1 = 1223f;
+    float zoom1 = 1223f; // increase = enlarge overlay
     float zoom2 = 399f;
 
 
