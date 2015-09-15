@@ -77,10 +77,10 @@ public class GMapOldActivity extends FragmentActivity {
         mOverlay = new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromResource(R.drawable.map))
                 .position(new LatLng(lat, lng), zoom1);
-        TextView tlat = (TextView)findViewById(R.id.textView_lat);
-        TextView tlng = (TextView)findViewById(R.id.textView_lng);
-        tlat.setText(new Double(lat).toString());
-        tlng.setText(new Double(lng).toString());
+        //TextView tlat = (TextView)findViewById(R.id.textView_lat);
+        //TextView tlng = (TextView)findViewById(R.id.textView_lng);
+        //tlat.setText(new Double(lat).toString());
+        //tlng.setText(new Double(lng).toString());
 
         mImageOverlay = mMap.addGroundOverlay(mOverlay);
     }

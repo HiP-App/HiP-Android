@@ -77,6 +77,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     ArExampleActivity.class,
                     ImageBoundariesActivity.class,
                     GMapOldActivity.class,
+                    ThreeSixtyDegreeViewActivity.class
             };
 
     private String[] mDescriptions =
@@ -85,6 +86,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     "Image View",
                     "AR Example",
                     "ImageBoundaries",
-                    "Old Map"
+                    "Old Map",
+                    "360 View"
             };
 }
