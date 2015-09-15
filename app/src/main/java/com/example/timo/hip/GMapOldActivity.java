@@ -24,10 +24,10 @@ public class GMapOldActivity extends FragmentActivity {
 
     public LatLng myStartLocation = new LatLng(51.7276064, 8.7684326); // Paderborn Hbf
     GroundOverlay mImageOverlay;
-    GroundOverlayOptions mOverlay;
-    double lat = 51.72260640;
-    double lng = 8.7564326;
-    float zoom1 = 450f;
+    GroundOverlayOptions mOverlay; // noch nach rechts
+    double lat = 51.719391; // decrease = nach unten
+    double lng = 8.754148;
+    float zoom1 = 1223f;
     float zoom2 = 399f;
 
 
@@ -77,10 +77,10 @@ public class GMapOldActivity extends FragmentActivity {
         mOverlay = new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromResource(R.drawable.map))
                 .position(new LatLng(lat, lng), zoom1);
-        TextView tlat = (TextView)findViewById(R.id.textView_lat);
-        TextView tlng = (TextView)findViewById(R.id.textView_lng);
-        tlat.setText(new Double(lat).toString());
-        tlng.setText(new Double(lng).toString());
+        //TextView tlat = (TextView)findViewById(R.id.textView_lat);
+        //TextView tlng = (TextView)findViewById(R.id.textView_lng);
+        //tlat.setText(new Double(lat).toString());
+        //tlng.setText(new Double(lng).toString());
 
         mImageOverlay = mMap.addGroundOverlay(mOverlay);
     }

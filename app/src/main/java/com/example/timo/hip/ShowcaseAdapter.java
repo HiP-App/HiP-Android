@@ -62,14 +62,14 @@ public class ShowcaseAdapter extends BaseAdapter {
 
     private Integer[] mThumbIds =
             {
-                R.drawable.showcase_main,
-                R.drawable.showcase_main,
-                R.drawable.showcase_ar,
-                R.drawable.showcase_imgview,
-                R.drawable.showcase_imgboundaries,
-                R.drawable.showcase_showroute,
-                R.drawable.showcase_timeline,
-                R.drawable.showcase_timelinefont
+                    R.drawable.showcase_main,
+                    R.drawable.showcase_imgview,
+                    R.drawable.showcase_ar,
+                    R.drawable.showcase_imgboundaries,
+                    R.drawable.showcase_oldmap,
+                    R.drawable.showcase_showroute,
+                    R.drawable.showcase_timeline,
+                    R.drawable.showcase_timelinefont
             };
 
     private Class[] mActivitys =
