@@ -70,7 +70,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     R.drawable.showcase_showroute,
                     R.drawable.showcase_timeline,
                     R.drawable.showcase_timelinefont,
-                    R.drawable.showcase_main
+                    R.drawable.showcase_threesixtyview
             };
 
     private Class[] mActivitys =
