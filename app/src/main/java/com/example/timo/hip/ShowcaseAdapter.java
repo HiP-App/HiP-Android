@@ -69,7 +69,8 @@ public class ShowcaseAdapter extends BaseAdapter {
                     R.drawable.showcase_oldmap,
                     R.drawable.showcase_showroute,
                     R.drawable.showcase_timeline,
-                    R.drawable.showcase_timelinefont
+                    R.drawable.showcase_timelinefont,
+                    R.drawable.showcase_main
             };
 
     private Class[] mActivitys =
@@ -81,7 +82,8 @@ public class ShowcaseAdapter extends BaseAdapter {
                     GMapOldActivity.class,
                     RouteActivity.class,
                     TimeLineActivity.class,
-                    FontActivity.class
+                    FontActivity.class,
+                    ThreeSixtyDegreeViewActivity.class
             };
 
     private String[] mDescriptions =
@@ -93,6 +95,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     "Old Map",
                     "Show Route",
                     "Time Line",
-                    "Time Line Font"
+                    "Time Line Font",
+                    "360 View"
             };
 }

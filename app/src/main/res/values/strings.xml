@@ -7,7 +7,7 @@
 
     <string name="title_activity_display_image_view">Busdorfkirche</string>
     <string name="title_activity_display_single_image">Busdorfkirche</string>
-
+    
     <string name="now_playing">Now Playing:</string>
     <string name="inital_time">0 min, 0 sec</string>
     
@@ -33,5 +33,14 @@
     <string name="ParadisePortalText">Tippe auf einen der Patrone, um mehr Informationen zu erhalten!</string>
     <string name="show_boundaries">Umrisse anzeigen</string>
     <string name="turnoff_boundaries">Umrisse ausblenden</string>
+
+    <string name="title_activity_360View">360 View</string>
+    <string name="spinner_prompt">Select the panorama type</string>
+    <string-array name="panorama_types">
+        <item>Cubic</item>
+        <item>Spherical2</item>
+        <item>Spherical</item>
+        <item>Cylindrical</item>
+    </string-array>
 
 </resources>

@@ -112,6 +112,11 @@
             android:configChanges="screenSize|orientation" >
 
         </activity>
+        <activity
+            android:name=".ThreeSixtyDegreeViewActivity"
+            android:label="@string/title_activity_360View"
+            android:parentActivityName=".ShowcaseActivity" >
+        </activity>
     </application>
 
 </manifest>
