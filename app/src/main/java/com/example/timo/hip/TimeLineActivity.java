@@ -247,11 +247,11 @@ public class TimeLineActivity extends Activity {
             mPicDataList.add(new PictureDataHelp("newsweek_2011", 2011));
         }
         else{
-            mPicDataList.add(new PictureDataHelp("busdorfkirche_aussen", 2002));
-            mPicDataList.add(new PictureDataHelp("databasetest", 2005));
-            mPicDataList.add(new PictureDataHelp("busdorfkirche_innen", 2007));
-            mPicDataList.add(new PictureDataHelp("dom", 2011));
-            mPicDataList.add(new PictureDataHelp("kreuzgang_busdorfkirche", 2015));
+            mPicDataList.add(new PictureDataHelp("phasei", 776));
+            mPicDataList.add(new PictureDataHelp("phaseii", 799));
+            mPicDataList.add(new PictureDataHelp("phaseiii", 836));
+            mPicDataList.add(new PictureDataHelp("phaseiv", 900));
+            mPicDataList.add(new PictureDataHelp("phasev", 938));
         }
     }
 
