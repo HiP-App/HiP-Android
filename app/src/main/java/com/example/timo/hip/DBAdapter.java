@@ -78,24 +78,35 @@ public class DBAdapter {
         db_is_empty = database.getDocumentCount() == 0;
         if (db_is_empty) {
 
-            /* insert text */
+            /* insert text and images*/
             insertRow(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
+            addImage(R.drawable.dom, 1);
             insertRow(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
+            addImage(R.drawable.uni, 2);
             insertRow(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
-            insertRow(4, "Irgendwo in der Nähe des HNF", "Dies ist ein Testeintrag um sicherzustellen, dass wirklich die korrekten Datenbankeinträge verwendet werden.", 51.7292000, 8.7434000, "Test", "Test");
+            addImage(R.drawable.hnf, 3);
+            insertRow(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "");
+            addImage(R.drawable.pfalz, 4);
+            insertRow(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "");
+            addImage(R.drawable.abdinghof, 5);
+            insertRow(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "");
+            addImage(R.drawable.busdorfkirche_aussen, 6);
+            insertRow(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "");
+            addImage(R.drawable.liboriuskapelle, 7);
+        }
+    }
 
-            /* insert images */
-            for (int i=1; i<=database.getDocumentCount(); i++) {
-                InputStream image = context.getResources().openRawResource(+ R.drawable.databasetest); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
-                Document doc = database.getDocument(String.valueOf(i));
-                UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
-                newRev.setAttachment("image.jpg", "image/jpeg", image);
-                try {
-                    newRev.save();
-                } catch (CouchbaseLiteException e) {
-                    Log.e(TAG, "Error attaching image", e);
-                }
-            }
+
+    /* adds an image from R.drawable to the document defined by document_id in local database */
+    private void addImage(int image_number, int document_id) {
+        InputStream image = context.getResources().openRawResource(+ image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
+        Document doc = database.getDocument(String.valueOf(document_id));
+        UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
+        newRev.setAttachment("image.jpg", "image/jpeg", image);
+        try {
+            newRev.save();
+        } catch (CouchbaseLiteException e) {
+            Log.e(TAG, "Error attaching image", e);
         }
     }
 
