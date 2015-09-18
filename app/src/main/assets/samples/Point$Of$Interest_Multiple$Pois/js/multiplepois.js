@@ -155,16 +155,15 @@ var World = {
 
 	// request POI data
 	requestDataFromLocal: function requestDataFromLocalFn(lat, lon) {
-
-		var poisNearby = Helper.bringPlacesToUser(myJsonData, lat, lon);
-		World.loadPoisFromJsonData(poisNearby);
+//		var poisNearby = Helper.bringPlacesToUser(myJsonData, lat, lon);
+//		World.loadPoisFromJsonData(poisNearby);
 
 		/*
 		For demo purpose they are relocated randomly around the user using a 'Helper'-function.
 		Comment out previous 2 lines and use the following line > instead < to use static values 1:1.
 		*/
 
-		// World.loadPoisFromJsonData(myJsonData);
+		 World.loadPoisFromJsonData(myJsonData);
 	},
 
 
@@ -180,26 +179,26 @@ var World = {
 
 };
 
-var Helper = {
-
-	/*
-		For demo purpose only, this method takes poi data and a center point (latitude, longitude) to relocate the given places randomly around the user
-	*/
-	bringPlacesToUser: function bringPlacesToUserFn(poiData, latitude, longitude) {
-		for (var i = 0; i < poiData.length; i++) {
-			poiData[i].latitude = latitude + (Math.random() / 5 - 0.1);
-			poiData[i].longitude = longitude + (Math.random() / 5 - 0.1);
-			/*
-			Note: setting altitude to '0'
-			will cause places being shown below / above user,
-			depending on the user 's GPS signal altitude.
-				Using this contant will ignore any altitude information and always show the places on user-level altitude
-			*/
-			poiData[i].altitude = AR.CONST.UNKNOWN_ALTITUDE;
-		}
-		return poiData;
-	}
-}
+//var Helper = {
+//
+//	/*
+//		For demo purpose only, this method takes poi data and a center point (latitude, longitude) to relocate the given places randomly around the user
+//	*/
+//	bringPlacesToUser: function bringPlacesToUserFn(poiData, latitude, longitude) {
+//		for (var i = 0; i < poiData.length; i++) {
+//			poiData[i].latitude = latitude + (Math.random() / 5 - 0.1);
+//			poiData[i].longitude = longitude + (Math.random() / 5 - 0.1);
+//			/*
+//			Note: setting altitude to '0'
+//			will cause places being shown below / above user,
+//			depending on the user 's GPS signal altitude.
+//				Using this contant will ignore any altitude information and always show the places on user-level altitude
+//			*/
+//			poiData[i].altitude = AR.CONST.UNKNOWN_ALTITUDE;
+//		}
+//		return poiData;
+//	}
+//}
 
 
 /* forward locationChanges to custom function */
