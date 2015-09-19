@@ -86,14 +86,14 @@ public class ImageSelectionActivity extends Activity {
         if ( (touchX > left[0] && touchX < left[2]) && (touchY > left[1] && touchY < left[3]) ){
             // StKilian
             mImageViewSelection.setAlpha(alpha);
-            mImageViewSelection2.setImageResource(R.drawable.stkilian);
+            mImageViewSelection2.setImageResource(R.drawable.st_kilian);
             mImageViewSelection2.setVisibility(View.VISIBLE);
             radGroup.check(R.id.rdbStKilian);
         }
         else if ( (touchX > right[0] && touchX < right[2]) && (touchY > right[1] && touchY < right[3]) ) {
             // StLiborius
             mImageViewSelection.setAlpha(alpha);
-            mImageViewSelection2.setImageResource(R.drawable.stliborius);
+            mImageViewSelection2.setImageResource(R.drawable.st_liborius);
             mImageViewSelection2.setVisibility(View.VISIBLE);
             radGroup.check(R.id.rdbStLiborius);
 
