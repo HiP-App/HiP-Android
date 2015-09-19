@@ -70,7 +70,8 @@ public class ShowcaseAdapter extends BaseAdapter {
                     R.drawable.showcase_showroute,
                     R.drawable.showcase_timeline,
                     R.drawable.showcase_timelinefont,
-                    R.drawable.showcase_threesixtyview
+                    R.drawable.showcase_threesixtyview,
+                    R.drawable.showcase_imageselection
             };
 
     private Class[] mActivitys =
@@ -83,7 +84,8 @@ public class ShowcaseAdapter extends BaseAdapter {
                     RouteActivity.class,
                     TimeLineActivity.class,
                     FontActivity.class,
-                    ThreeSixtyDegreeViewActivity.class
+                    ThreeSixtyDegreeViewActivity.class,
+                    ImageSelectionActivity.class
             };
 
     private String[] mDescriptions =
@@ -96,6 +98,7 @@ public class ShowcaseAdapter extends BaseAdapter {
                     "Show Route",
                     "Time Line",
                     "Time Line Font",
-                    "360 View"
+                    "360 View",
+                    "Image Selection"
             };
 }

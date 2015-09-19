@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true">
+
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/background_material_dark">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageViewSelection"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/imageViewSelection2"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter"
+            android:focusable="false" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_material_light"
+        android:id="@+id/layoutSeekbar"
+        android:layout_gravity="right"
+        android:gravity="center">
+
+        <RadioGroup
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:id="@+id/rgroupImgSelection">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:id="@+id/rdbWholePic"
+                android:gravity="center"
+                android:singleLine="false"
+                android:layout_marginRight="20dp"
+                android:enabled="true"
+                android:checked="true"
+                android:focusable="true" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="StKilian"
+                android:id="@+id/rdbStKilian"
+                android:gravity="center"
+                android:enabled="true"
+                android:focusable="true" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Maria"
+                android:id="@+id/rdbMaria"
+                android:gravity="center"
+                android:enabled="true"
+                android:focusable="true" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="StLiborius"
+                android:id="@+id/rdbStLiborius"
+                android:gravity="center"
+                android:enabled="true"
+                android:focusable="true" />
+        </RadioGroup>
+
+    </LinearLayout>
+</LinearLayout>

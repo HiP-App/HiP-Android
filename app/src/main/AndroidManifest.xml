@@ -58,13 +58,16 @@
         <activity
             android:name=".TimeLineActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Transparent"
+            android:parentActivityName=".ShowcaseActivity">
+        </activity>
+        <activity
+            android:name=".ImageSelectionActivity"
+            android:label="@string/title_activity_main"
             android:parentActivityName=".ShowcaseActivity">
         </activity>
         <activity
             android:name=".FontActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Transparent"
             android:parentActivityName=".ShowcaseActivity">
         </activity>
         <activity
