@@ -38,7 +38,7 @@ public class ImageSelectionActivity extends Activity {
                     case R.id.rdbStKilian:
                         // StKilian
                         mImageViewSelection.setAlpha(alpha);
-                        mImageViewSelection2.setImageResource(R.drawable.stkilian);
+                        mImageViewSelection2.setImageResource(R.drawable.st_kilian);
                         mImageViewSelection2.setVisibility(View.VISIBLE);
                         break;
                     case R.id.rdbMaria:
@@ -50,7 +50,7 @@ public class ImageSelectionActivity extends Activity {
                     case R.id.rdbStLiborius:
                         // StLiborius
                         mImageViewSelection.setAlpha(alpha);
-                        mImageViewSelection2.setImageResource(R.drawable.stliborius);
+                        mImageViewSelection2.setImageResource(R.drawable.st_liborius);
                         mImageViewSelection2.setVisibility(View.VISIBLE);
                         break;
                     default:
