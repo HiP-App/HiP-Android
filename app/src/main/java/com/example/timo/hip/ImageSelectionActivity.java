@@ -15,11 +15,11 @@ public class ImageSelectionActivity extends Activity {
 
     private RadioGroup radGroup;
 
-    // TODO bad style, change late
+/*    // TODO bad style, change late
     //         xTOP, yTop, xBotton, yBotton
     int[] left = {170,770,290,1300};
     int[] right = {780,770,920,1300};
-    int[] center = {445,620,620,1165};
+    int[] center = {445,620,620,1165};*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class ImageSelectionActivity extends Activity {
 
     }
 
-    @Override
+/*    @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         int eventAction = event.getAction();
@@ -113,5 +113,5 @@ public class ImageSelectionActivity extends Activity {
 
         }
 
-    }
+    }*/
 }
