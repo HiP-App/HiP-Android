@@ -55,6 +55,7 @@
             android:paddingRight="20dp"
             android:scrollbars="vertical"/>
         </ScrollView>
+        <!--
         <ImageButton
             android:id="@+id/fab"
             android:layout_alignParentRight="true"
@@ -70,6 +71,7 @@
             android:elevation="4dp"
             android:onClick="onClick_back"
             android:nestedScrollingEnabled="false" />
+        -->
     </FrameLayout>
 
 </LinearLayout>

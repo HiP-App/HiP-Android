@@ -69,16 +69,16 @@ public class DetailsActivity extends Activity {
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
         txtDescription.setText(exhibit.description);
 
-        ImageButton fab = (ImageButton) findViewById(R.id.fab);
-        ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                // Or read size directly from the view's width/height
-                int size = getResources().getDimensionPixelSize(R.dimen.fab_size);
-                outline.setOval(0, 0, size, size);
-            }
-        };
-        fab.setOutlineProvider(viewOutlineProvider);
+        //ImageButton fab = (ImageButton) findViewById(R.id.fab);
+//        ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
+//            @Override
+//            public void getOutline(View view, Outline outline) {
+//                // Or read size directly from the view's width/height
+//                int size = getResources().getDimensionPixelSize(R.dimen.fab_size);
+//                outline.setOval(0, 0, size, size);
+//            }
+//        };
+//        fab.setOutlineProvider(viewOutlineProvider);
 
     }
 
@@ -134,7 +134,6 @@ public class DetailsActivity extends Activity {
     }
 
     public void onClick_back(View view){
-        Log.i("Click", "BACK!");
         this.finish();
     }
 
@@ -150,6 +149,11 @@ public class DetailsActivity extends Activity {
 
     private void openDatabase() {
        database = new DBAdapter(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        this.finish();
     }
 
 }
