@@ -1,6 +1,7 @@
 package com.example.timo.hip;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
@@ -135,6 +136,12 @@ public class DetailsActivity extends Activity {
 
     public void onClick_back(View view){
         this.finish();
+    }
+
+    public void onClick_imageViewDetail(View view) {
+        Intent intent = new Intent(this, DisplaySingleImage.class);
+        intent.putExtra("exhibit-id", exhibitId);
+        startActivity(intent);
     }
 
     @Override

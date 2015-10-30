@@ -10,7 +10,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:onClick="onClick_back"
         android:nestedScrollingEnabled="false">
 
         <ImageView
@@ -19,7 +18,8 @@
             android:id="@+id/imageViewDetail"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/dom" />
+            android:src="@drawable/dom"
+            android:onClick="onClick_imageViewDetail" />
 
         <TextView
             android:layout_width="wrap_content"

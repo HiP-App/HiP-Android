@@ -58,6 +58,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".DisplaySingleImage"
+            android:label="@string/title_activity_display_single_image" >
+        </activity>
     </application>
 
 </manifest>
