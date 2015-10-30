@@ -1,3 +1,10 @@
+// incompatible API changes
+def versionMajor = 0
+// added functionality in a backwards-compatible manner, must be <=99
+def versionMinor = 1
+// backwards-compatible bug fixes, must be <=99
+def versionPatch = 0
+
 apply plugin: 'com.android.application'
 
 android {
@@ -8,8 +15,8 @@ android {
         applicationId "com.example.timo.hip"
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
     }
     buildTypes {
         release {
