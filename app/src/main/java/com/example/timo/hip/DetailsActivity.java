@@ -6,8 +6,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.transition.Transition;
 import android.util.Log;
@@ -21,7 +25,7 @@ import android.widget.Toast;
 
 import com.couchbase.lite.Document;
 
-public class DetailsActivity extends Activity {
+public class DetailsActivity extends ActionBarActivity {
 
     private DBAdapter database;
 
@@ -36,6 +40,9 @@ public class DetailsActivity extends Activity {
 
     private int exhibitId;
 
+    //ActionBar
+    private ActionBar actionBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,20 +51,22 @@ public class DetailsActivity extends Activity {
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
         mTextView = (TextView) findViewById(R.id.txtName);
 
-        /**
-         * Set the name of the view's which will be transition to, using the static values above.
-         * This could be done in the layout XML, but exposing it via static variables allows easy
-         * querying from other Activities
-         */
-        ViewCompat.setTransitionName(mImageView, VIEW_NAME_IMAGE);
-        ViewCompat.setTransitionName(mTextView, VIEW_NAME_TITLE);
+        if (Build.VERSION.SDK_INT >= 21) {
+            /**
+             * Set the name of the view's which will be transition to, using the static values above.
+             * This could be done in the layout XML, but exposing it via static variables allows easy
+             * querying from other Activities
+             */
+            ViewCompat.setTransitionName(mImageView, VIEW_NAME_IMAGE);
+            ViewCompat.setTransitionName(mTextView, VIEW_NAME_TITLE);
 
-        addTransitionListener();
+
+            addTransitionListener();
+        }
 
         openDatabase();
 
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
-
 
         Drawable d = DBAdapter.getImage(exhibitId);
         mImageView.setImageDrawable(d);
@@ -69,6 +78,19 @@ public class DetailsActivity extends Activity {
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
         txtDescription.setText(exhibit.description);
+
+        // Set ActionBar
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(exhibit.name);
+            setSupportActionBar(toolbar);
+        }
+
+        // Set back button on actionbar
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         //ImageButton fab = (ImageButton) findViewById(R.id.fab);
 //        ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- brand color: blue -->
+    <item name="colorPrimary" type="color">#3F51B5</item>
+    <item name="colorPrimaryDark" type="color">#303F9F</item>
+    <!-- accent color: red -->
+    <item name="colorAccent" type="color">#FF4081</item>
+
+    <!-- text color: white -->
+    <item name="textColorPrimary" type="color">#FFFFFF</item>
+    <item name="textColorSecondary" type="color">#9E9E9E</item>
+    <!-- inverse text color: 87% black -->
+    <item name="textColorPrimaryInverse" type="color">#DE000000</item>
+    <item name="textColorSecondaryInverse" type="color">#9E9E9E</item>
+
+</resources>

@@ -5,6 +5,10 @@
     android:layout_height="match_parent"
     android:focusable="true">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
     <FrameLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"

@@ -1,22 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-        <!-- enable window content transitions -->
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    <style name="AppTheme" parent="AppTheme.Base"/>
 
-        <!-- specify shared element transitions -->
-        <item name="android:windowSharedElementEnterTransition">
-            @transition/change_image_transform
-        </item>
-        <item name="android:windowSharedElementExitTransition">
-            @transition/change_image_transform
-        </item>
-        <item name="android:windowSharedElementReenterTransition">
-            @transition/change_image_transform
-        </item>
+    <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <!-- Main theme colors -->
+        <!--   your app's branding color (for the app bar) -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
     </style>
 
 </resources>

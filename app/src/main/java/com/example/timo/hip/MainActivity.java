@@ -14,8 +14,11 @@ import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -44,7 +47,7 @@ import com.google.maps.android.SphericalUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
 
@@ -72,7 +75,6 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +90,13 @@ public class MainActivity extends FragmentActivity implements GoogleApiClient.Co
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, new ExtendedLocationListener(this));
 
         setUpMapIfNeeded();
+
+        // Set ActionBar
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            toolbar.setTitle(R.string.app_name);
+            setSupportActionBar(toolbar);
+        }
 
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
