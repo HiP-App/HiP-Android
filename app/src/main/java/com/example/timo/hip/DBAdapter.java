@@ -18,17 +18,34 @@ import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.auth.Authenticator;
 import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
-import com.couchbase.lite.replicator.ReplicationState;
+import com.couchbase.lite.support.CouchbaseLiteHttpClientFactory;
+import com.couchbase.lite.support.PersistentCookieStore;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.Certificate;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.http.conn.ssl.SSLSocketFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 
 
 /* Class for the connection between app and database */
@@ -44,17 +61,19 @@ public class DBAdapter {
     public static final String KEY_TAGS = "tags";
 
 
-    public static final String DB_NAME = "exhibits"; // local database name, which is synchronized with the server
-    public static final String EXAMPLE_DB_NAME = "example_database"; // the local database with example data, that is used if the network is unreachable
+    public static final String DB_NAME = "exhibits"; // local database name
     private Manager manager = null; // local database manager
     private static Database database = null; // local database
-    private static final String COUCHBASE_SERVER_URL = "http://Couchbase-Server:4984/exhibits"; // URL to Server with running Couchbase Sync Gateway
+    private static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/exhibits"; // URL to Server with running Couchbase Sync Gateway
     private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
-    private static final String COUCHBASE_PASSWORD = "couchbase"; // password to access the data bucket on Couchbase Sync Gateway
+    private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
 
 
     public static final String TAG = "DBAdapter"; // for logging
     private final Context context; // Context of application who uses us.
+
+    private KeyStore trustStore;
+    private final String KEYSTORE_PASSWORD = "bQw8CRqFlzvgvNbr";
 
 
     /* Constructor */
@@ -62,17 +81,19 @@ public class DBAdapter {
         this.context = ctx;
         if (database==null) {
             initDatabase();
+            insertDummyDataToDatabase(); // ToDo: Remove
         }
     }
 
 
-    /* Put some dummy data to the local database
+    /* Put some dummy data to the database
+     * Call this function manual, if you need to reset the database on your emulator
      * ToDo: Remove this function for productive use! */
-    public void initExampleDatabase() {
+    public void insertDummyDataToDatabase() {
         try {
-            switchDatabase(EXAMPLE_DB_NAME);
-            database.delete(); // delete the database
-            switchDatabase(EXAMPLE_DB_NAME); // set up a new databes
+            database.delete();
+            database = null;
+            initDatabase();
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error deleting local database", e);
             return;
@@ -93,7 +114,7 @@ public class DBAdapter {
         addImage(R.drawable.busdorfkirche_aussen, 6);
         insertRow(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "");
         addImage(R.drawable.liboriuskapelle, 7);
-        switchDatabase(DB_NAME); // switch back to productive database
+
     }
 
 
@@ -140,23 +161,11 @@ public class DBAdapter {
     }
 
 
-    /* switch to the (local) database, that is given by the String db_name
-    * ToDo: Remove for productive use */
-    private void switchDatabase(String db_name) {
-        try {
-            this.database = getManagerInstance().getDatabase(db_name);
-        } catch (CouchbaseLiteException ex) {
-            Log.e(TAG, "Error switching to example database", ex);
-        } catch (IOException ex) {
-            Log.e(TAG, "Error switching to example database", ex);
-        }
-    }
-
-
     /* initialize the database */
     private void initDatabase() {
         try {
-            initExampleDatabase(); // set up example database
+            setKeyStore();
+            setHttpClientFactory();
 
             /* set up a connection to Sync Gateway */
             URL url= new URL(COUCHBASE_SERVER_URL);
@@ -169,6 +178,8 @@ public class DBAdapter {
             pull.setContinuous(true); // sync all changes, ToDo: Sync later only neccessary entries
             push.setContinuous(true); // sync all changes
 
+
+
             push.setAuthenticator(auth);
             pull.setAuthenticator(auth);
 
@@ -177,10 +188,6 @@ public class DBAdapter {
             Replication.ChangeListener changeListener = new Replication.ChangeListener() {
                 @Override
                 public void changed(Replication.ChangeEvent event) {
-                    switchDatabase(DB_NAME);
-                    if (database.getDocumentCount() == 0) {
-                        switchDatabase(EXAMPLE_DB_NAME);
-                    }
                     notifyExhibitSetChanged(); // updates the view everytime the database changes
                 }
             };
@@ -203,6 +210,68 @@ public class DBAdapter {
         }
     }
 
+    private void setKeyStore(){
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            InputStream in = this.context.getResources().openRawResource(R.raw.ssl);
+            Certificate ca;
+
+            try {
+                ca = cf.generateCertificate(in);
+            } finally {
+                in.close();
+            }
+
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+            keyStore.load(null, null);
+            keyStore.setCertificateEntry("ca", ca);
+            trustStore = keyStore;
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setHttpClientFactory() {
+        PersistentCookieStore cookieStore = null;
+        try {
+            cookieStore = getDatabaseInstance().getPersistentCookieStore();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        URL url = null;
+        try {
+            url = new URL(COUCHBASE_SERVER_URL);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        CouchbaseLiteHttpClientFactory cblHttpClientFactory = new CouchbaseLiteHttpClientFactory(cookieStore);
+
+        try {
+            cblHttpClientFactory.setSSLSocketFactory(new SSLSocketFactory(this.trustStore));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
+
+        // set CouchbaseHttpClientFactory to Manager
+        manager.setDefaultHttpClientFactory(cblHttpClientFactory);
+    }
 
     /* insert a row in the database */
     public void insertRow(int id, String name, String description, double lat, double lng, String categories, String tags) {
