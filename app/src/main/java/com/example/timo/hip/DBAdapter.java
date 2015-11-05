@@ -21,11 +21,8 @@ import com.couchbase.lite.replicator.Replication;
 import com.couchbase.lite.support.CouchbaseLiteHttpClientFactory;
 import com.couchbase.lite.support.PersistentCookieStore;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -36,16 +33,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 
 /* Class for the connection between app and database */
@@ -72,28 +65,24 @@ public class DBAdapter {
     public static final String TAG = "DBAdapter"; // for logging
     private final Context context; // Context of application who uses us.
 
-    private KeyStore trustStore;
-    private final String KEYSTORE_PASSWORD = "bQw8CRqFlzvgvNbr";
-
 
     /* Constructor */
     public DBAdapter(Context ctx) {
         this.context = ctx;
-        if (database==null) {
-            initDatabase();
-            insertDummyDataToDatabase(); // ToDo: Remove
+        if (database == null) {
+            initDatabase(false);
         }
     }
 
 
     /* Put some dummy data to the database
-     * Call this function manual, if you need to reset the database on your emulator
+     * Call this function manual, if you need to reset the database. IMPORTANT: This data will replicated to the life database, so be sure what you are doing!
      * ToDo: Remove this function for productive use! */
     public void insertDummyDataToDatabase() {
         try {
             database.delete();
             database = null;
-            initDatabase();
+            initDatabase(true);
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error deleting local database", e);
             return;
@@ -120,7 +109,7 @@ public class DBAdapter {
 
     /* adds an image from R.drawable to the document defined by document_id in local database */
     private void addImage(int image_number, int document_id) {
-        InputStream image = context.getResources().openRawResource(+ image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
+        InputStream image = context.getResources().openRawResource(+image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
         Document doc = database.getDocument(String.valueOf(document_id));
         UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
         newRev.setAttachment("image.jpg", "image/jpeg", image);
@@ -134,7 +123,7 @@ public class DBAdapter {
 
     /* notify the UI Thread that the database has changed */
     private synchronized void notifyExhibitSetChanged() {
-        ((MainActivity)context).runOnUiThread(new Runnable() {
+        ((MainActivity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ((MainActivity) context).notifyExhibitSetChanged();
@@ -161,29 +150,15 @@ public class DBAdapter {
     }
 
 
-    /* initialize the database */
-    private void initDatabase() {
+    /* initialize the database, the flag enablePush indicates if local changes should be pushed to the gateway */
+    private void initDatabase(Boolean enablePush) {
         try {
-            setKeyStore();
-            setHttpClientFactory();
+            setHttpClientFactory(); // sets the HTTP Factory to connect over SSL to the gateway
 
             /* set up a connection to Sync Gateway */
-            URL url= new URL(COUCHBASE_SERVER_URL);
+            URL url = new URL(COUCHBASE_SERVER_URL);
 
             Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(COUCHBASE_USER, COUCHBASE_PASSWORD); // authenticate on the gateway
-
-            Replication push = getDatabaseInstance().createPushReplication(url);
-            Replication pull = getDatabaseInstance().createPullReplication(url);
-
-            pull.setContinuous(true); // sync all changes, ToDo: Sync later only neccessary entries
-            push.setContinuous(true); // sync all changes
-
-
-
-            push.setAuthenticator(auth);
-            pull.setAuthenticator(auth);
-
-            pull.setCreateTarget(true); // creates the local database, if it doesn't exist
 
             Replication.ChangeListener changeListener = new Replication.ChangeListener() {
                 @Override
@@ -192,11 +167,22 @@ public class DBAdapter {
                 }
             };
 
-            pull.addChangeListener(changeListener);
-            push.addChangeListener(changeListener);
+            Replication pull = getDatabaseInstance().createPullReplication(url);
 
+            pull.setContinuous(true); // sync all changes, ToDo: Sync later only neccessary entries
+            pull.setAuthenticator(auth);
+            pull.setCreateTarget(true); // creates the local database, if it doesn't exist
+            pull.addChangeListener(changeListener);
             pull.start();
-            push.start();
+
+            if (enablePush) {
+                /* all changes should be pushed to the database */
+                Replication push = getDatabaseInstance().createPushReplication(url);
+                push.setContinuous(true); // sync all changes
+                push.setAuthenticator(auth);
+                push.addChangeListener(changeListener);
+                push.start();
+            }
 
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error getting database", e);
@@ -210,10 +196,14 @@ public class DBAdapter {
         }
     }
 
-    private void setKeyStore(){
+
+    /* Gets the key store with the (self signed) trusted certificates to the gateway */
+    private KeyStore getKeyStore() {
+        KeyStore keystore = null;
+
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream in = this.context.getResources().openRawResource(R.raw.ssl);
+            InputStream in = this.context.getResources().openRawResource(R.raw.ssl); // get the public certificate
             Certificate ca;
 
             try {
@@ -222,11 +212,11 @@ public class DBAdapter {
                 in.close();
             }
 
+            /* Setting default values for the keystore */
             String keyStoreType = KeyStore.getDefaultType();
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
-            trustStore = keyStore;
+            keystore = KeyStore.getInstance(keyStoreType);
+            keystore.load(null, null);
+            keystore.setCertificateEntry("ca", ca);
 
         } catch (CertificateException e) {
             e.printStackTrace();
@@ -237,28 +227,25 @@ public class DBAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return keystore;
     }
 
+
+    /* sets the Couchbase Lite Manager HTTP Factory with the keystore returned by getKeystore() */
     private void setHttpClientFactory() {
         PersistentCookieStore cookieStore = null;
         try {
-            cookieStore = getDatabaseInstance().getPersistentCookieStore();
+            cookieStore = getDatabaseInstance().getPersistentCookieStore(); // get Cookie Store
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        URL url = null;
-        try {
-            url = new URL(COUCHBASE_SERVER_URL);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        CouchbaseLiteHttpClientFactory cblHttpClientFactory = new CouchbaseLiteHttpClientFactory(cookieStore);
+        CouchbaseLiteHttpClientFactory cblHttpClientFactory = new CouchbaseLiteHttpClientFactory(cookieStore); // get Factory
 
         try {
-            cblHttpClientFactory.setSSLSocketFactory(new SSLSocketFactory(this.trustStore));
+            cblHttpClientFactory.setSSLSocketFactory(new SSLSocketFactory(getKeyStore())); // sets the keystore
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (KeyManagementException e) {
@@ -272,6 +259,7 @@ public class DBAdapter {
         // set CouchbaseHttpClientFactory to Manager
         manager.setDefaultHttpClientFactory(cblHttpClientFactory);
     }
+
 
     /* insert a row in the database */
     public void insertRow(int id, String name, String description, double lat, double lng, String categories, String tags) {
@@ -326,7 +314,7 @@ public class DBAdapter {
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error getting all rows", e);
         }
-        List<Map<String,Object>> result = new ArrayList<>();
+        List<Map<String, Object>> result = new ArrayList<>();
         while (enumerator.hasNext()) {
             QueryRow row = enumerator.next();
             Map<String, Object> properties = database.getDocument(row.getDocumentId()).getProperties();
