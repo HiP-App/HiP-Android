@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         //LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
         openDatabase();
-        this.exhibitSet = new ExhibitSet(database.getAllRows(), this.paderborn);
+        this.exhibitSet = new ExhibitSet(database.getView("exhibits"), this.paderborn);
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, new ExtendedLocationListener(this));
 
         setUpMapIfNeeded();
@@ -124,7 +124,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mFilterRecyclerView.setAdapter(mFilterAdapter);
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
 
-        // if(this.exhibitSet.getSize() == 0) new HttpAsyncTask(this).execute(BASE_URL);
 
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -134,7 +133,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
             public void onRefresh() {
                 ImageLoader imgLoader = new ImageLoader(mMainActivity);
                 imgLoader.clearCache();
-                // new HttpAsyncTask(mMainActivity).execute(BASE_URL);
             }
         });
 
@@ -142,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     public void notifyExhibitSetChanged() {
         mSwipeLayout.setRefreshing(false);
-        this.exhibitSet = new ExhibitSet(database.getAllRows(), this.paderborn);
+        this.exhibitSet = new ExhibitSet(database.getView("exhibits"), this.paderborn);
         mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();

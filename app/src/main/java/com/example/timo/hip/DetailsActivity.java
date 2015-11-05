@@ -71,7 +71,7 @@ public class DetailsActivity extends ActionBarActivity {
         Drawable d = DBAdapter.getImage(exhibitId);
         mImageView.setImageDrawable(d);
 
-        Document document = database.getRow(exhibitId);
+        Document document = database.getDocument(exhibitId);
         Exhibit exhibit = new Exhibit(document);
 
         mTextView.setText(exhibit.name);

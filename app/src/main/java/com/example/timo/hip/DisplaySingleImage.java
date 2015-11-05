@@ -51,7 +51,7 @@ public class DisplaySingleImage extends ActionBarActivity {
         // Set ActionBar
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
-            Document document = database.getRow(exhibitId);
+            Document document = database.getDocument(exhibitId);
             Exhibit exhibit = new Exhibit(document);
 
             toolbar.setTitle(exhibit.name);

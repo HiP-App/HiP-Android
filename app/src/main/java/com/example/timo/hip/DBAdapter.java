@@ -7,19 +7,23 @@ import android.util.Log;
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Emitter;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.Database;
+import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.Revision;
 import com.couchbase.lite.UnsavedRevision;
+import com.couchbase.lite.View;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.auth.Authenticator;
 import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
 import com.couchbase.lite.support.CouchbaseLiteHttpClientFactory;
 import com.couchbase.lite.support.PersistentCookieStore;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +39,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,10 +59,10 @@ public class DBAdapter {
     public static final String KEY_TAGS = "tags";
 
 
-    public static final String DB_NAME = "exhibits"; // local database name
+    public static final String DB_NAME = "hip"; // local database name
     private Manager manager = null; // local database manager
     private static Database database = null; // local database
-    private static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/exhibits"; // URL to Server with running Couchbase Sync Gateway
+    private static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
     private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
     private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
 
@@ -71,6 +76,7 @@ public class DBAdapter {
         this.context = ctx;
         if (database == null) {
             initDatabase(false);
+            //insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
     }
 
@@ -89,21 +95,40 @@ public class DBAdapter {
         }
 
         /* insert text and images*/
-        insertRow(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
+        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
         addImage(R.drawable.dom, 1);
-        insertRow(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
+        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
         addImage(R.drawable.uni, 2);
-        insertRow(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
+        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
         addImage(R.drawable.hnf, 3);
-        insertRow(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "");
+        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "");
         addImage(R.drawable.pfalz, 4);
-        insertRow(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "");
+        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "");
         addImage(R.drawable.abdinghof, 5);
-        insertRow(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "");
+        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "");
         addImage(R.drawable.busdorfkirche_aussen, 6);
-        insertRow(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "");
+        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "");
         addImage(R.drawable.liboriuskapelle, 7);
 
+        LinkedList<Waypoint> waypoints = new LinkedList<>();
+        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), 0));
+        waypoints.add(new Waypoint(new LatLng(51.718178, 8.747164), 0));
+        waypoints.add(new Waypoint(new LatLng(51.722850, 8.750780), 0));
+        waypoints.add(new Waypoint(new LatLng(51.722710, 8.758365), 0));
+        waypoints.add(new Waypoint(new LatLng(51.718789, 8.762699), 0));
+        waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), 0));
+        waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
+        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), 0));
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints);
+
+        waypoints = new LinkedList<>();
+        waypoints.add(new Waypoint(new LatLng(51.718590, 8.752206), 5));
+        waypoints.add(new Waypoint(new LatLng(51.719128, 8.755457), 1));
+        waypoints.add(new Waypoint(new LatLng(51.719527, 8.755736), 4));
+        waypoints.add(new Waypoint(new LatLng(51.718969, 8.758472), 6));
+        waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), 0));
+        waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), 0));
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints);
     }
 
 
@@ -133,9 +158,15 @@ public class DBAdapter {
 
 
     /* gets the (local) database, ensures the Singleton pattern */
-    public Database getDatabaseInstance() throws CouchbaseLiteException, IOException {
+    public Database getDatabaseInstance() {
         if (this.database == null) {
-            this.database = getManagerInstance().getDatabase(DB_NAME);
+            try {
+                this.database = getManagerInstance().getDatabase(DB_NAME);
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return this.database;
     }
@@ -184,9 +215,29 @@ public class DBAdapter {
                 push.start();
             }
 
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error getting database", e);
-            return;
+            /* initialize local views */
+            View exhibitsView = getDatabaseInstance().getView("exhibits"); // view for exhibits
+            exhibitsView.setMap(new Mapper() {
+                @Override
+                public void map(Map<String, Object> document, Emitter emitter) {
+                    if (document.get("type").equals("exhibit")) {
+                        emitter.emit(document.get("id"), null);
+                    }
+                }
+            }, "1");
+
+
+            View routeView = getDatabaseInstance().getView("routes"); // view for routes
+            routeView.setMap(new Mapper() {
+                @Override
+                public void map(Map<String, Object> document, Emitter emitter) {
+                    if (document.get("type").equals("route")) {
+                        emitter.emit(document.get("id"), null);
+                    }
+                }
+            }, "1");
+
+
         } catch (MalformedURLException e) {
             Log.e(TAG, "Malformed URL", e);
             return;
@@ -234,13 +285,8 @@ public class DBAdapter {
     /* sets the Couchbase Lite Manager HTTP Factory with the keystore returned by getKeystore() */
     private void setHttpClientFactory() {
         PersistentCookieStore cookieStore = null;
-        try {
-            cookieStore = getDatabaseInstance().getPersistentCookieStore(); // get Cookie Store
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        cookieStore = getDatabaseInstance().getPersistentCookieStore(); // get Cookie Store
 
         CouchbaseLiteHttpClientFactory cblHttpClientFactory = new CouchbaseLiteHttpClientFactory(cookieStore); // get Factory
 
@@ -261,17 +307,40 @@ public class DBAdapter {
     }
 
 
-    /* insert a row in the database */
-    public void insertRow(int id, String name, String description, double lat, double lng, String categories, String tags) {
+    /* insert a exhibit in the database */
+    public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
+        properties.put("type", "exhibit");
         properties.put("name", name);
         properties.put("description", description);
         properties.put("categories", categories);
         properties.put("tags", tags);
         properties.put("lat", lat);
         properties.put("lng", lng);
+        properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
+
+
+        try {
+            // Save the properties to the document
+            document.putProperties(properties);
+        } catch (CouchbaseLiteException e) {
+            Log.e(TAG, "Error putting properties", e);
+        }
+
+    }
+
+
+    /* insert a route in the database */
+    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints) {
+        Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("type", "route");
+        properties.put("title", title);
+        properties.put("description", description);
+        properties.put("waypoints", waypoints);
         properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
 
         try {
@@ -303,30 +372,36 @@ public class DBAdapter {
     }
 
 
-    /* gets all rows from the database */
-    public List<Map<String, Object>> getAllRows() {
+    /* gets all rows from a view from the database */
+    public List<Map<String, Object>> getView(String view_name) {
 
-        Query query = database.createAllDocumentsQuery();
-        query.setAllDocsMode(Query.AllDocsMode.ALL_DOCS);
-        QueryEnumerator enumerator = null;
-        try {
-            enumerator = query.run();
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error getting all rows", e);
-        }
         List<Map<String, Object>> result = new ArrayList<>();
-        while (enumerator.hasNext()) {
-            QueryRow row = enumerator.next();
-            Map<String, Object> properties = database.getDocument(row.getDocumentId()).getProperties();
-            result.add(properties);
+        try {
+             /* get the view */
+            View view = getDatabaseInstance().getView(view_name);
+            view.updateIndex();
+
+            Query query = view.createQuery();
+
+            QueryEnumerator enumerator = query.run();
+
+            while (enumerator.hasNext()) { // add all documents to result
+                QueryRow row = enumerator.next();
+
+                Map<String, Object> properties = getDatabaseInstance().getDocument(row.getDocumentId()).getProperties();
+
+                result.add(properties);
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
         }
         return result;
     }
 
 
     /* gets one row (specified by id) from database */
-    public Document getRow(int id) {
-        return database.getDocument(String.valueOf(id));
+    public Document getDocument(int id) {
+        return getDatabaseInstance().getDocument(String.valueOf(id));
     }
 
 
