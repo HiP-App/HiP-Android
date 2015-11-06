@@ -111,14 +111,14 @@ public class DBAdapter {
         addImage(R.drawable.liboriuskapelle, 7);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), 0));
-        waypoints.add(new Waypoint(new LatLng(51.718178, 8.747164), 0));
-        waypoints.add(new Waypoint(new LatLng(51.722850, 8.750780), 0));
-        waypoints.add(new Waypoint(new LatLng(51.722710, 8.758365), 0));
-        waypoints.add(new Waypoint(new LatLng(51.718789, 8.762699), 0));
-        waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), 0));
+        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
+        waypoints.add(new Waypoint(new LatLng(51.718178, 8.747164), -1));
+        waypoints.add(new Waypoint(new LatLng(51.722850, 8.750780), -1));
+        waypoints.add(new Waypoint(new LatLng(51.722710, 8.758365), -1));
+        waypoints.add(new Waypoint(new LatLng(51.718789, 8.762699), -1));
+        waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), -1));
         waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
-        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), 0));
+        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
         insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints);
 
         waypoints = new LinkedList<>();
@@ -126,8 +126,8 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.719128, 8.755457), 1));
         waypoints.add(new Waypoint(new LatLng(51.719527, 8.755736), 4));
         waypoints.add(new Waypoint(new LatLng(51.718969, 8.758472), 6));
-        waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), 0));
-        waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), 0));
+        waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), -1));
+        waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), -1));
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints);
     }
 
