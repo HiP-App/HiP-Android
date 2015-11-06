@@ -42,4 +42,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.+'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.couchbase.lite:couchbase-lite-android:1.1.0'
+
+    testCompile "org.robolectric:robolectric:3.0"
 }
