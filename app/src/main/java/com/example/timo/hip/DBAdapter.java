@@ -1,5 +1,6 @@
 package com.example.timo.hip;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -148,6 +149,8 @@ public class DBAdapter {
 
     /* notify the UI Thread that the database has changed */
     private synchronized void notifyExhibitSetChanged() {
+        if(((Activity) context).getClass().getSimpleName() != "MainActivity") return;
+
         ((MainActivity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
