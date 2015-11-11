@@ -49,6 +49,7 @@ public class DetailsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_details);
 
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
+        mImageView.setImageDrawable(DBAdapter.getImage(1));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -73,7 +74,6 @@ public class DetailsActivity extends ActionBarActivity {
 
         Document document = database.getDocument(exhibitId);
         Exhibit exhibit = new Exhibit(document);
-
         mTextView.setText(exhibit.name);
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
@@ -184,5 +184,12 @@ public class DetailsActivity extends ActionBarActivity {
     public void onBackPressed() {
         this.finish();
     }
+
+    /*  Check later if this is needed
+    public void onStop() {
+        mImageView.destroyDrawingCache();
+        super.onStop();
+    }
+    */
 
 }
