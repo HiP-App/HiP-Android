@@ -1,8 +1,16 @@
 package com.example.timo.hip;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
 import android.util.Log;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -55,11 +63,13 @@ public class DBAdapter {
 
     public static final String TAG = "DBAdapter"; // for logging
     private final Context context; // Context of application who uses us.
+    private static Context staticcontext; // static context for static getImage()-method
 
 
     /* Constructor */
     public DBAdapter(Context ctx) {
         this.context = ctx;
+        staticcontext = ctx;
         if (database==null) {
             initDatabase();
         }
@@ -235,8 +245,31 @@ public class DBAdapter {
         Drawable d = null;
         if (att != null) {
             try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
                 InputStream is = att.getContent();
-                d = Drawable.createFromStream(is, "image.jpg");
+                Bitmap b = BitmapFactory.decodeStream(is);
+                int width = b.getWidth();
+                int height = b.getHeight();
+
+                WindowManager wm = (WindowManager) staticcontext.getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int screen_width = size.x;
+                int screen_height = size.y;
+
+                // check if greater than device's width / height
+                if(width >= screen_width && height >= screen_height) {
+                    final float scale = staticcontext.getResources().getDisplayMetrics().density;
+                    int new_width = (int) (width / scale + 0.5f);
+                    int new_height = (int) (height / scale + 0.5f);
+                    Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
+                    d = new BitmapDrawable(staticcontext.getResources(), b2);
+                } else {
+                    d = new BitmapDrawable(staticcontext.getResources(), b);
+                }
+
                 is.close();
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
@@ -245,6 +278,42 @@ public class DBAdapter {
         return d;
     }
 
+    /* returns an image from the database */
+    public static Drawable getImage(int id, int required_size) {
+        Document doc = database.getDocument(String.valueOf(id));
+        Revision rev = doc.getCurrentRevision();
+        Attachment att = rev.getAttachment("image.jpg");
+        Drawable d = null;
+        if (att != null) {
+            try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                InputStream is = att.getContent();
+                Bitmap b = BitmapFactory.decodeStream(is);
+
+                //Find the correct scale value. It should be the power of 2.
+                final int REQUIRED_SIZE=required_size;
+                int width_tmp=b.getWidth(), height_tmp=b.getHeight();
+                int scale=1;
+                while(true){
+                    if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
+                        break;
+                    width_tmp/=2;
+                    height_tmp/=2;
+                    scale*=2;
+                }
+
+                BitmapFactory.Options o2 = new BitmapFactory.Options();
+                o2.inSampleSize=scale;
+                Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
+                d = new BitmapDrawable(staticcontext.getResources(), b2);
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
 
     /* gets all rows from the database */
     public List<Map<String, Object>> getAllRows() {

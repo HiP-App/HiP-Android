@@ -41,6 +41,7 @@ public class DetailsActivity extends Activity {
         setContentView(R.layout.activity_details);
 
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
+        mImageView.setImageDrawable(DBAdapter.getImage(1));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         /**
@@ -63,7 +64,6 @@ public class DetailsActivity extends Activity {
 
         Document document = database.getRow(exhibitId);
         Exhibit exhibit = new Exhibit(document);
-
         mTextView.setText(exhibit.name);
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
@@ -155,5 +155,12 @@ public class DetailsActivity extends Activity {
     public void onBackPressed() {
         this.finish();
     }
+
+    /*  Check later if this is needed
+    public void onStop() {
+        mImageView.destroyDrawingCache();
+        super.onStop();
+    }
+    */
 
 }

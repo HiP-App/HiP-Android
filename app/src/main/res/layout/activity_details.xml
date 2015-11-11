@@ -18,8 +18,7 @@
             android:layout_height="match_parent"
             android:id="@+id/imageViewDetail"
             android:cropToPadding="false"
-            android:scaleType="centerCrop"
-            android:src="@drawable/dom" />
+            android:scaleType="centerCrop" />
 
         <TextView
             android:layout_width="wrap_content"
