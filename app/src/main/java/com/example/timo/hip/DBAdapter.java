@@ -149,7 +149,7 @@ public class DBAdapter {
 
     /* notify the UI Thread that the database has changed */
     private synchronized void notifyExhibitSetChanged() {
-        if(((Activity) context).getClass().getSimpleName() != "MainActivity") return;
+        if(!((Activity) context).getClass().getSimpleName().equals("MainActivity")) return;
 
         ((MainActivity) context).runOnUiThread(new Runnable() {
             @Override
