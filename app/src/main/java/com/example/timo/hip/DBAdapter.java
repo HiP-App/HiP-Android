@@ -194,9 +194,8 @@ public class DBAdapter {
     }
 
 
-    /* switch to the (local) database, that is given by the String db_name
-    * ToDo: Remove for productive use */
-    private void switchDatabase(String db_name) {
+    /* initialize the database, the flag enablePush indicates if local changes should be pushed to the gateway */
+    private void initDatabase(Boolean enablePush) {
         try {
             setHttpClientFactory(); // sets the HTTP Factory to connect over SSL to the gateway
 
