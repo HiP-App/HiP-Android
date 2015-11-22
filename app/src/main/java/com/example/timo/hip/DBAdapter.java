@@ -254,9 +254,6 @@ public class DBAdapter {
         } catch (MalformedURLException e) {
             Log.e(TAG, "Malformed URL", e);
             return;
-        } catch (IOException e) {
-            Log.e(TAG, "Error getting database manager", e);
-            return;
         }
     }
 
