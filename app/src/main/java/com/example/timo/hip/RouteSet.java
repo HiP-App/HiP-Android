@@ -18,7 +18,7 @@ public class RouteSet {
             int id = Integer.valueOf((String) properties.get("_id"));
             String title = (String)properties.get("title");
             String description = (String)properties.get("description");
-            LinkedList<Waypoint> waypoints = (LinkedList<Waypoint>)properties.get("waypoints");
+            ArrayList<Waypoint> waypoints = (ArrayList<Waypoint>)properties.get("waypoints");
 
             Route route = new Route(id, title, description, waypoints);
 

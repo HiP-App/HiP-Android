@@ -6,10 +6,6 @@
 
     tools:context="com.example.timo.hip.RouteActivity">
 
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_route"
         android:scrollbars="vertical"

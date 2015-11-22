@@ -64,7 +64,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         String description;
         if(route.description.length() > 32) description = route.description.substring(0,32).concat("...");
         else description = route.description;
-        //holder.mDescription.setText(description);
+        holder.mDescription.setText(description);
 
 
         holder.mView.setId(route.id);

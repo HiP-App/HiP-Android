@@ -27,6 +27,7 @@ public class RouteActivity extends Activity {
         routeSet = new RouteSet(database.getView("routes"));
 
         Log.i("routes", "test-log");
+        Log.i("routes", new Integer(routeSet.getSize()).toString());
         for(Route r: routeSet.routes) {
             Log.i("routes", r.title);
         }
