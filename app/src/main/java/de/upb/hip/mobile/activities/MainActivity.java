@@ -103,7 +103,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             toolbar.setTitle(R.string.app_name);
-            toolbar.inflateMenu(R.menu.menu_main);
+            //toolbar.inflateMenu(R.menu.menu_main);
             setSupportActionBar(toolbar);
         }
 
