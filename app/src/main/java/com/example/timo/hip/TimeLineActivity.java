@@ -241,10 +241,16 @@ public class TimeLineActivity extends Activity {
     // set test data to show images and calculate progress
     private void setDataShowCase(){
         if (fontFading){
-            mPicDataList.add(new PictureDataHelp("newsweek_1949", 1949));
-            mPicDataList.add(new PictureDataHelp("newsweek_1970", 1970));
-            mPicDataList.add(new PictureDataHelp("newsweek_1986", 1986));
-            mPicDataList.add(new PictureDataHelp("newsweek_2011", 2011));
+            //Also show Pfalz pictures here for demonstration purposes
+            mPicDataList.add(new PictureDataHelp("phasei", 776));
+            mPicDataList.add(new PictureDataHelp("phaseii", 799));
+            mPicDataList.add(new PictureDataHelp("phaseiii", 836));
+            mPicDataList.add(new PictureDataHelp("phaseiv", 900));
+            mPicDataList.add(new PictureDataHelp("phasev", 938));
+            //mPicDataList.add(new PictureDataHelp("newsweek_1949", 1949));
+            //mPicDataList.add(new PictureDataHelp("newsweek_1970", 1970));
+            //mPicDataList.add(new PictureDataHelp("newsweek_1986", 1986));
+            //mPicDataList.add(new PictureDataHelp("newsweek_2011", 2011));
         }
         else{
             mPicDataList.add(new PictureDataHelp("phasei", 776));
