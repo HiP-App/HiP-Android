@@ -65,12 +65,9 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         if(route.description.length() > 32) description = route.description.substring(0,32).concat("...");
         else description = route.description;
         holder.mDescription.setText(description);
-
+        holder.mDuration.setText((route.duration/60) + " Minuten");
 
         holder.mView.setId(route.id);
-
-        holder.mDuration.setText("1");
-
     }
 
     // Return the size of your dataset (invoked by the layout manager)

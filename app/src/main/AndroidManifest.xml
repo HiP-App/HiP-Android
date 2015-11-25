@@ -28,10 +28,6 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".DetailsActivity"
@@ -50,6 +46,10 @@
         <activity
             android:name=".RouteActivity"
             android:label="@string/title_activity_route" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

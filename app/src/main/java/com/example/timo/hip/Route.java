@@ -11,6 +11,7 @@ public class Route {
     public String title;
     public String description;
     public ArrayList<Waypoint> waypoints;
+    public int duration; //in seconds
 
     public Route (Document document) {
 
@@ -18,11 +19,12 @@ public class Route {
 
     }
 
-    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints)
+    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints, int duration)
     {
         this.id = id;
         this.title = title;
         this.description = description;
         this.waypoints = waypoints;
+        this.duration = duration;
     }
 }

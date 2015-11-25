@@ -1,5 +1,8 @@
 package com.example.timo.hip;
 
+import android.util.Log;
+
+import com.google.android.gms.internal.pr;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -11,16 +14,17 @@ public class RouteSet {
 
     public List<Route> routes = new ArrayList<>();
 
-    public RouteSet (List<Map<String, Object>> list){
+    public RouteSet(List<Map<String, Object>> list) {
 
-        for (int i=0; i<list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             Map<String, Object> properties = list.get(i);
             int id = Integer.valueOf((String) properties.get("_id"));
-            String title = (String)properties.get("title");
-            String description = (String)properties.get("description");
-            ArrayList<Waypoint> waypoints = (ArrayList<Waypoint>)properties.get("waypoints");
+            String title = (String) properties.get("title");
+            String description = (String) properties.get("description");
+            ArrayList<Waypoint> waypoints = (ArrayList<Waypoint>) properties.get("waypoints");
+            int duration = (Integer) properties.get("duration");
 
-            Route route = new Route(id, title, description, waypoints);
+            Route route = new Route(id, title, description, waypoints, duration);
 
             routes.add(route);
         }
