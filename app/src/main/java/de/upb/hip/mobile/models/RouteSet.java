@@ -1,4 +1,10 @@
-package com.example.timo.hip;
+package de.upb.hip.mobile.models;
+
+import de.upb.hip.mobile.activities.*;
+import de.upb.hip.mobile.adapters.*;
+import de.upb.hip.mobile.helpers.*;
+import de.upb.hip.mobile.listeners.*;
+import de.upb.hip.mobile.models.*;
 
 import com.google.android.gms.maps.model.LatLng;
 
