@@ -29,8 +29,8 @@ public class RouteSet {
             String description = (String) properties.get("description");
             ArrayList<Waypoint> waypoints = (ArrayList<Waypoint>) properties.get("waypoints");
             int duration = (Integer) properties.get("duration");
-
-            Route route = new Route(id, title, description, waypoints, duration);
+            List<String> tags = (List<String>) properties.get("tags");
+            Route route = new Route(id, title, description, waypoints, duration, tags);
 
             routes.add(route);
         }

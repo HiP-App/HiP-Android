@@ -136,7 +136,11 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), -1));
         waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
         waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30);
+
+        List<String> tags = new LinkedList<>();
+        tags.add("bar");
+
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, tags);
 
         waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(new LatLng(51.718590, 8.752206), 5));
@@ -145,7 +149,11 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.718969, 8.758472), 6));
         waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), -1));
         waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), -1));
-        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120);
+
+        tags = new LinkedList<>();
+        tags.add("restaurant");
+
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, tags);
     }
 
 
@@ -349,7 +357,7 @@ public class DBAdapter {
 
 
     /* insert a route in the database */
-    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration) {
+    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<String> tags) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
@@ -358,6 +366,7 @@ public class DBAdapter {
         properties.put("description", description);
         properties.put("waypoints", waypoints);
         properties.put("duration", duration);
+        properties.put("tags", tags);
         properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
 
         try {

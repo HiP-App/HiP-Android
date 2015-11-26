@@ -8,16 +8,18 @@ import de.upb.hip.mobile.models.*;
 
 import android.content.Context;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 
 import android.support.v7.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 
 public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdapter.ViewHolder> {
@@ -34,6 +36,8 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         public TextView mTitle;
         public TextView mDescription;
         public TextView mDuration;
+        public LinearLayout mTagsLayout;
+
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
@@ -41,6 +45,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
             this.mTitle = (TextView) v.findViewById(R.id.text_title);
             this.mDescription = (TextView) v.findViewById(R.id.text_description);
             this.mDuration = (TextView) v.findViewById(R.id.text_duration);
+            this.mTagsLayout = (LinearLayout) v.findViewById(R.id.tags_layout);
         }
     }
 
@@ -68,10 +73,20 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
 
         holder.mTitle.setText(route.title);
         String description;
-        if(route.description.length() > 32) description = route.description.substring(0,32).concat("...");
+        if (route.description.length() > 32)
+            description = route.description.substring(0, 32).concat("...");
         else description = route.description;
         holder.mDescription.setText(description);
-        holder.mDuration.setText((route.duration/60) + " Minuten");
+        holder.mDuration.setText((route.duration / 60) + " Minuten");
+        //Check if there are actually tags for this route
+        if (route.tags != null) {
+            for (String tagId : route.tags) {
+                ImageView tagImageView = new ImageView(context);
+                tagImageView.setImageDrawable(new RouteTagSet(context).getTagById(tagId).getImage());
+                holder.mTagsLayout.addView(tagImageView);
+            }
+
+        }
 
         holder.mView.setId(route.id);
     }
