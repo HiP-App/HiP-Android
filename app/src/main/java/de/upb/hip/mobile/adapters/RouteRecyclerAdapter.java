@@ -83,7 +83,8 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
             description = route.description.substring(0, 32).concat("...");
         else description = route.description;
         holder.mDescription.setText(description);
-        holder.mDuration.setText((route.duration / 60) + " Minuten");
+        int durationInMinutes = route.duration / 60;
+        holder.mDuration.setText(context.getResources().getQuantityString(R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
         //Check if there are actually tags for this route
         if (route.tags != null) {
             for (RouteTag tag : route.tags) {

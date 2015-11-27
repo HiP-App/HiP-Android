@@ -6,4 +6,9 @@
     <string name="title_activity_display_single_image">Detailansicht</string>
     <string name="title_activity_route">RouteActivity</string>
 
+    <plurals name="route_activity_duration_minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+
 </resources>
