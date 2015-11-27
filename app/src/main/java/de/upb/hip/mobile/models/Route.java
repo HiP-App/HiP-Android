@@ -1,6 +1,7 @@
 package de.upb.hip.mobile.models;
 
 import com.couchbase.lite.Document;
+import com.google.android.gms.internal.im;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ public class Route {
     public ArrayList<Waypoint> waypoints;
     public int duration; //in seconds
     public List<RouteTag> tags;
+    public String imageName;
 
     public Route (Document document) {
 
@@ -20,7 +22,7 @@ public class Route {
 
     }
 
-    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints, int duration, List<RouteTag> tags)
+    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints, int duration, List<RouteTag> tags, String imageName)
     {
         this.id = id;
         this.title = title;
@@ -28,5 +30,6 @@ public class Route {
         this.waypoints = waypoints;
         this.duration = duration;
         this.tags = tags;
+        this.imageName = imageName;
     }
 }

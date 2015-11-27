@@ -28,7 +28,9 @@ public class RouteSet {
             for(Map<String, String> tagMap: tagList){
                 tags.add(new RouteTag(tagMap.get("tag"), tagMap.get("name"), tagMap.get("imageFilename")));
             }
-            Route route = new Route(id, title, description, waypoints, duration, tags);
+
+            String imageName = (String) properties.get("imageName");
+            Route route = new Route(id, title, description, waypoints, duration, tags, imageName);
 
             routes.add(route);
         }

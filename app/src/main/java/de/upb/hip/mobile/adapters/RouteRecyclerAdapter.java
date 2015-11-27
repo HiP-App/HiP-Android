@@ -8,7 +8,10 @@ import de.upb.hip.mobile.models.*;
 
 import android.content.Context;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.couchbase.lite.Attachment;
+import com.couchbase.lite.CouchbaseLiteException;
 
 
 public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdapter.ViewHolder> {
@@ -87,7 +93,14 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
             }
 
         }
-
+        Attachment att = DBAdapter.getAttachment(route.id, route.imageName);
+        try {
+            Bitmap b = BitmapFactory.decodeStream(att.getContent());
+            Drawable image = new BitmapDrawable(context.getResources(), b);
+            holder.mImage.setImageDrawable(image);
+        } catch (CouchbaseLiteException e) {
+            Log.e("routes", e.toString());
+        }
         holder.mView.setId(route.id);
     }
 

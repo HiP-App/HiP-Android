@@ -93,8 +93,17 @@ public class DBAdapter {
         staticcontext = ctx;
         if (database == null) {
             initDatabase(false);
-            //insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
+            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
+
+
+        final int resId = context.getResources().getIdentifier("pfalz.jpg".split("\\.")[0], "drawable", context.getPackageName());
+        if(resId != 0){
+            Log.i("routes", "Found ress id!");
+        } else {
+            Log.e("routes", "Could not load image resource for route ");
+        }
+
     }
 
 
@@ -141,7 +150,7 @@ public class DBAdapter {
         ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
         ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags);
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(new LatLng(51.718590, 8.752206), 5));
@@ -154,7 +163,7 @@ public class DBAdapter {
         List<RouteTag> stadtrouteTags = new LinkedList<>();
         stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, stadtrouteTags);
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, stadtrouteTags, "route_stadt.jpg");
     }
 
 
@@ -362,7 +371,7 @@ public class DBAdapter {
 
 
     /* insert a route in the database */
-    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<RouteTag> tags) {
+    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<RouteTag> tags, String imageName) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
@@ -372,6 +381,7 @@ public class DBAdapter {
         properties.put("waypoints", waypoints);
         properties.put("duration", duration);
         properties.put("tags", tags);
+        properties.put("imageName", imageName);
         properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
 
         try {
@@ -381,18 +391,26 @@ public class DBAdapter {
             Log.e(TAG, "Error putting properties", e);
         }
 
-
+        //Add images for route tags as attachment
         for(RouteTag tag: tags){
             final int resId =  context.getResources().getIdentifier(tag.getImageFilename(), "drawable", context.getPackageName());
             if(resId != 0){
                 InputStream ress = context.getResources().openRawResource(+resId);
-                addAttachment(id, tag.getImageFilename(), "image/png", ress);
+                addAttachment(id, tag.getImageFilename(), "image/jpeg", ress);
             } else {
-                Log.e("routes", "Could not load image resource for route " + id);
+                Log.e("routes", "Could not load image tag resource for route " + id);
             }
-
         }
 
+        //Add route image as attachment
+        //Use only the part before "." for the filename when accessing the Android resource
+        final int resId = context.getResources().getIdentifier(imageName.split("\\.")[0], "drawable", context.getPackageName());
+        if(resId != 0){
+            InputStream ress = context.getResources().openRawResource(+resId);
+            addAttachment(id, imageName, "image/png", ress);
+        } else {
+            Log.e("routes", "Could not load image resource for route " + id);
+        }
     }
 
     public static Attachment getAttachment(int documentId, String filename){
