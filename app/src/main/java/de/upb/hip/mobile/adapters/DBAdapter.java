@@ -139,6 +139,7 @@ public class DBAdapter {
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
         ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
+        ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
         insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags);
 
