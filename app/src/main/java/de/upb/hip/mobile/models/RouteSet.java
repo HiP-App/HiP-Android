@@ -1,17 +1,9 @@
 package de.upb.hip.mobile.models;
 
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
-
 import android.util.Log;
 
-import com.google.android.gms.internal.pr;
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +21,13 @@ public class RouteSet {
             String description = (String) properties.get("description");
             ArrayList<Waypoint> waypoints = (ArrayList<Waypoint>) properties.get("waypoints");
             int duration = (Integer) properties.get("duration");
-            List<String> tags = (List<String>) properties.get("tags");
+
+            //Need to deserialize tags manually since CouchDB doesn't seem to do it automatically
+            List<Map> tagList = (List<Map>) properties.get("tags");
+            List<RouteTag> tags = new LinkedList<>();
+            for(Map<String, String> tagMap: tagList){
+                tags.add(new RouteTag(tagMap.get("tag"), tagMap.get("name"), tagMap.get("imageFilename")));
+            }
             Route route = new Route(id, title, description, waypoints, duration, tags);
 
             routes.add(route);

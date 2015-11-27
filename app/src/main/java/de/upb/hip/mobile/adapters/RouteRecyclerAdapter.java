@@ -80,9 +80,9 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         holder.mDuration.setText((route.duration / 60) + " Minuten");
         //Check if there are actually tags for this route
         if (route.tags != null) {
-            for (String tagId : route.tags) {
+            for (RouteTag tag : route.tags) {
                 ImageView tagImageView = new ImageView(context);
-                tagImageView.setImageDrawable(new RouteTagSet(context).getTagById(tagId).getImage());
+                tagImageView.setImageDrawable(tag.getImage(route.id, context));
                 holder.mTagsLayout.addView(tagImageView);
             }
 

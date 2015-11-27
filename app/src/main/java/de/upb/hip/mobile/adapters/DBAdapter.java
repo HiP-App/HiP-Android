@@ -137,10 +137,10 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
         waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
 
-        List<String> tags = new LinkedList<>();
-        tags.add("bar");
+        List<RouteTag> ringrouteTags = new LinkedList<>();
+        ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
 
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, tags);
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags);
 
         waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(new LatLng(51.718590, 8.752206), 5));
@@ -150,10 +150,10 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), -1));
         waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), -1));
 
-        tags = new LinkedList<>();
-        tags.add("restaurant");
+        List<RouteTag> stadtrouteTags = new LinkedList<>();
+        stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, tags);
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, stadtrouteTags);
     }
 
 
@@ -361,7 +361,7 @@ public class DBAdapter {
 
 
     /* insert a route in the database */
-    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<String> tags) {
+    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<RouteTag> tags) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
@@ -378,6 +378,18 @@ public class DBAdapter {
             document.putProperties(properties);
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error putting properties", e);
+        }
+
+
+        for(RouteTag tag: tags){
+            final int resId =  context.getResources().getIdentifier(tag.getImageFilename(), "drawable", context.getPackageName());
+            if(resId != 0){
+                InputStream ress = context.getResources().openRawResource(+resId);
+                addAttachment(id, tag.getImageFilename(), "image/png", ress);
+            } else {
+                Log.e("routes", "Could not load image resource for route " + id);
+            }
+
         }
 
     }

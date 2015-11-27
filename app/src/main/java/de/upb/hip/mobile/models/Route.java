@@ -12,7 +12,7 @@ public class Route {
     public String description;
     public ArrayList<Waypoint> waypoints;
     public int duration; //in seconds
-    public List<String> tags;
+    public List<RouteTag> tags;
 
     public Route (Document document) {
 
@@ -20,7 +20,7 @@ public class Route {
 
     }
 
-    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints, int duration, List<String> tags)
+    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints, int duration, List<RouteTag> tags)
     {
         this.id = id;
         this.title = title;
