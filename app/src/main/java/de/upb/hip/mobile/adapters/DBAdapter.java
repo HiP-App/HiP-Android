@@ -160,13 +160,17 @@ public class DBAdapter {
     /* adds an image from R.drawable to the document defined by document_id in local database */
     private void addImage(int image_number, int document_id) {
         InputStream image = context.getResources().openRawResource(+image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
+        addAttachment(document_id, "image.jpg", "image/jpeg", image);
+    }
+
+    public void addAttachment(int document_id, String filename, String mimeType, InputStream attachment){
         Document doc = database.getDocument(String.valueOf(document_id));
         UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
-        newRev.setAttachment("image.jpg", "image/jpeg", image);
+        newRev.setAttachment(filename, mimeType, attachment);
         try {
             newRev.save();
         } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error attaching image", e);
+            Log.e(TAG, "Error attaching resource " + filename + " to document " + document_id, e);
         }
     }
 
@@ -378,12 +382,17 @@ public class DBAdapter {
 
     }
 
+    public static Attachment getAttachment(int documentId, String filename){
+        Document doc = database.getDocument(String.valueOf(documentId));
+        Revision rev = doc.getCurrentRevision();
+        Attachment attachment = rev.getAttachment(filename);
+        return attachment;
+    }
+
 
     /* returns an image from the database */
     public static Drawable getImage(int id) {
-        Document doc = database.getDocument(String.valueOf(id));
-        Revision rev = doc.getCurrentRevision();
-        Attachment att = rev.getAttachment("image.jpg");
+        Attachment att = getAttachment(id, "image.jpg");
         Drawable d = null;
         if (att != null) {
             try {
@@ -422,9 +431,7 @@ public class DBAdapter {
 
     /* returns an image from the database */
     public static Drawable getImage(int id, int required_size) {
-        Document doc = database.getDocument(String.valueOf(id));
-        Revision rev = doc.getCurrentRevision();
-        Attachment att = rev.getAttachment("image.jpg");
+        Attachment att = getAttachment(id, "image.jpg");
         Drawable d = null;
         if (att != null) {
             try {
