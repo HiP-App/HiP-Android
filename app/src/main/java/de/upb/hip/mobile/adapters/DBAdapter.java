@@ -93,17 +93,8 @@ public class DBAdapter {
         staticcontext = ctx;
         if (database == null) {
             initDatabase(false);
-            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
+            //insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
-
-
-        final int resId = context.getResources().getIdentifier("pfalz.jpg".split("\\.")[0], "drawable", context.getPackageName());
-        if(resId != 0){
-            Log.i("routes", "Found ress id!");
-        } else {
-            Log.e("routes", "Could not load image resource for route ");
-        }
-
     }
 
 
