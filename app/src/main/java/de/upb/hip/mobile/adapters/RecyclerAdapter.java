@@ -1,4 +1,10 @@
-package com.example.timo.hip;
+package de.upb.hip.mobile.adapters;
+
+import de.upb.hip.mobile.activities.*;
+import de.upb.hip.mobile.adapters.*;
+import de.upb.hip.mobile.helpers.*;
+import de.upb.hip.mobile.listeners.*;
+import de.upb.hip.mobile.models.*;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -96,7 +102,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         holder.mDistance.setText(distance);
 
-        Drawable d = DBAdapter.getImage(exhibit.id);
+        Drawable d = DBAdapter.getImage(exhibit.id, 64);
         holder.mImage.setImageDrawable(d);
     }
 

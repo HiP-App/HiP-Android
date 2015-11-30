@@ -1,8 +1,23 @@
-package com.example.timo.hip;
+package de.upb.hip.mobile.adapters;
 
+import de.upb.hip.mobile.activities.*;
+import de.upb.hip.mobile.adapters.*;
+import de.upb.hip.mobile.helpers.*;
+import de.upb.hip.mobile.listeners.*;
+import de.upb.hip.mobile.models.*;
+
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
 import android.util.Log;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -69,11 +84,13 @@ public class DBAdapter {
 
     public static final String TAG = "DBAdapter"; // for logging
     private final Context context; // Context of application who uses us.
+    private static Context staticcontext; // static context for static getImage()-method
 
 
     /* Constructor */
     public DBAdapter(Context ctx) {
         this.context = ctx;
+        staticcontext = ctx;
         if (database == null) {
             initDatabase(false);
             //insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
@@ -111,14 +128,14 @@ public class DBAdapter {
         addImage(R.drawable.liboriuskapelle, 7);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), 0));
-        waypoints.add(new Waypoint(new LatLng(51.718178, 8.747164), 0));
-        waypoints.add(new Waypoint(new LatLng(51.722850, 8.750780), 0));
-        waypoints.add(new Waypoint(new LatLng(51.722710, 8.758365), 0));
-        waypoints.add(new Waypoint(new LatLng(51.718789, 8.762699), 0));
-        waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), 0));
+        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
+        waypoints.add(new Waypoint(new LatLng(51.718178, 8.747164), -1));
+        waypoints.add(new Waypoint(new LatLng(51.722850, 8.750780), -1));
+        waypoints.add(new Waypoint(new LatLng(51.722710, 8.758365), -1));
+        waypoints.add(new Waypoint(new LatLng(51.718789, 8.762699), -1));
+        waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), -1));
         waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
-        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), 0));
+        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
         insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints);
 
         waypoints = new LinkedList<>();
@@ -126,8 +143,8 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.719128, 8.755457), 1));
         waypoints.add(new Waypoint(new LatLng(51.719527, 8.755736), 4));
         waypoints.add(new Waypoint(new LatLng(51.718969, 8.758472), 6));
-        waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), 0));
-        waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), 0));
+        waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), -1));
+        waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), -1));
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints);
     }
 
@@ -148,6 +165,8 @@ public class DBAdapter {
 
     /* notify the UI Thread that the database has changed */
     private synchronized void notifyExhibitSetChanged() {
+        if(!((Activity) context).getClass().getSimpleName().equals("MainActivity")) return;
+
         ((MainActivity) context).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -240,9 +259,6 @@ public class DBAdapter {
 
         } catch (MalformedURLException e) {
             Log.e(TAG, "Malformed URL", e);
-            return;
-        } catch (IOException e) {
-            Log.e(TAG, "Error getting database manager", e);
             return;
         }
     }
@@ -361,8 +377,31 @@ public class DBAdapter {
         Drawable d = null;
         if (att != null) {
             try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
                 InputStream is = att.getContent();
-                d = Drawable.createFromStream(is, "image.jpg");
+                Bitmap b = BitmapFactory.decodeStream(is);
+                int width = b.getWidth();
+                int height = b.getHeight();
+
+                WindowManager wm = (WindowManager) staticcontext.getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int screen_width = size.x;
+                int screen_height = size.y;
+
+                // check if greater than device's width / height
+                if(width >= screen_width && height >= screen_height) {
+                    final float scale = staticcontext.getResources().getDisplayMetrics().density;
+                    int new_width = (int) (width / scale + 0.5f);
+                    int new_height = (int) (height / scale + 0.5f);
+                    Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
+                    d = new BitmapDrawable(staticcontext.getResources(), b2);
+                } else {
+                    d = new BitmapDrawable(staticcontext.getResources(), b);
+                }
+
                 is.close();
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
@@ -371,6 +410,42 @@ public class DBAdapter {
         return d;
     }
 
+    /* returns an image from the database */
+    public static Drawable getImage(int id, int required_size) {
+        Document doc = database.getDocument(String.valueOf(id));
+        Revision rev = doc.getCurrentRevision();
+        Attachment att = rev.getAttachment("image.jpg");
+        Drawable d = null;
+        if (att != null) {
+            try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                InputStream is = att.getContent();
+                Bitmap b = BitmapFactory.decodeStream(is);
+
+                //Find the correct scale value. It should be the power of 2.
+                final int REQUIRED_SIZE=required_size;
+                int width_tmp=b.getWidth(), height_tmp=b.getHeight();
+                int scale=1;
+                while(true){
+                    if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
+                        break;
+                    width_tmp/=2;
+                    height_tmp/=2;
+                    scale*=2;
+                }
+
+                BitmapFactory.Options o2 = new BitmapFactory.Options();
+                o2.inSampleSize=scale;
+                Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
+                d = new BitmapDrawable(staticcontext.getResources(), b2);
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
 
     /* gets all rows from a view from the database */
     public List<Map<String, Object>> getView(String view_name) {

@@ -1,4 +1,10 @@
-package com.example.timo.hip;
+package de.upb.hip.mobile.activities;
+
+import de.upb.hip.mobile.activities.*;
+import de.upb.hip.mobile.adapters.*;
+import de.upb.hip.mobile.helpers.*;
+import de.upb.hip.mobile.listeners.*;
+import de.upb.hip.mobile.models.*;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -49,6 +55,7 @@ public class DetailsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_details);
 
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
+        mImageView.setImageDrawable(DBAdapter.getImage(1));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -73,7 +80,6 @@ public class DetailsActivity extends ActionBarActivity {
 
         Document document = database.getDocument(exhibitId);
         Exhibit exhibit = new Exhibit(document);
-
         mTextView.setText(exhibit.name);
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
@@ -184,5 +190,12 @@ public class DetailsActivity extends ActionBarActivity {
     public void onBackPressed() {
         this.finish();
     }
+
+    /*  Check later if this is needed
+    public void onStop() {
+        mImageView.destroyDrawingCache();
+        super.onStop();
+    }
+    */
 
 }

@@ -22,7 +22,6 @@
             android:id="@+id/imageViewDetail"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            android:src="@drawable/dom"
             android:onClick="onClick_imageViewDetail" />
 
         <TextView

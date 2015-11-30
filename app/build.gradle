@@ -12,7 +12,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.example.timo.hip"
+        applicationId "de.upb.hip.mobile"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
