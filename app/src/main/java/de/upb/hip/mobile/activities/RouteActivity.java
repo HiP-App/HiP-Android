@@ -12,6 +12,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.io.Console;
 
@@ -29,13 +31,14 @@ public class RouteActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
+
         database = new DBAdapter(this);
 
         routeSet = new RouteSet(database.getView("routes"));
 
         Log.i("routes", "test-log");
         Log.i("routes", new Integer(routeSet.getSize()).toString());
-        for(Route r: routeSet.routes) {
+        for (Route r : routeSet.routes) {
             Log.i("routes", r.title);
         }
 
@@ -52,6 +55,24 @@ public class RouteActivity extends ActionBarActivity {
         // specify an adapter
         mAdapter = new RouteRecyclerAdapter(this.routeSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_route_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_route_filter:
+                Log.i("routes", "Selected filter");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }
