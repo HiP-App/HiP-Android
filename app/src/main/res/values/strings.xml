@@ -4,7 +4,7 @@
     <string name="app_name">History in Paderborn</string>
     <string name="title_activity_main">History in Paderborn</string>
     <string name="title_activity_display_single_image">Detailansicht</string>
-    <string name="title_activity_route">RouteActivity</string>
+    <string name="title_activity_route">Routen</string>
 
     <string name="activity_route_filter">Filter</string>
 

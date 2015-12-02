@@ -12,8 +12,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.io.Console;
 
@@ -69,6 +73,15 @@ public class RouteActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_route_filter:
                 Log.i("routes", "Selected filter");
+                LayoutInflater layoutInflater
+                        = (LayoutInflater) getBaseContext()
+                        .getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = layoutInflater.inflate(R.layout.activity_route_filter_popup, null);
+                final FilterPopupWindow popupWindow = new FilterPopupWindow(
+                        popupView,
+                        ViewGroup.LayoutParams.FILL_PARENT,
+                        ViewGroup.LayoutParams.FILL_PARENT, "test");
+                popupWindow.showAtLocation(this.findViewById(R.id.recycler_view_route), Gravity.CENTER, 0, 0);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
