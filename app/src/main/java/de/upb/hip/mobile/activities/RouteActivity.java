@@ -8,13 +8,14 @@ import de.upb.hip.mobile.models.*;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import java.io.Console;
 
-public class RouteActivity extends Activity {
+public class RouteActivity extends ActionBarActivity {
 
     private DBAdapter database;
     private RouteSet routeSet;

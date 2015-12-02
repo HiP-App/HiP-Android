@@ -45,7 +45,8 @@
         </activity>
         <activity
             android:name=".RouteActivity"
-            android:label="@string/title_activity_route" >
+            android:label="@string/title_activity_route"
+            android:theme="@style/AppTheme.WithActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
