@@ -61,6 +61,15 @@ public class RouteTag implements Serializable {
         return image;
     }
 
+
+    /**
+     * Can only be called if getImage(documentId, imageFilename) was called previously
+     * @return
+     */
+    public Drawable getImage(){
+        return image;
+    }
+
     public String getImageFilename() {
         return imageFilename;
     }
