@@ -1,16 +1,12 @@
 package de.upb.hip.mobile.adapters;
 
 import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
 import de.upb.hip.mobile.models.*;
 
 import android.content.Context;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -29,7 +25,6 @@ import android.widget.TextView;
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -90,7 +85,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
     @Override
     public RouteRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_routes, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_route_row, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }

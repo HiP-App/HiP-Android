@@ -97,7 +97,7 @@ public class RouteActivity extends ActionBarActivity {
         switch (requestCode) {
             case ACTIVITY_FILTER_RESULT:
                 if (resultCode == RouteFilterActivity.RETURN_NOSAVE) {
-                    Log.i("routes", "nosave");
+                    // User choosed not to save changes, don't do anything
                 } else if (resultCode == RouteFilterActivity.RETURN_SAVE) {
                     HashSet<String> activeTags = (HashSet<String>) data.getSerializableExtra("activeTags");
                     this.activeTags.clear();

@@ -86,25 +86,21 @@ public class RouteFilterActivity extends Activity {
         });
     }
 
+
     private static class RouteTagViewHolder {
         private CheckBox checkBox;
         private TextView textView;
         private ImageView imageView;
         private String tagId;
 
-        public RouteTagViewHolder(CheckBox checkBox, TextView textView, ImageView imageView, String tagId) {
+        public RouteTagViewHolder(CheckBox checkBox, ImageView imageView, String tagId) {
             this.checkBox = checkBox;
-            this.textView = textView;
             this.imageView = imageView;
             this.tagId = tagId;
         }
 
         public CheckBox getCheckBox() {
             return checkBox;
-        }
-
-        public TextView getTextView() {
-            return textView;
         }
 
         public ImageView getImageView() {
@@ -153,7 +149,6 @@ public class RouteFilterActivity extends Activity {
             RouteTag tag = tagHolder.getRouteTag();
 
             CheckBox checkBox;
-            TextView textView;
             ImageView imageView;
 
             if (convertView == null) {
@@ -162,7 +157,7 @@ public class RouteFilterActivity extends Activity {
                 checkBox = (CheckBox) convertView.findViewById(R.id.activityRouteFilterRowCheckBox);
                 imageView = (ImageView) convertView.findViewById(R.id.activityRouteFilterRowImageView);
 
-                convertView.setTag(new RouteTagViewHolder(checkBox, null, imageView, tag.getTag()));
+                convertView.setTag(new RouteTagViewHolder(checkBox, imageView, tag.getTag()));
 
                 checkBox.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -174,13 +169,11 @@ public class RouteFilterActivity extends Activity {
             } else {
                 RouteTagViewHolder viewHolder = (RouteTagViewHolder) convertView.getTag();
                 checkBox = viewHolder.getCheckBox();
-                textView = viewHolder.getTextView();
                 imageView = viewHolder.getImageView();
             }
-            checkBox.setTag(tagHolder);
 
+            checkBox.setTag(tagHolder);
             checkBox.setText(tag.getName());
-            //We start with checked checkboxes
             checkBox.setChecked(tagHolder.isSelected());
             imageView.setImageDrawable(tag.getImage());
 
