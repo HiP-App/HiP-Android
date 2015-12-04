@@ -7,6 +7,9 @@
     <string name="title_activity_route">Routen</string>
 
     <string name="activity_route_filter">Filter</string>
+    <string name="route_tag_label">Tags</string>
+    <string name="routeTagCloseWithoutSaveLabel">Ohne Speichern Schließen</string>
+    <string name="routeTagCloseWithSaveLabel">Speichern und Schließen</string>
 
     <plurals name="route_activity_duration_minutes">
         <item quantity="one">%d Minute</item>

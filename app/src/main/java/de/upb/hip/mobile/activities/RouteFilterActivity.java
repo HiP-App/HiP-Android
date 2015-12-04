@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,8 +20,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteSet;
@@ -28,26 +31,59 @@ import de.upb.hip.mobile.models.RouteTag;
 
 public class RouteFilterActivity extends Activity {
 
+    public static final int RETURN_SAVE = 0;
+    public static final int RETURN_NOSAVE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_filter);
         Intent intent = getIntent();
         RouteSet routeSet = (RouteSet) intent.getSerializableExtra("routeSet");
+        HashSet<String> activeTags = (HashSet<String>) intent.getSerializableExtra("activeTags");
         //There will be duplicates in the route set so we have to remove them
-        HashMap<String, RouteTag> uniqueTags = new HashMap<>();
+        HashMap<String, RouteTagHolder> uniqueTags = new HashMap<>();
         for (Route route : routeSet.routes) {
             for (RouteTag tag : route.tags) {
                 if (!uniqueTags.containsKey(tag.getTag())) {
                     //Call getImage so that the route tag caches its image
                     tag.getImage(route.id, getApplicationContext());
-                    uniqueTags.put(tag.getTag(), tag);
+                    uniqueTags.put(tag.getTag(), new RouteTagHolder(activeTags.contains(tag.getTag()), tag));
                 }
             }
         }
         ListView listView = (ListView) findViewById(R.id.routeTagList);
-        ArrayAdapter<RouteTag> adapter = new RouteTagArrayAdapter(getApplicationContext(), new ArrayList<RouteTag>(uniqueTags.values()));
+        final ArrayAdapter<RouteTagHolder> adapter = new RouteTagArrayAdapter(getApplicationContext(), new ArrayList<RouteTagHolder>(uniqueTags.values()));
         listView.setAdapter(adapter);
+
+
+        Button closeWithoutSave = (Button) findViewById(R.id.routeTagCloseWithoutSave);
+        Button closeWithSave = (Button) findViewById(R.id.routeTagCloseWithSave);
+
+        closeWithoutSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RETURN_NOSAVE);
+                finish();
+            }
+        });
+
+        closeWithSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HashSet<String> activeTags = new HashSet<>();
+                for (int i = 0; i < adapter.getCount(); i++) {
+                    RouteTagHolder tagHolder = adapter.getItem(i);
+                    if (tagHolder.isSelected) {
+                        activeTags.add(tagHolder.getRouteTag().getTag());
+                    }
+                }
+                Intent intent = new Intent();
+                intent.putExtra("activeTags", activeTags);
+                setResult(RETURN_SAVE, intent);
+                finish();
+            }
+        });
     }
 
     private static class RouteTagViewHolder {
@@ -80,18 +116,41 @@ public class RouteFilterActivity extends Activity {
         }
     }
 
-    private static class RouteTagArrayAdapter extends ArrayAdapter<RouteTag> {
+    private static class RouteTagHolder {
+        private boolean isSelected;
+        private RouteTag routeTag;
+
+        public RouteTagHolder(boolean isSelected, RouteTag routeTag) {
+            this.isSelected = isSelected;
+            this.routeTag = routeTag;
+        }
+
+        public boolean isSelected() {
+            return isSelected;
+        }
+
+        public void setSelected(boolean isSelected) {
+            this.isSelected = isSelected;
+        }
+
+        public RouteTag getRouteTag() {
+            return routeTag;
+        }
+    }
+
+    private static class RouteTagArrayAdapter extends ArrayAdapter<RouteTagHolder> {
 
         private LayoutInflater inflater;
 
-        public RouteTagArrayAdapter(Context context, List<RouteTag> tags) {
+        public RouteTagArrayAdapter(Context context, List<RouteTagHolder> tags) {
             super(context, R.layout.activity_route_filter_row, tags);
             inflater = LayoutInflater.from(context);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            RouteTag tag = this.getItem(position);
+            RouteTagHolder tagHolder = this.getItem(position);
+            RouteTag tag = tagHolder.getRouteTag();
 
             CheckBox checkBox;
             TextView textView;
@@ -108,20 +167,21 @@ public class RouteFilterActivity extends Activity {
                 checkBox.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         CheckBox cb = (CheckBox) v;
-                        RouteTag tag = (RouteTag) v.getTag();
-                        Log.i("routes", tag.getTag());
+                        RouteTagHolder tagHolder = (RouteTagHolder) v.getTag();
+                        tagHolder.setSelected(cb.isChecked());
                     }
                 });
-            }
-            else {
+            } else {
                 RouteTagViewHolder viewHolder = (RouteTagViewHolder) convertView.getTag();
                 checkBox = viewHolder.getCheckBox();
                 textView = viewHolder.getTextView();
                 imageView = viewHolder.getImageView();
             }
-            checkBox.setTag(tag);
+            checkBox.setTag(tagHolder);
 
             checkBox.setText(tag.getName());
+            //We start with checked checkboxes
+            checkBox.setChecked(tagHolder.isSelected());
             imageView.setImageDrawable(tag.getImage());
 
             return convertView;
