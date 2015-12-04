@@ -6,6 +6,7 @@ import de.upb.hip.mobile.helpers.*;
 import de.upb.hip.mobile.listeners.*;
 import de.upb.hip.mobile.models.*;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
@@ -73,15 +74,9 @@ public class RouteActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_route_filter:
                 Log.i("routes", "Selected filter");
-                LayoutInflater layoutInflater
-                        = (LayoutInflater) getBaseContext()
-                        .getSystemService(LAYOUT_INFLATER_SERVICE);
-                View popupView = layoutInflater.inflate(R.layout.activity_route_filter_popup, null);
-                final FilterPopupWindow popupWindow = new FilterPopupWindow(
-                        popupView,
-                        ViewGroup.LayoutParams.FILL_PARENT,
-                        ViewGroup.LayoutParams.FILL_PARENT, "test");
-                popupWindow.showAtLocation(this.findViewById(R.id.recycler_view_route), Gravity.CENTER, 0, 0);
+                Intent intent = new Intent(getApplicationContext(), RouteFilterActivity.class);
+                intent.putExtra("routeSet", routeSet);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

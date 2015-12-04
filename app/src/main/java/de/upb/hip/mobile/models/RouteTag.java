@@ -11,17 +11,20 @@ import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.io.Serializable;
+
 import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
  * Represents a tag for a route
  */
-public class RouteTag {
+public class RouteTag implements Serializable {
 
     private String tag;
     private String name;
+    //Do not try to serialize the image
     @JsonIgnore
-    private Drawable image;
+    transient private Drawable image;
     private String imageFilename;
 
     public RouteTag(String tag, String name, String imageFilename) {
@@ -43,7 +46,7 @@ public class RouteTag {
     }*/
 
     public Drawable getImage(int documentId, Context ctx) {
-        if(image != null){
+        if (image != null) {
             return image;
         }
         Attachment att = DBAdapter.getAttachment(documentId, imageFilename);
@@ -58,7 +61,7 @@ public class RouteTag {
         return image;
     }
 
-    public String getImageFilename(){
+    public String getImageFilename() {
         return imageFilename;
     }
 

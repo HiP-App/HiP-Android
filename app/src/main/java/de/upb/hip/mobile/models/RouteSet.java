@@ -2,13 +2,14 @@ package de.upb.hip.mobile.models;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class RouteSet {
+public class RouteSet implements Serializable{
 
     public List<Route> routes = new ArrayList<>();
 

@@ -3,10 +3,11 @@ package de.upb.hip.mobile.models;
 import com.couchbase.lite.Document;
 import com.google.android.gms.internal.im;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Route {
+public class Route implements Serializable{
 
     public int id;
     public String title;
