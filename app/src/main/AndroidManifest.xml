@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.upb.hip.mobile.activities" >
+    package="de.upb.hip.mobile.activities">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -17,7 +17,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -27,29 +27,34 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".DetailsActivity"
             android:label="@string/title_activity_main"
-            android:parentActivityName=".MainActivity" >
-        </activity>
+            android:parentActivityName=".MainActivity"></activity>
         <activity
             android:name=".FilterActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme" >
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".DisplaySingleImageActivity"
             android:label="@string/title_activity_display_single_image" >
         </activity>
+
         <activity
             android:name=".RouteActivity"
-            android:label="@string/title_activity_route" >
+            android:label="@string/title_activity_route"
+            android:theme="@style/AppTheme.WithActionBar">
+        </activity>
+        <activity
+            android:name=".RouteFilterActivity"
+            android:theme="@style/AppTheme">>
         </activity>
     </application>
 

@@ -136,7 +136,12 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), -1));
         waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
         waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints);
+
+        List<RouteTag> ringrouteTags = new LinkedList<>();
+        ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
+        ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
+
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(new LatLng(51.718590, 8.752206), 5));
@@ -145,20 +150,28 @@ public class DBAdapter {
         waypoints.add(new Waypoint(new LatLng(51.718969, 8.758472), 6));
         waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), -1));
         waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), -1));
-        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints);
+
+        List<RouteTag> stadtrouteTags = new LinkedList<>();
+        stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
+
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, stadtrouteTags, "route_stadt.jpg");
     }
 
 
     /* adds an image from R.drawable to the document defined by document_id in local database */
     private void addImage(int image_number, int document_id) {
         InputStream image = context.getResources().openRawResource(+image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
+        addAttachment(document_id, "image.jpg", "image/jpeg", image);
+    }
+
+    public void addAttachment(int document_id, String filename, String mimeType, InputStream attachment){
         Document doc = database.getDocument(String.valueOf(document_id));
         UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
-        newRev.setAttachment("image.jpg", "image/jpeg", image);
+        newRev.setAttachment(filename, mimeType, attachment);
         try {
             newRev.save();
         } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error attaching image", e);
+            Log.e(TAG, "Error attaching resource " + filename + " to document " + document_id, e);
         }
     }
 
@@ -349,7 +362,7 @@ public class DBAdapter {
 
 
     /* insert a route in the database */
-    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints) {
+    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<RouteTag> tags, String imageName) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
@@ -357,6 +370,9 @@ public class DBAdapter {
         properties.put("title", title);
         properties.put("description", description);
         properties.put("waypoints", waypoints);
+        properties.put("duration", duration);
+        properties.put("tags", tags);
+        properties.put("imageName", imageName);
         properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
 
         try {
@@ -366,14 +382,39 @@ public class DBAdapter {
             Log.e(TAG, "Error putting properties", e);
         }
 
+        //Add images for route tags as attachment
+        for(RouteTag tag: tags){
+            final int resId =  context.getResources().getIdentifier(tag.getImageFilename(), "drawable", context.getPackageName());
+            if(resId != 0){
+                InputStream ress = context.getResources().openRawResource(+resId);
+                addAttachment(id, tag.getImageFilename(), "image/jpeg", ress);
+            } else {
+                Log.e("routes", "Could not load image tag resource for route " + id);
+            }
+        }
+
+        //Add route image as attachment
+        //Use only the part before "." for the filename when accessing the Android resource
+        final int resId = context.getResources().getIdentifier(imageName.split("\\.")[0], "drawable", context.getPackageName());
+        if(resId != 0){
+            InputStream ress = context.getResources().openRawResource(+resId);
+            addAttachment(id, imageName, "image/png", ress);
+        } else {
+            Log.e("routes", "Could not load image resource for route " + id);
+        }
+    }
+
+    public static Attachment getAttachment(int documentId, String filename){
+        Document doc = database.getDocument(String.valueOf(documentId));
+        Revision rev = doc.getCurrentRevision();
+        Attachment attachment = rev.getAttachment(filename);
+        return attachment;
     }
 
 
     /* returns an image from the database */
     public static Drawable getImage(int id) {
-        Document doc = database.getDocument(String.valueOf(id));
-        Revision rev = doc.getCurrentRevision();
-        Attachment att = rev.getAttachment("image.jpg");
+        Attachment att = getAttachment(id, "image.jpg");
         Drawable d = null;
         if (att != null) {
             try {
@@ -412,9 +453,7 @@ public class DBAdapter {
 
     /* returns an image from the database */
     public static Drawable getImage(int id, int required_size) {
-        Document doc = database.getDocument(String.valueOf(id));
-        Revision rev = doc.getCurrentRevision();
-        Attachment att = rev.getAttachment("image.jpg");
+        Attachment att = getAttachment(id, "image.jpg");
         Drawable d = null;
         if (att != null) {
             try {
@@ -464,7 +503,6 @@ public class DBAdapter {
                 QueryRow row = enumerator.next();
 
                 Map<String, Object> properties = getDatabaseInstance().getDocument(row.getDocumentId()).getProperties();
-
                 result.add(properties);
             }
         } catch (CouchbaseLiteException e) {

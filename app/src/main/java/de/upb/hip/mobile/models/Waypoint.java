@@ -8,8 +8,10 @@ import de.upb.hip.mobile.models.*;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 
-public class Waypoint {
+
+public class Waypoint implements Serializable{
 
     public LatLng latlng;
     public int exhibit_id;
