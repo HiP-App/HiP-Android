@@ -15,5 +15,10 @@
         <item quantity="one">%d Minute</item>
         <item quantity="other">%d Minuten</item>
     </plurals>
+    <string name="title_activity_route_details">RouteDetailsActivity</string>
+    <string name="route_activity_details_start">Tour beginnen</string>
+    <string name="route_activity_duration">Dauer</string>
+    <string name="route_activity_description">Beschreibung</string>
+    <string name="route_activity_title">Titel</string>
 
 </resources>
