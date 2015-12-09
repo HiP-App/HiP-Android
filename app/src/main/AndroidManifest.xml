@@ -44,7 +44,7 @@
             android:theme="@style/AppTheme" >
         </activity>
         <activity
-            android:name=".DisplaySingleImage"
+            android:name=".DisplaySingleImageActivity"
             android:label="@string/title_activity_display_single_image" >
         </activity>
         <activity

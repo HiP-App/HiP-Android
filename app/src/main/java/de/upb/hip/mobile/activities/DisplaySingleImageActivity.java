@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.couchbase.lite.Document;
 
 
-public class DisplaySingleImage extends ActionBarActivity {
+public class DisplaySingleImageActivity extends ActionBarActivity {
 
     private DBAdapter database;
 
