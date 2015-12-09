@@ -72,7 +72,6 @@ public class RouteDetailsActivity extends Activity {
         } catch (CouchbaseLiteException e) {
             Log.e("routes", e.toString());
         }
-        Log.i("routes", route.waypoints == null ? "null" : "# of waypoints: " + route.waypoints.size());
         if (route.waypoints != null) {
             List<LatLng> waypointList = new LinkedList<>();
             for (Waypoint waypoint : route.waypoints) {

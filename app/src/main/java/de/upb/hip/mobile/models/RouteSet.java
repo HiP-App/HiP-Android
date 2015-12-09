@@ -43,7 +43,6 @@ public class RouteSet implements Serializable {
                 }
                 //Make sure the DB actually contains these keys
                 if(!map.containsKey("latitude") || !map.containsKey("longitude") || !map.containsKey("exhibit_id")){
-                    Log.i("routes", "Skipping waypoint adding for route ");
                     continue;
                 }
                 double latitude = (Double) map.get("latitude");
