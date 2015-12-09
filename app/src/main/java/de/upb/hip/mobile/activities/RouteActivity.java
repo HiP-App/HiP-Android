@@ -24,7 +24,7 @@ import java.io.Console;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RouteActivity extends ActionBarActivity {
+public class RouteActivity extends ActionBarActivity implements RouteRecyclerAdapter.RouteSelectedListener{
 
     private DBAdapter database;
     private RouteSet routeSet;
@@ -65,8 +65,10 @@ public class RouteActivity extends ActionBarActivity {
         //routeSet = new RouteSet();
 
         // specify an adapter
-        mAdapter = new RouteRecyclerAdapter(this.routeSet, getApplicationContext(), activeTags);
+        RouteRecyclerAdapter adapter = new RouteRecyclerAdapter(this.routeSet, getApplicationContext(), activeTags);
+        mAdapter = adapter;
         mRecyclerView.setAdapter(mAdapter);
+        adapter.registerRouteSelectedListener(this);
     }
 
     @Override
@@ -111,4 +113,8 @@ public class RouteActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    public void onRouteSelected(Route route) {
+        Log.i("routes", route.title);
+    }
 }

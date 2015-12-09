@@ -36,6 +36,9 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
 
     private final Set<String> activeTags;
 
+    private List<RouteSelectedListener> routeSelectedListeners = new LinkedList<>();
+
+
     // Provide a suitable constructor (depends on the kind of dataset)
     public RouteRecyclerAdapter(RouteSet routeSet, Context context, Set<String> activeTags) {
         this.routeSet = routeSet;
@@ -61,7 +64,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public View mView;
         public ImageView mImage;
@@ -78,6 +81,12 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
             this.mDescription = (TextView) v.findViewById(R.id.text_description);
             this.mDuration = (TextView) v.findViewById(R.id.text_duration);
             this.mTagsLayout = (LinearLayout) v.findViewById(R.id.tags_layout);
+            mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    notifyRouteSelectedListeners(routeSet.getRouteById(v.getId()));
+                }
+            });
         }
     }
 
@@ -95,8 +104,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Route route = getFilteredRoutes().getRoute(position);
-
+        Route route = getFilteredRoutes().getRouteByPosition(position);
         holder.mTitle.setText(route.title);
         String description;
         if (route.description.length() > 32)
@@ -147,5 +155,23 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         RouteSet set = new RouteSet();
         set.setRoutes(result);
         return set;
+    }
+
+    public void registerRouteSelectedListener(RouteSelectedListener listener){
+        routeSelectedListeners.add(listener);
+    }
+
+    public void removeRouteSelectedListener(RouteSelectedListener listener){
+        routeSelectedListeners.remove(listener);
+    }
+
+    private void notifyRouteSelectedListeners(Route route){
+        for(RouteSelectedListener listener: routeSelectedListeners){
+            listener.onRouteSelected(route);
+        }
+    }
+
+    public interface RouteSelectedListener{
+        public void onRouteSelected(Route route);
     }
 }

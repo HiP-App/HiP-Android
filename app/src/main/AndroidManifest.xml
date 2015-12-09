@@ -43,7 +43,12 @@
         <activity
             android:name=".RouteActivity"
             android:label="@string/title_activity_route"
-            android:theme="@style/AppTheme.WithActionBar"></activity>
+            android:theme="@style/AppTheme.WithActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".RouteFilterActivity"
             android:theme="@style/AppTheme">
@@ -56,10 +61,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.upb.hip.mobile.activities.RouteActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

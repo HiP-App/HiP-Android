@@ -46,8 +46,17 @@ public class RouteSet implements Serializable {
     }
 
 
-    public Route getRoute(int position) {
+    public Route getRouteByPosition(int position) {
         return routes.get(position);
+    }
+
+    public Route getRouteById(int id) {
+        for (Route route : routes) {
+            if (route.id == id) {
+                return route;
+            }
+        }
+        return null;
     }
 
     public int getSize() {
