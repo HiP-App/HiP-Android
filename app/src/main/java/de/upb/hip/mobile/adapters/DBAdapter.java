@@ -128,14 +128,14 @@ public class DBAdapter {
         addImage(R.drawable.liboriuskapelle, 7);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
-        waypoints.add(new Waypoint(new LatLng(51.718178, 8.747164), -1));
-        waypoints.add(new Waypoint(new LatLng(51.722850, 8.750780), -1));
-        waypoints.add(new Waypoint(new LatLng(51.722710, 8.758365), -1));
-        waypoints.add(new Waypoint(new LatLng(51.718789, 8.762699), -1));
-        waypoints.add(new Waypoint(new LatLng(51.715745, 8.757796), -1));
-        waypoints.add(new Waypoint(new LatLng(51.715207, 8.752142), 7));
-        waypoints.add(new Waypoint(new LatLng(51.715606, 8.746552), -1));
+        waypoints.add(new Waypoint(51.715606, 8.746552, -1));
+        waypoints.add(new Waypoint(51.718178, 8.747164, -1));
+        waypoints.add(new Waypoint(51.722850, 8.750780, -1));
+        waypoints.add(new Waypoint(51.722710, 8.758365, -1));
+        waypoints.add(new Waypoint(51.718789, 8.762699, -1));
+        waypoints.add(new Waypoint(51.715745, 8.757796, -1));
+        waypoints.add(new Waypoint(51.715207, 8.752142, 7));
+        waypoints.add(new Waypoint(51.715606, 8.746552, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
         ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
@@ -144,12 +144,12 @@ public class DBAdapter {
         insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(new LatLng(51.718590, 8.752206), 5));
-        waypoints.add(new Waypoint(new LatLng(51.719128, 8.755457), 1));
-        waypoints.add(new Waypoint(new LatLng(51.719527, 8.755736), 4));
-        waypoints.add(new Waypoint(new LatLng(51.718969, 8.758472), 6));
-        waypoints.add(new Waypoint(new LatLng(51.720371, 8.761723), -1));
-        waypoints.add(new Waypoint(new LatLng(51.719454, 8.767484), -1));
+        waypoints.add(new Waypoint(51.718590, 8.752206, 5));
+        waypoints.add(new Waypoint(51.719128, 8.755457, 1));
+        waypoints.add(new Waypoint(51.719527, 8.755736, 4));
+        waypoints.add(new Waypoint(51.718969, 8.758472, 6));
+        waypoints.add(new Waypoint(51.720371, 8.761723, -1));
+        waypoints.add(new Waypoint(51.719454, 8.767484, -1));
 
         List<RouteTag> stadtrouteTags = new LinkedList<>();
         stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));

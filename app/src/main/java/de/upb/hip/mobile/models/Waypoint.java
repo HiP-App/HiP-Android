@@ -13,12 +13,14 @@ import java.io.Serializable;
 
 public class Waypoint implements Serializable{
 
-    public LatLng latlng;
+    public double latitude;
+    public double longitude;
     public int exhibit_id;
 
 
-    public Waypoint(LatLng latlng, int exhibit_id) {
-        this.latlng = latlng;
+    public Waypoint(double latitude, double longitude, int exhibit_id) {
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.exhibit_id = exhibit_id;
     }
 }

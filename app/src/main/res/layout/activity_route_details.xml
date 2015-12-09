@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="Medium Text"
-                    android:id="@+id/activityRouteDetailsRouteDescribtion" />
+                    android:id="@+id/activityRouteDetailsRouteDescription" />
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -71,7 +71,7 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/activityRouteDetailsRouteTagsLabel"></LinearLayout>
+                    android:id="@+id/activityRouteDetailsRouteTagsLayout"></LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

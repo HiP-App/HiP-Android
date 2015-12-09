@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class RouteSet implements Serializable {
 
@@ -24,7 +25,8 @@ public class RouteSet implements Serializable {
             int id = Integer.valueOf((String) properties.get("_id"));
             String title = (String) properties.get("title");
             String description = (String) properties.get("description");
-            ArrayList<Waypoint> waypoints = (ArrayList<Waypoint>) properties.get("waypoints");
+            ArrayList<Map<String, Object>> waypoints = (ArrayList<Map<String, Object>>) properties.get("waypoints");
+           // Map waypoints = (Map) properties.get("waypoints");
             int duration = (Integer) properties.get("duration");
 
             //Need to deserialize tags manually since CouchDB doesn't seem to do it automatically
@@ -34,8 +36,24 @@ public class RouteSet implements Serializable {
                 tags.add(new RouteTag(tagMap.get("tag"), tagMap.get("name"), tagMap.get("imageFilename")));
             }
 
+            ArrayList<Waypoint> waypointsDeserialized = new ArrayList<>();
+            for(Map<String, Object> map: waypoints){
+                for(String key: map.keySet()){
+                    Log.i("routes", key + ": " + map.get(key).toString());
+                }
+                //Make sure the DB actually contains these keys
+                if(!map.containsKey("latitude") || !map.containsKey("longitude") || !map.containsKey("exhibit_id")){
+                    Log.i("routes", "Skipping waypoint adding for route ");
+                    continue;
+                }
+                double latitude = (Double) map.get("latitude");
+                double longitude = (Double) map.get("longitude");
+                int exhibit_id = (Integer) map.get("exhibit_id");
+                waypointsDeserialized.add(new Waypoint(latitude, longitude, exhibit_id));
+            }
+
             String imageName = (String) properties.get("imageName");
-            Route route = new Route(id, title, description, waypoints, duration, tags, imageName);
+            Route route = new Route(id, title, description, waypointsDeserialized, duration, tags, imageName);
 
             routes.add(route);
         }

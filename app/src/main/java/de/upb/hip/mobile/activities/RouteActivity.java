@@ -115,6 +115,8 @@ public class RouteActivity extends ActionBarActivity implements RouteRecyclerAda
 
     @Override
     public void onRouteSelected(Route route) {
-        Log.i("routes", route.title);
+        Intent intent = new Intent(getApplicationContext(), RouteDetailsActivity.class);
+        intent.putExtra("route", route);
+        startActivity(intent);
     }
 }
