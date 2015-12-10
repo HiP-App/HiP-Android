@@ -63,6 +63,7 @@ public class RouteDetailsActivity extends Activity {
             }
         }
 
+
         //Add image
         Attachment att = DBAdapter.getAttachment(route.id, route.imageName);
         try {
@@ -72,6 +73,8 @@ public class RouteDetailsActivity extends Activity {
         } catch (CouchbaseLiteException e) {
             Log.e("routes", e.toString());
         }
+
+        DBAdapter db = new DBAdapter(this);
         if (route.waypoints != null) {
             List<LatLng> waypointList = new LinkedList<>();
             for (Waypoint waypoint : route.waypoints) {
@@ -79,7 +82,9 @@ public class RouteDetailsActivity extends Activity {
                 waypointList.add(latLng);
                 MarkerOptions marker = new MarkerOptions();
                 marker.position(latLng);
-                marker.title("Test");
+                if(waypoint.exhibit_id != -1){
+                    marker.title(waypoint.getExhibit(db).name);
+                }
                 map.getMap().addMarker(marker);
             }
             PolylineOptions routePolyLine = new PolylineOptions().addAll(waypointList);
