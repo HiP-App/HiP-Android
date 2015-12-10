@@ -113,7 +113,7 @@ public class RouteDetailsActivity extends Activity {
             map.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
                 public void onMapLoaded() {
-                    map.getMap().moveCamera(cu);
+                    map.getMap().animateCamera(cu);
                 }
             });
 
