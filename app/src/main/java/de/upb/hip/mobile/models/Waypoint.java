@@ -23,4 +23,8 @@ public class Waypoint implements Serializable{
         this.longitude = longitude;
         this.exhibit_id = exhibit_id;
     }
+
+    public Exhibit getExhibit(DBAdapter db){
+        return new Exhibit(db.getDocument(exhibit_id));
+    }
 }
