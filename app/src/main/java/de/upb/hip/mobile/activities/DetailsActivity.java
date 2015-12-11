@@ -1,16 +1,9 @@
 package de.upb.hip.mobile.activities;
 
-import de.upb.hip.mobile.activities.*;
 import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
 import de.upb.hip.mobile.models.*;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,16 +11,10 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
 import android.transition.Transition;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewOutlineProvider;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.couchbase.lite.Document;
 
@@ -167,7 +154,7 @@ public class DetailsActivity extends ActionBarActivity {
     }
 
     public void onClick_imageViewDetail(View view) {
-        Intent intent = new Intent(this, DisplaySingleImage.class);
+        Intent intent = new Intent(this, DisplaySingleImageActivity.class);
         intent.putExtra("exhibit-id", exhibitId);
         startActivity(intent);
     }

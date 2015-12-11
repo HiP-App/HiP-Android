@@ -512,7 +512,7 @@ public class DBAdapter {
     }
 
 
-    /* gets one row (specified by id) from database */
+    /* gets one row_main (specified by id) from database */
     public Document getDocument(int id) {
         return getDatabaseInstance().getDocument(String.valueOf(id));
     }

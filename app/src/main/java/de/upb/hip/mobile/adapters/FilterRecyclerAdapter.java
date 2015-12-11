@@ -1,10 +1,6 @@
 package de.upb.hip.mobile.adapters;
 
 import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,7 +34,7 @@ public class FilterRecyclerAdapter extends RecyclerView.Adapter<FilterRecyclerAd
 
     @Override
     public FilterRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.filter_row, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_filter, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }

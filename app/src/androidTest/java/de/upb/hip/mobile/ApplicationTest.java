@@ -1,4 +1,4 @@
-package com.example.timo.hip;
+package de.upb.hip.mobile;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

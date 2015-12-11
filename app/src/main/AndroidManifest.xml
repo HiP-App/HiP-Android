@@ -28,6 +28,10 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".DetailsActivity"
@@ -38,16 +42,14 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".DisplaySingleImage"
-            android:label="@string/title_activity_display_single_image" />
+            android:name=".DisplaySingleImageActivity"
+            android:label="@string/title_activity_display_single_image" >
+        </activity>
+
         <activity
             android:name=".RouteActivity"
             android:label="@string/title_activity_route"
             android:theme="@style/AppTheme.WithActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".RouteFilterActivity"
