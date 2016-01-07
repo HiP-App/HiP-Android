@@ -11,6 +11,7 @@ import android.animation.ValueAnimator;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
@@ -18,6 +19,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -25,12 +27,16 @@ import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -80,6 +86,12 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private RecyclerView.Adapter mFilterAdapter;
     private RecyclerView.LayoutManager mFilterLayoutManager;
 
+    //Navigation Drawer
+    private ListView mNavigationDrawerList;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private String[] array = {"Title 1", "Title 2", "Title 3"};
+
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
 
@@ -123,6 +135,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this));
 
+        /*
         mFilterRecyclerView = (RecyclerView) findViewById(R.id.filter_recycler_view);
         mFilterRecyclerView.setHasFixedSize(true);
         mFilterLayoutManager = new LinearLayoutManager(this);
@@ -132,7 +145,36 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mFilterAdapter = new FilterRecyclerAdapter(categories, this.activeFilter);
         mFilterRecyclerView.setAdapter(mFilterAdapter);
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
+        */
 
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationDrawerList = (ListView) findViewById(R.id.navigation_drawer);
+        mNavigationDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.navigation_drawer_list_item, array));
+        mNavigationDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+
+        // ActionBarDrawerToggle ties together the the proper interactions
+        // between the sliding drawer and the action bar app icon
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+        ) {
+            public void onDrawerClosed(View view) {
+//                getSupportActionBar().setTitle(R.string.app_name);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+//                getSupportActionBar().setTitle(R.string.app_name);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -272,5 +314,38 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    /* The click listner for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mNavigationDrawerList.setItemChecked(position, true);
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        // ActionBarDrawerToggle will take care of this.
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
