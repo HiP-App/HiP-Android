@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,21 +53,15 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
         Drawable d = DBAdapter.getImage(exhibitId);
         mImageView.setImageDrawable(d);
 
-        // Set ActionBar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            Document document = database.getDocument(exhibitId);
-            Exhibit exhibit = new Exhibit(document);
 
-            toolbar.setTitle(exhibit.name);
-
-            setSupportActionBar(toolbar);
-        }
+//        Document document = database.getDocument(exhibitId);
+//        Exhibit exhibit = new Exhibit(document);
 
         // Set back button on actionbar
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+//            actionBar.setTitle(exhibit.name);
         }
     }
 

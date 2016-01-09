@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,17 +71,18 @@ public class DetailsActivity extends ActionBarActivity {
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
         txtDescription.setText(exhibit.description);
 
-        // Set ActionBar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(exhibit.name);
-            setSupportActionBar(toolbar);
-        }
+//        // Set ActionBar
+//        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        if (toolbar != null) {
+//            toolbar.setTitle(exhibit.name);
+//            setSupportActionBar(toolbar);
+//        }
 
         // Set back button on actionbar
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(exhibit.name);
         }
 
         //ImageButton fab = (ImageButton) findViewById(R.id.fab);

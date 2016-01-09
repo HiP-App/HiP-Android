@@ -26,7 +26,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.transition.Explode;
@@ -61,7 +60,7 @@ import com.google.maps.android.SphericalUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
 
@@ -86,11 +85,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private RecyclerView.Adapter mFilterAdapter;
     private RecyclerView.LayoutManager mFilterLayoutManager;
 
-    //Navigation Drawer
-    private ListView mNavigationDrawerList;
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
-    private String[] array = {"Title 1", "Title 2", "Title 3"};
 
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
@@ -110,14 +105,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, new ExtendedLocationListener(this));
 
         setUpMapIfNeeded();
-
-        // Set ActionBar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
-            //toolbar.inflateMenu(R.menu.menu_main);
-            setSupportActionBar(toolbar);
-        }
 
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -147,34 +134,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
         */
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationDrawerList = (ListView) findViewById(R.id.navigation_drawer);
-        mNavigationDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.navigation_drawer_list_item, array));
-        mNavigationDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-
-        // ActionBarDrawerToggle ties together the the proper interactions
-        // between the sliding drawer and the action bar app icon
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */
-        ) {
-            public void onDrawerClosed(View view) {
-//                getSupportActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            public void onDrawerOpened(View drawerView) {
-//                getSupportActionBar().setTitle(R.string.app_name);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        //setUp navigation drawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_mainActivity);
+        super.setUpNavigationDrawer(this, mDrawerLayout);
 
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
@@ -314,38 +276,5 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-    }
-
-    /* The click listner for ListView in the navigation drawer */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mNavigationDrawerList.setItemChecked(position, true);
-        }
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // The action bar home/up action should open or close the drawer.
-        // ActionBarDrawerToggle will take care of this.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

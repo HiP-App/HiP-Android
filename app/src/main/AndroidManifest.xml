@@ -27,7 +27,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.WithActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,6 +37,7 @@
         <activity
             android:name=".DetailsActivity"
             android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.WithActionBar"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".FilterActivity"
@@ -43,7 +45,8 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DisplaySingleImageActivity"
-            android:label="@string/title_activity_display_single_image" >
+            android:label="@string/title_activity_display_single_image"
+            android:theme="@style/AppTheme.WithActionBar">
         </activity>
 
         <activity
