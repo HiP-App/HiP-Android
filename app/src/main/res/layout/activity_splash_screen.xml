@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Historisches Paderborn wird geladen."
+        android:text="@string/splash_screen_loading"
         android:id="@+id/textView_action"
         android:textSize="22dp"
         android:textIsSelectable="false"
@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Einen Moment bitte..."
+        android:text="@string/splash_screen_waiting"
         android:id="@+id/textView_waiting"
         android:textColor="#000000"
         android:autoText="false"
@@ -28,5 +28,23 @@
         android:textSize="15dp"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center" />
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/splash_screen_retry"
+        android:id="@+id/button_retry"
+        android:layout_gravity="center"
+        android:layout_marginTop="75dp"
+        android:onClick="onclick_retry"
+        android:visibility="gone" />
 
 </LinearLayout>
