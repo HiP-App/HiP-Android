@@ -28,7 +28,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.WithActionBar">
+            android:theme="@style/AppTheme.WithActionBar"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -52,7 +53,8 @@
         <activity
             android:name=".RouteActivity"
             android:label="@string/title_activity_route"
-            android:theme="@style/AppTheme.WithActionBar">
+            android:theme="@style/AppTheme.WithActionBar"
+            android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".RouteFilterActivity"

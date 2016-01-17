@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/navdrawer_selector"
     android:padding="6dip" >
     <ImageView
         android:id="@+id/navigation_drawer_item_icon"
@@ -15,7 +16,6 @@
 
     <TextView
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:background="?android:attr/activatedBackgroundIndicator"
         android:textColor="@color/textColorPrimaryInverse"
         android:paddingRight="16dp"
         android:paddingLeft="16dp"
@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/navigation_drawer_item_text"
-        xmlns:android="http://schemas.android.com/apk/res/android"/>
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    </TextView>
 
 </LinearLayout>

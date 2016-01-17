@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         */
 
         //setUp navigation drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_mainActivity);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         super.setUpNavigationDrawer(this, mDrawerLayout);
 
         //swipe_container

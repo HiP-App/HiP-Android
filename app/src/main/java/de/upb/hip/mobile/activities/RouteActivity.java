@@ -74,7 +74,7 @@ public class RouteActivity extends BaseActivity implements RouteRecyclerAdapter.
         adapter.registerRouteSelectedListener(this);
 
         //setUp navigation drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_routeActivity);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         super.setUpNavigationDrawer(this, mDrawerLayout);
     }
 
