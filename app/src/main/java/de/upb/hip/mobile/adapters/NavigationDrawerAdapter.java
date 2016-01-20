@@ -91,6 +91,6 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     private String[] mDescriptions =
             {
                     "Übersicht",
-                    "Routen Navigation"
+                    "Routen"
             };
 }
