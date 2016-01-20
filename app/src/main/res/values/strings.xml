@@ -21,6 +21,13 @@
     <string name="route_activity_description">Beschreibung</string>
     <string name="route_activity_title">Titel</string>
 
+    <string name="splash_screen_loading">Historisches Paderborn wird geladen.</string>
+    <string name="splash_screen_waiting">Einen Moment bitte…</string>
+    <string name="splash_screen_retry">Erneut versuchen</string>
+    <string name="splash_screen_no_connection">Keine Internetverbindung.</string>
+    <string name="splash_screen_no_connection_error_message">Bitte stellen Sie sicher, dass Sie über eine aktive Internetverbindung verfügen.</string>
+    <string name="splash_screen_check_connection">Prüfe Internetverbindung.</string>
+
     <string name="drawer_open">Öffne Navigation</string>
     <string name="drawer_close">Schließ Navigation</string>
 

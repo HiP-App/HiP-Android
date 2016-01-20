@@ -77,7 +77,7 @@ public class DBAdapter {
     public static final String DB_NAME = "hip"; // local database name
     private Manager manager = null; // local database manager
     private static Database database = null; // local database
-    private static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
+    public static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
     private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
     private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
 
@@ -515,6 +515,11 @@ public class DBAdapter {
     /* gets one row_main (specified by id) from database */
     public Document getDocument(int id) {
         return getDatabaseInstance().getDocument(String.valueOf(id));
+    }
+
+    /* gets the total count of data in the local database */
+    public int getDocumentCount() {
+        return getDatabaseInstance().getDocumentCount();
     }
 
 
