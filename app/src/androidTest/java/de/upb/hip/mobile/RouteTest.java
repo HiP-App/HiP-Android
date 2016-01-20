@@ -62,15 +62,15 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
         ArrayList<Waypoint> wp = new ArrayList<Waypoint>();
         List<RouteTag> rt = new LinkedList<RouteTag>();
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
-        wp.add(new Waypoint(new LatLng(51.718953, 8.75583), 127));
+        wp.add(new Waypoint(51.718953, 8.75583, 127));
         Route r = new Route(/*rs.getSize()*/127, "new route without description",
                 "", wp, 1, rt, "route_stadt");
         Route r2 = new Route(/*rs.getSize()*/127, "new route with null description",
                 null, wp, 1, rt, "route_stadt");
         rs.addRoute(r);
         rs.addRoute(r2);
-        assertEquals(rs.getRoute(rs.getSize() - 1).id, TEST_ID);
-        assertEquals(rs.getRoute(rs.getSize() - 2).id, TEST_ID);
+        assertEquals(rs.getRouteById(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteById(rs.getSize() - 2).id, TEST_ID);
     }
 
     public void testMissingTitle()
@@ -79,14 +79,14 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
         ArrayList<Waypoint> wp = new ArrayList<Waypoint>();
         List<RouteTag> rt = new LinkedList<RouteTag>();
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
-        wp.add(new Waypoint(new LatLng(51.718953, 8.75583), 127));
+        wp.add(new Waypoint(51.718953, 8.75583, 127));
         Route r = new Route(127, "", "this is a route without title", wp, 1, rt, "route_stadt");
         Route r2 = new Route(127, null, "this is a route without title", wp, 1, rt, "route_stadt");
 
         rs.addRoute(r);
         rs.addRoute(r2);
-        assertEquals(rs.getRoute(rs.getSize() - 1).id, TEST_ID);
-        assertEquals(rs.getRoute(rs.getSize() - 2).id, TEST_ID);
+        assertEquals(rs.getRouteById(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteById(rs.getSize() - 2).id, TEST_ID);
     }
 
     public void testMissingTag()
@@ -96,10 +96,10 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
         List<RouteTag> rt = new LinkedList<RouteTag>();
         rt.add(new RouteTag("", "testname", "route_stadt"));
         rt.add(new RouteTag(null, "testname2", "route_stadt"));
-        wp.add(new Waypoint(new LatLng(51.718953, 8.75583), 127));
+        wp.add(new Waypoint(51.718953, 8.75583, 127));
         Route r = new Route(127, "tagless route", "this is a route without tag", wp, 1, rt, "route_stadt");
 
         rs.addRoute(r);
-        assertEquals(rs.getRoute(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteById(rs.getSize() - 1).id, TEST_ID);
     }
 }
