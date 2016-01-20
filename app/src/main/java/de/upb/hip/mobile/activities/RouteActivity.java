@@ -9,6 +9,7 @@ import de.upb.hip.mobile.models.*;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +25,7 @@ import java.io.Console;
 import java.util.HashSet;
 import java.util.Set;
 
-public class RouteActivity extends ActionBarActivity implements RouteRecyclerAdapter.RouteSelectedListener{
+public class RouteActivity extends BaseActivity implements RouteRecyclerAdapter.RouteSelectedListener{
 
     private DBAdapter database;
     private RouteSet routeSet;
@@ -35,7 +36,14 @@ public class RouteActivity extends ActionBarActivity implements RouteRecyclerAda
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private DrawerLayout mDrawerLayout;
+
     public static final int ACTIVITY_FILTER_RESULT = 0;
+
+    public RouteSet getRouteSet()
+    {
+        return routeSet;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,10 @@ public class RouteActivity extends ActionBarActivity implements RouteRecyclerAda
         mAdapter = adapter;
         mRecyclerView.setAdapter(mAdapter);
         adapter.registerRouteSelectedListener(this);
+
+        //setUp navigation drawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        super.setUpNavigationDrawer(this, mDrawerLayout);
     }
 
     @Override

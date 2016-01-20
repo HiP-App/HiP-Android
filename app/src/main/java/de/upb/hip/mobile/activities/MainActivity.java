@@ -11,6 +11,7 @@ import android.animation.ValueAnimator;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.location.Criteria;
 import android.location.Location;
@@ -18,19 +19,23 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.transition.Explode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -55,7 +60,7 @@ import com.google.maps.android.SphericalUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
 
@@ -80,6 +85,8 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private RecyclerView.Adapter mFilterAdapter;
     private RecyclerView.LayoutManager mFilterLayoutManager;
 
+    private DrawerLayout mDrawerLayout;
+
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
 
@@ -99,14 +106,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         setUpMapIfNeeded();
 
-        // Set ActionBar
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setTitle(R.string.app_name);
-            //toolbar.inflateMenu(R.menu.menu_main);
-            setSupportActionBar(toolbar);
-        }
-
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -123,6 +122,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this));
 
+        /*
         mFilterRecyclerView = (RecyclerView) findViewById(R.id.filter_recycler_view);
         mFilterRecyclerView.setHasFixedSize(true);
         mFilterLayoutManager = new LinearLayoutManager(this);
@@ -132,7 +132,11 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         mFilterAdapter = new FilterRecyclerAdapter(categories, this.activeFilter);
         mFilterRecyclerView.setAdapter(mFilterAdapter);
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
+        */
 
+        //setUp navigation drawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        super.setUpNavigationDrawer(this, mDrawerLayout);
 
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);

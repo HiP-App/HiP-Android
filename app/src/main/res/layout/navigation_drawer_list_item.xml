@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/navdrawer_selector"
+    android:padding="6dip" >
+    <ImageView
+        android:id="@+id/navigation_drawer_item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="6dip"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:textColor="@color/textColorPrimaryInverse"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/navigation_drawer_item_text"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    </TextView>
+
+</LinearLayout>
