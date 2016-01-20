@@ -1,6 +1,5 @@
 package de.upb.hip.mobile.adapters;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
@@ -12,12 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.List;
-
-import de.upb.hip.mobile.activities.BaseActivity;
-import de.upb.hip.mobile.activities.MainActivity;
-import de.upb.hip.mobile.activities.R;
-import de.upb.hip.mobile.activities.RouteActivity;
+import de.upb.hip.mobile.activities.*;
 
 public class NavigationDrawerAdapter extends BaseAdapter {
 
@@ -35,12 +29,12 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mActivitys.length;
+        return mActivities.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return mActivitys[position];
+        return mActivities[position];
     }
 
     @Override
@@ -49,8 +43,8 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     }
 
     public int getId(Class activityClass){
-        for (int id = 0; id < mActivitys.length; id++ ){
-            if(mActivitys[id].equals(activityClass)){
+        for (int id = 0; id < mActivities.length; id++ ){
+            if(mActivities[id].equals(activityClass)){
                 return id;
             }
         }
@@ -71,7 +65,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(mContext, mActivitys[v.getId()]);
+                Intent intent = new Intent(mContext, mActivities[v.getId()]);
                 mDrawerLayout.closeDrawer(mNavigationDrawerList);
 
                 mContext.startActivity(intent);
@@ -88,7 +82,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                     R.drawable.ic_launcher
             };
 
-    private Class[] mActivitys =
+    private Class[] mActivities =
             {
                     MainActivity.class,
                     RouteActivity.class
@@ -96,7 +90,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
     private String[] mDescriptions =
             {
-                    "Main Activity",
-                    "Route Activity"
+                    "Übersicht",
+                    "Routen Navigation"
             };
 }
