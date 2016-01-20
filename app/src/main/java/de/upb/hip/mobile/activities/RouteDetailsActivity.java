@@ -1,12 +1,12 @@
 package de.upb.hip.mobile.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.models.Exhibit;
@@ -36,7 +35,7 @@ import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.Waypoint;
 
-public class RouteDetailsActivity extends Activity {
+public class RouteDetailsActivity extends BaseActivity {
 
     //We need to store the markers we add to the map so that we can identify them in the listener
     private Map<String, Integer> markerMap = new HashMap<>();
@@ -45,6 +44,9 @@ public class RouteDetailsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_details);
+        //setUp navigation drawer
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        super.setUpNavigationDrawer(this, mDrawerLayout);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         Route route = (Route) getIntent().getSerializableExtra("route");
         showRouteDetails(route);
@@ -96,7 +98,7 @@ public class RouteDetailsActivity extends Activity {
                 waypointList.add(latLng);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                if(waypoint.exhibit_id != -1){
+                if (waypoint.exhibit_id != -1) {
                     Exhibit exhibit = waypoint.getExhibit(db);
                     markerOptions.title(exhibit.name);
                     markerOptions.snippet(exhibit.description);
@@ -120,7 +122,7 @@ public class RouteDetailsActivity extends Activity {
             map.getMap().setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
-                    if(markerMap.containsKey(marker.getId()) && markerMap.get(marker.getId()) != -1){
+                    if (markerMap.containsKey(marker.getId()) && markerMap.get(marker.getId()) != -1) {
                         Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
                         intent.putExtra("exhibit-id", markerMap.get(marker.getId()));
                         startActivity(intent);
