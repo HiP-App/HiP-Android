@@ -154,9 +154,16 @@ public class DetailsActivity extends ActionBarActivity {
     }
 
     public void onClick_imageViewDetail(View view) {
-        Intent intent = new Intent(this, DisplaySingleImageActivity.class);
-        intent.putExtra("exhibit-id", exhibitId);
-        startActivity(intent);
+        boolean hasSlider = true;
+        if(hasSlider) {
+            Intent intent = new Intent(this, DisplayImageSliderActivity.class);
+            intent.putExtra("exhibit-id", exhibitId);
+            startActivity(intent);
+        }else{
+            Intent intent = new Intent(this, DisplaySingleImageActivity.class);
+            intent.putExtra("exhibit-id", exhibitId);
+            startActivity(intent);
+        }
     }
 
     @Override
