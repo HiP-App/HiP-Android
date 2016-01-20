@@ -37,6 +37,11 @@ public class RouteActivity extends ActionBarActivity {
 
     public static final int ACTIVITY_FILTER_RESULT = 0;
 
+    public RouteSet getRouteSet()
+    {
+        return routeSet;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -54,4 +54,8 @@ public class RouteSet implements Serializable {
         return routes.size();
     }
 
+    public void addRoute(Route r)
+    {
+        this.routes.add(r);
+    }
 }
