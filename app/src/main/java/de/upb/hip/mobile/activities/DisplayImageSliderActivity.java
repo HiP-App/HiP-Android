@@ -25,7 +25,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
     private CustomSeekBar mSeekBar;
     private boolean fontFading = true;
 
-    private List<PictureDataHelp> mPicDataList = new ArrayList<>();
+    private List<PictureData> mPicDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +36,12 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         database = new DBAdapter(this);
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        setDataShowCase();
+        setData();
 
         init();
 
-
         mTextView = (TextView) findViewById(R.id.TextView01);
+        mTextView.setText("Dies ist die Zeitachsenansicht der Kaiserfpfalz");
 
         // Set back button on actionbar
         ActionBar actionBar = getSupportActionBar();
@@ -57,10 +57,11 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
     }
 
     private void init(){
-        calcProgressSeekBarAccordingToPicDate(mPicDataList);
+        calcDotPositions(mPicDataList);
 
         mSeekBar = (CustomSeekBar)findViewById(R.id.seekBar);
-        mSeekBar.setProgress(getPicDataProgressList(mPicDataList));
+        mSeekBar.setDots(getListOfDotPositions(mPicDataList));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mSeekBar.setProgressDrawable(getResources().getDrawable(R.drawable.customseekbar, getTheme()));
         } else {
@@ -68,50 +69,46 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         }
 
         mImageViewTimeLine = (ImageView) findViewById(R.id.imageViewTimeLine);
-        mImageViewTimeLine.setImageResource(mPicDataList.get(0).picID);
+        mImageViewTimeLine.setImageResource(mPicDataList.get(0).id);
 
         if (fontFading) {
             mImageViewTimeLine2 = (ImageView) findViewById(R.id.imageViewTimeLine2);
-            mImageViewTimeLine2.setImageResource(mPicDataList.get(1).picID);
+            mImageViewTimeLine2.setImageResource(mPicDataList.get(1).id);
             mImageViewTimeLine.bringToFront();
         }
 
         TextView txtStartSeekBar = (TextView) findViewById(R.id.txtStartSeekBar);
-        txtStartSeekBar.setTextColor(Color.WHITE);
-        txtStartSeekBar.setTextSize(10);
-        txtStartSeekBar.setText(String.valueOf(mPicDataList.get(0).picYear));
+        txtStartSeekBar.setText(String.valueOf(mPicDataList.get(0).year));
 
         TextView txtEndSeekBar = (TextView) findViewById(R.id.txtEndSeekBar);
-        txtEndSeekBar.setTextColor(Color.WHITE);
-        txtEndSeekBar.setTextSize(10);
-        txtEndSeekBar.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).picYear));
+        txtEndSeekBar.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).year));
 
         txtMiddleSeekBar = (TextView) findViewById(R.id.txtMiddleSeekBar);
 
-        addSeekBarListner();
+        addSeekBarListener();
         openDatabase();
     }
 
-    private void calcProgressSeekBarAccordingToPicDate(List<PictureDataHelp> list){
+    private void calcDotPositions(List<PictureData> list){
         // set progress for the first picture
-        list.get(0).picProgress = 0;
+        list.get(0).dotPosition = 0;
 
         // set progress for other pictures
         int lSize = list.size();
         for (int i = 1; i < lSize; i++){
             if (i + 1 < lSize){
-                int progress = 100 * (list.get(i).picYear - list.get(i - 1).picYear) /
-                        (list.get(lSize - 1).picYear - list.get(0).picYear);
-                list.get(i).picProgress = (progress + list.get(i - 1).picProgress);
+                int progress = 100 * (list.get(i).year - list.get(i - 1).year) /
+                        (list.get(lSize - 1).year - list.get(0).year);
+                list.get(i).dotPosition = (progress + list.get(i - 1).dotPosition);
             }
             else{
                 // set progress for last picture
-                list.get(i).picProgress = 100;
+                list.get(i).dotPosition = 100;
             }
         }
     }
 
-    private void addSeekBarListner() {
+    private void addSeekBarListener() {
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progressStart = 0;
@@ -135,14 +132,14 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                 nextNode = result[1];
 
                 if (fontFading) {
-                    int actProgressAccordingStartNextNode = Math.abs(progresValue - mPicDataList.get(startNode).picProgress);
-                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).picProgress - mPicDataList.get(startNode).picProgress);
+                    int actProgressAccordingStartNextNode = Math.abs(progresValue - mPicDataList.get(startNode).dotPosition);
+                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).dotPosition - mPicDataList.get(startNode).dotPosition);
                     float alpha = (float) actProgressAccordingStartNextNode / differenceStartNextNode;
 
-                    mImageViewTimeLine.setImageResource(mPicDataList.get(startNode).picID);
+                    mImageViewTimeLine.setImageResource(mPicDataList.get(startNode).id);
                     mImageViewTimeLine.setAlpha(1 - alpha);
 
-                    mImageViewTimeLine2.setImageResource(mPicDataList.get(nextNode).picID);
+                    mImageViewTimeLine2.setImageResource(mPicDataList.get(nextNode).id);
                     mImageViewTimeLine2.setAlpha(alpha);
 
                     mImageViewTimeLine.bringToFront();
@@ -155,7 +152,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                 if (progresValue != 0 && progresValue != 100) {
                     int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) * seekBar.getProgress();
                     txtMiddleSeekBar.setPadding(xPos, 0, 0, 0);
-                    txtMiddleSeekBar.setText(String.valueOf(mPicDataList.get(nearest).picYear));
+                    txtMiddleSeekBar.setText(String.valueOf(mPicDataList.get(nearest).year));
 
                 } else {
                     // set empty text for first and last position
@@ -171,23 +168,23 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if (!fontFading) {
-                    seekBar.setProgress(mPicDataList.get(nearest).picProgress);
-                    mImageViewTimeLine.setImageResource(mPicDataList.get(nearest).picID);
+                    seekBar.setProgress(mPicDataList.get(nearest).dotPosition);
+                    mImageViewTimeLine.setImageResource(mPicDataList.get(nearest).id);
                 }
             }
 
             private int[] getNodes(int progressStop, boolean forward) {
                 for (int i = 0; i < mPicDataList.size(); i++) {
                     if (forward) {
-                        if ((progressStop >= mPicDataList.get(i).picProgress) &&
-                                (progressStop <= mPicDataList.get(i + 1).picProgress)) {
+                        if ((progressStop >= mPicDataList.get(i).dotPosition) &&
+                                (progressStop <= mPicDataList.get(i + 1).dotPosition)) {
                             return new int[]{i, i + 1};
                         }
                     } else {
                         if (i == 0) i = 1;
 
-                        if (progressStop <= mPicDataList.get(i).picProgress &&
-                                (progressStop >= mPicDataList.get(i - 1).picProgress)) {
+                        if (progressStop <= mPicDataList.get(i).dotPosition &&
+                                (progressStop >= mPicDataList.get(i - 1).dotPosition)) {
                             return new int[]{i, i - 1};
                         }
                     }
@@ -199,16 +196,16 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                 int min = 0, max = 0, closestNode;
 
                 for (int i = 0; i < array.length; i++) {
-                    if (mPicDataList.get(array[i]).picProgress < progress) {
+                    if (mPicDataList.get(array[i]).dotPosition < progress) {
                         if (min == 0) {
                             min = array[i];
-                        } else if (mPicDataList.get(array[i]).picProgress > mPicDataList.get(min).picProgress) {
+                        } else if (mPicDataList.get(array[i]).dotPosition > mPicDataList.get(min).dotPosition) {
                             min = array[i];
                         }
-                    } else if (mPicDataList.get(array[i]).picProgress > progress) {
+                    } else if (mPicDataList.get(array[i]).dotPosition > progress) {
                         if (max == 0) {
                             max = array[i];
-                        } else if (mPicDataList.get(array[i]).picProgress < mPicDataList.get(max).picProgress) {
+                        } else if (mPicDataList.get(array[i]).dotPosition < mPicDataList.get(max).dotPosition) {
                             max = array[i];
                         }
                     } else {
@@ -216,8 +213,8 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                     }
                 }
 
-                if (Math.abs(progress - mPicDataList.get(min).picProgress) <
-                        Math.abs(progress - mPicDataList.get(max).picProgress)) {
+                if (Math.abs(progress - mPicDataList.get(min).dotPosition) <
+                        Math.abs(progress - mPicDataList.get(max).dotPosition)) {
                     closestNode = min;
                 } else {
                     closestNode = max;
@@ -242,48 +239,33 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         database = new DBAdapter(this);
     }
 
-    // set test data to show images and calculate progress
-    private void setDataShowCase(){
-        if (fontFading){
-            //Also show Pfalz pictures here for demonstration purposes
-            mPicDataList.add(new PictureDataHelp("phasei", 776));
-            mPicDataList.add(new PictureDataHelp("phaseii", 799));
-            mPicDataList.add(new PictureDataHelp("phaseiii", 836));
-            mPicDataList.add(new PictureDataHelp("phaseiv", 900));
-            mPicDataList.add(new PictureDataHelp("phasev", 938));
-            //mPicDataList.add(new PictureDataHelp("newsweek_1949", 1949));
-            //mPicDataList.add(new PictureDataHelp("newsweek_1970", 1970));
-            //mPicDataList.add(new PictureDataHelp("newsweek_1986", 1986));
-            //mPicDataList.add(new PictureDataHelp("newsweek_2011", 2011));
-        }
-        else{
-            mPicDataList.add(new PictureDataHelp("phasei", 776));
-            mPicDataList.add(new PictureDataHelp("phaseii", 799));
-            mPicDataList.add(new PictureDataHelp("phaseiii", 836));
-            mPicDataList.add(new PictureDataHelp("phaseiv", 900));
-            mPicDataList.add(new PictureDataHelp("phasev", 938));
-        }
+    private void setData(){
+        mPicDataList.add(new PictureData("phasei", 776));
+        mPicDataList.add(new PictureData("phaseii", 799));
+        mPicDataList.add(new PictureData("phaseiii", 836));
+        mPicDataList.add(new PictureData("phaseiv", 900));
+        mPicDataList.add(new PictureData("phasev", 938));
     }
 
     // create list for setting dots on seekbar
-    private List<Integer> getPicDataProgressList(List<PictureDataHelp> list){
+    private List<Integer> getListOfDotPositions(List<PictureData> list){
         List<Integer> mPicDataProgressList = new ArrayList<>();
 
         for(int i = 0; i < list.size(); i++){
-            mPicDataProgressList.add(list.get(i).picProgress);
+            mPicDataProgressList.add(list.get(i).dotPosition);
         }
         return mPicDataProgressList;
     }
 
-    private class PictureDataHelp{
-        private int picID;
-        private int picYear;
-        private int picProgress;
+    private class PictureData {
+        private int id;
+        private int year;
+        private int dotPosition;
 
-        public PictureDataHelp(String strName, int iYear){
-            picID = getResources().getIdentifier(strName, "drawable", getPackageName());
-            picYear = iYear;
-            picProgress = 0;
+        public PictureData(String strName, int iYear){
+            id = getResources().getIdentifier(strName, "drawable", getPackageName());
+            year = iYear;
+            dotPosition = 0;
         }
 
     }

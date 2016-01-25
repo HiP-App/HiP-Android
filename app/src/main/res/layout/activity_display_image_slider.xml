@@ -9,8 +9,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:background="@color/background_material_light">
+        android:layout_weight="3">
 
         <ImageView
             android:layout_width="fill_parent"
@@ -31,7 +30,6 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_material_dark"
         android:id="@+id/layoutSeekbar">
 
         <TextView
@@ -41,8 +39,8 @@
             android:gravity="top"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="top"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textColor="@color/textColorSecondary" />
 
         <view class="de.upb.hip.mobile.helpers.CustomSeekBar"
             android:layout_width="fill_parent"
@@ -51,24 +49,29 @@
             android:minHeight="3dip"
             android:maxHeight="3dip"
             android:thumb="@drawable/thumb"
-            android:background="@color/background_material_dark"
-            android:layout_marginBottom="10dp"
             android:layout_gravity="bottom"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="14sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/txtStartSeekBar"
-            android:layout_gravity="left|bottom" />
+            android:layout_gravity="left|bottom"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="14sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/txtEndSeekBar"
-            android:layout_gravity="bottom|right" />
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="5dp"
+            android:textColor="@color/textColorSecondary" />
 
     </FrameLayout>
     <FrameLayout

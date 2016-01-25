@@ -13,10 +13,10 @@ import de.upb.hip.mobile.activities.R;
 
 public class CustomSeekBar extends SeekBar {
 
-    private Paint selected, unselected;
+    private Paint selectedColor, unselectedColor;
     private RectF position;
     private final int halfSize = 15;
-    private List<Integer> mProgressList = new ArrayList<>();
+    private List<Integer> mDotList = new ArrayList<>();
 
     public CustomSeekBar(Context context) {
         super(context);
@@ -33,20 +33,20 @@ public class CustomSeekBar extends SeekBar {
         init();
     }
 
-    public void setProgress(List<Integer> list){
+    public void setDots(List<Integer> list){
         //update the instance variable
-        mProgressList = list;
+        mDotList = list;
     }
 
     private void init(){
-        selected = new Paint(Paint.ANTI_ALIAS_FLAG);
-        selected.setColor(getResources().getColor(R.color.wallet_highlighted_text_holo_light)); //TODO
-        selected.setStyle(Paint.Style.FILL);
+        selectedColor = new Paint(Paint.ANTI_ALIAS_FLAG);
+        selectedColor.setColor(getResources().getColor(R.color.colorPrimary));
+        selectedColor.setStyle(Paint.Style.FILL);
 
-        unselected = new Paint(Paint.ANTI_ALIAS_FLAG);
-        unselected.setColor(getResources().getColor(R.color.material_blue_grey_800));//TODO
+        unselectedColor = new Paint(Paint.ANTI_ALIAS_FLAG);
+        unselectedColor.setColor(getResources().getColor(R.color.textColorSecondaryInverse));
 
-        selected.setStyle(Paint.Style.FILL);
+        selectedColor.setStyle(Paint.Style.FILL);
         position = new RectF();
     }
 
@@ -57,14 +57,14 @@ public class CustomSeekBar extends SeekBar {
         float margin     = (canvas.getWidth() - (paddingLeft + getPaddingRight()));
         float halfHeight = (canvas.getHeight() + paddingTop) *.5f;
 
-        for (int i = 0; i < mProgressList.size(); i++) {
-            int pos = (int) (margin / 100 * mProgressList.get(i));
+        for (int i = 0; i < mDotList.size(); i++) {
+            int pos = (int) (margin / 100 * mDotList.get(i));
 
             position.set(paddingLeft + pos - halfSize, halfHeight - halfSize,
                     paddingLeft + pos + halfSize, halfHeight + halfSize);
 
-            int progress = mProgressList.get(i);
-            canvas.drawOval(position, (progress < getProgress()) ? selected : unselected);
+            int progress = mDotList.get(i);
+            canvas.drawOval(position, (progress < getProgress()) ? selectedColor : unselectedColor);
         }
         super.onDraw(canvas);
     }
