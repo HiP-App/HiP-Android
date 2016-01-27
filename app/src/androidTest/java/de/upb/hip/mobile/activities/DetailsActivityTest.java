@@ -89,6 +89,6 @@ public class DetailsActivityTest extends ActivityInstrumentationTestCase2<MainAc
     /* test if the ImageViewDetail can be opened by clicking on the image */
     public void testOpenImageView() {
         onView(withId(R.id.imageViewDetail)).perform(click());
-        matchToolbarTitle("Detailansicht");
+        matchToolbarTitle(UNIPADERBORN);
     }
 }
