@@ -40,8 +40,10 @@ public class DetailsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        openDatabase();
+
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
-        mImageView.setImageDrawable(DBAdapter.getImage(1));
+        mImageView.setImageDrawable(database.getImage(1));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -57,11 +59,9 @@ public class DetailsActivity extends ActionBarActivity {
             addTransitionListener();
         }
 
-        openDatabase();
-
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        Drawable d = DBAdapter.getImage(exhibitId);
+        Drawable d = database.getImage(exhibitId);
         mImageView.setImageDrawable(d);
 
         Document document = database.getDocument(exhibitId);
@@ -114,7 +114,7 @@ public class DetailsActivity extends ActionBarActivity {
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     // As the transition has ended, we can now load the full-size image
-                    Drawable d = DBAdapter.getImage(exhibitId);
+                    Drawable d = database.getImage(exhibitId);
                     mImageView.setImageDrawable(d);
 
                     // Make sure we remove ourselves as a listener
