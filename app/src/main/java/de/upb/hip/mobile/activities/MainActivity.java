@@ -157,7 +157,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();
-        this.exhibitSet.addMarker(this.mMap);
+        this.exhibitSet.addMarker(this.mMap, getApplicationContext());
     }
 
     public void updateCategories(String categorie) {
@@ -167,7 +167,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
             this.mFilterAdapter.notifyDataSetChanged();
             this.exhibitSet.updateCategories(this.activeFilter);
             this.mAdapter.notifyDataSetChanged();
-            this.exhibitSet.addMarker(this.mMap);
+            this.exhibitSet.addMarker(this.mMap, getApplicationContext());
         }
 
     }
@@ -269,7 +269,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(this.paderborn, 12);
         mMap.animateCamera(update);
 
-        exhibitSet.addMarker(mMap);
+        exhibitSet.addMarker(mMap, getApplicationContext());
 
     }
 

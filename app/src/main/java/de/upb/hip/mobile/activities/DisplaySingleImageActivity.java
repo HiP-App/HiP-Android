@@ -1,18 +1,12 @@
 package de.upb.hip.mobile.activities;
 
-import de.upb.hip.mobile.activities.*;
 import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
+import de.upb.hip.mobile.models.Exhibit;
 
-import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,13 +29,6 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_single_image);
-        Button button = (Button) this.findViewById(R.id.Button01);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         mImageView = (ImageView) findViewById(R.id.ImageView01);
         mTextView = (TextView) findViewById(R.id.TextView01);
@@ -61,7 +48,7 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setTitle(exhibit.name);
+            actionBar.setTitle(new Exhibit(database.getDocument(exhibitId)).name);
         }
     }
 

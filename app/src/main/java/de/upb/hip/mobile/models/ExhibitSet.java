@@ -6,12 +6,21 @@ import de.upb.hip.mobile.helpers.*;
 import de.upb.hip.mobile.listeners.*;
 import de.upb.hip.mobile.models.*;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.util.Log;
 
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
@@ -165,14 +174,21 @@ public class ExhibitSet {
         return list;
     }
 
-    public void addMarker(GoogleMap mMap) {
+    public void addMarker(GoogleMap mMap, Context ctx) {
         mMap.clear();
 
         Iterator<Exhibit> iterator = activeSet.iterator();
 
         while(iterator.hasNext()) {
             Exhibit exhibit = iterator.next();
-            mMap.addMarker(new MarkerOptions().position(exhibit.latlng).title(exhibit.name));
+            Drawable d = DBAdapter.getImage(exhibit.id, 32);
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
+            Bitmap bitmap2 = bitmapDrawable.getBitmap();
+
+            ImageManipulation IM = new ImageManipulation();
+
+
+            mMap.addMarker(new MarkerOptions().position(exhibit.latlng).title(exhibit.name).icon(BitmapDescriptorFactory.fromBitmap(IM.getMarker(bitmap2, ctx))));
         }
     }
 

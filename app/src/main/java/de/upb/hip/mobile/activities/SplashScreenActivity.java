@@ -35,6 +35,9 @@ public class SplashScreenActivity extends Activity {
         progBar = (ProgressBar) findViewById(R.id.progressBar1);
         btnRetry = (Button) findViewById(R.id.button_retry);
 
+        txtAction.setGravity(Gravity.CENTER);
+        txtWaiting.setGravity(Gravity.CENTER);
+
         //Check If Internet Connection
 
         dba = new DBAdapter(this);
@@ -64,6 +67,7 @@ public class SplashScreenActivity extends Activity {
 
             txtAction.setText(getString(R.string.splash_screen_no_connection));
             txtWaiting.setText(getString(R.string.splash_screen_no_connection_error_message));
+            txtAction.setGravity(Gravity.CENTER);
             txtWaiting.setGravity(Gravity.CENTER);
             progBar.setVisibility(View.GONE);
             btnRetry.setVisibility(View.VISIBLE);
