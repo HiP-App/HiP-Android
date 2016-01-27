@@ -54,23 +54,6 @@
             android:paddingRight="20dp"
             android:scrollbars="vertical"/>
         </ScrollView>
-        <!--
-        <ImageButton
-            android:id="@+id/fab"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_width="@dimen/fab_size"
-            android:layout_height="@dimen/fab_size"
-            android:layout_gravity="bottom|right"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/ripple"
-            android:stateListAnimator="@anim/anim"
-            android:src="@drawable/ic_action_reply"
-            android:elevation="4dp"
-            android:onClick="onClick_back"
-            android:nestedScrollingEnabled="false" />
-        -->
     </FrameLayout>
 
 </LinearLayout>

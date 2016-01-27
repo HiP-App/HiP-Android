@@ -8,8 +8,8 @@ android:focusable="true">
 <FrameLayout
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="1"
+    android:layout_height="0dp"
+    android:layout_weight="3"
     android:nestedScrollingEnabled="false">
 
     <ImageView
@@ -23,8 +23,8 @@ android:focusable="true">
 
 <FrameLayout
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_weight="3">
+    android:layout_height="0dp"
+    android:layout_weight="1">
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -42,15 +42,6 @@ android:focusable="true">
             android:scrollbars="vertical"/>
 
     </ScrollView>
-
-    <Button
-        android:id="@+id/Button01"
-        android:layout_below="@id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Bildansicht schließen"
-        android:layout_gravity="center_horizontal|bottom" />
 </FrameLayout>
 
 </LinearLayout>
