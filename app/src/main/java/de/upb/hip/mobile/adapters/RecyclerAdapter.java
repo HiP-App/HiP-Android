@@ -1,9 +1,12 @@
 package de.upb.hip.mobile.adapters;
 
 import de.upb.hip.mobile.activities.*;
+import de.upb.hip.mobile.helpers.ImageManipulation;
 import de.upb.hip.mobile.models.*;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -84,7 +87,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.mDistance.setText(distance);
 
         Drawable d = DBAdapter.getImage(exhibit.id, 64);
-        holder.mImage.setImageDrawable(d);
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
+        Bitmap bmp = bitmapDrawable.getBitmap();
+        ImageManipulation IM = new ImageManipulation();
+        holder.mImage.setImageBitmap(IM.getCroppedImage(bmp, 100));
+        //holder.mImage.setImageDrawable(d);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
