@@ -59,7 +59,7 @@ dependencies {
 
     androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.0')
     {
-        // Necessary to avoid version conflicts
+        // Necessary to avoid version conflict
         exclude group: 'com.android.support', module: 'appcompat'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'support-annotations'
