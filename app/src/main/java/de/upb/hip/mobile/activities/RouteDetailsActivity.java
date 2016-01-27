@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,7 +35,7 @@ import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.Waypoint;
 
-public class RouteDetailsActivity extends BaseActivity {
+public class RouteDetailsActivity extends ActionBarActivity {
 
     //We need to store the markers we add to the map so that we can identify them in the listener
     private Map<String, Integer> markerMap = new HashMap<>();
@@ -44,10 +44,7 @@ public class RouteDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_details);
-        //setUp navigation drawer
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        super.setUpNavigationDrawer(this, mDrawerLayout);
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Route route = (Route) getIntent().getSerializableExtra("route");
         showRouteDetails(route);
     }
@@ -137,6 +134,12 @@ public class RouteDetailsActivity extends BaseActivity {
             map.getMap().addPolyline(routePolyLine);
         }
         map.getMap().setMyLocationEnabled(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
 }
