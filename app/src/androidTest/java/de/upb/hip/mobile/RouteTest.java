@@ -72,7 +72,6 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
         rs.addRoute(r2);
         assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
         assertEquals(rs.getRouteByPosition(rs.getSize() - 2).id, TEST_ID);
-        assertNotNull(wp);
     }
 
     public void testMissingTitle()
