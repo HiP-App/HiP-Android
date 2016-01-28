@@ -59,6 +59,7 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
     {       //IDs for testing: 127
 
         RouteSet rs = activity.getRouteSet();
+        assertNotNull(rs);
         ArrayList<Waypoint> wp = new ArrayList<Waypoint>();
         List<RouteTag> rt = new LinkedList<RouteTag>();
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
@@ -69,8 +70,8 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
                 null, wp, 1, rt, "route_stadt");
         rs.addRoute(r);
         rs.addRoute(r2);
-        assertEquals(rs.getRouteById(rs.getSize() - 1).id, TEST_ID);
-        assertEquals(rs.getRouteById(rs.getSize() - 2).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 2).id, TEST_ID);
     }
 
     public void testMissingTitle()
@@ -85,8 +86,8 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
 
         rs.addRoute(r);
         rs.addRoute(r2);
-        assertEquals(rs.getRouteById(rs.getSize() - 1).id, TEST_ID);
-        assertEquals(rs.getRouteById(rs.getSize() - 2).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 2).id, TEST_ID);
     }
 
     public void testMissingTag()
@@ -100,6 +101,6 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
         Route r = new Route(127, "tagless route", "this is a route without tag", wp, 1, rt, "route_stadt");
 
         rs.addRoute(r);
-        assertEquals(rs.getRouteById(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
     }
 }
