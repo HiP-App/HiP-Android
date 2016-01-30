@@ -24,6 +24,7 @@ public class Exhibit {
     public String[] categories;
     public String[] tags;
     public double distance;
+    public int sliderID;
 
     public Exhibit (Document document) {
 
@@ -35,6 +36,7 @@ public class Exhibit {
         double lng = (double)properties.get(DBAdapter.KEY_LNG);
         String categories = (String)properties.get(DBAdapter.KEY_CATEGORIES);
         String tags = (String)properties.get(DBAdapter.KEY_TAGS);
+        int sliderID = (int)properties.get(DBAdapter.KEY_SLIDER_ID);
 
         this.id = id;
         this.name = name;
@@ -42,6 +44,7 @@ public class Exhibit {
         this.latlng = new LatLng(lat, lng);
         this.categories = categories.split(",");
         this.tags = tags.split(",");
+        this.sliderID = sliderID;
     }
 
     public Exhibit (int id, String name, String description, double lat, double lng, String categories, String tags) {

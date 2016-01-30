@@ -18,6 +18,7 @@ import android.view.WindowManager;
 import android.util.Log;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.widget.ListView;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -72,6 +73,7 @@ public class DBAdapter {
     public static final String KEY_LNG = "lng";
     public static final String KEY_CATEGORIES = "categories";
     public static final String KEY_TAGS = "tags";
+    public static final String KEY_SLIDER_ID = "sliderId";
 
 
     public static final String DB_NAME = "hip"; // local database name
@@ -93,7 +95,7 @@ public class DBAdapter {
         staticcontext = ctx;
         if (database == null) {
             initDatabase(false);
-            //insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
+//            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
     }
 
@@ -112,20 +114,20 @@ public class DBAdapter {
         }
 
         /* insert text and images*/
-        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom");
-        addImage(R.drawable.dom, 1);
-        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität");
-        addImage(R.drawable.uni, 2);
-        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI");
-        addImage(R.drawable.hnf, 3);
-        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "");
-        addImage(R.drawable.pfalz, 4);
-        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "");
-        addImage(R.drawable.abdinghof, 5);
-        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "");
-        addImage(R.drawable.busdorfkirche_aussen, 6);
-        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "");
-        addImage(R.drawable.liboriuskapelle, 7);
+        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom", -1);
+        addImage(R.drawable.dom, 1, "image.jpg");
+        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", -1);
+        addImage(R.drawable.uni, 2, "image.jpg");
+        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", -1);
+        addImage(R.drawable.hnf, 3, "image.jpg");
+        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "", 201);
+        addImage(R.drawable.pfalz, 4, "image.jpg");
+        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", -1);
+        addImage(R.drawable.abdinghof, 5, "image.jpg");
+        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", -1);
+        addImage(R.drawable.busdorfkirche_aussen, 6, "image.jpg");
+        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", -1);
+        addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
@@ -155,13 +157,27 @@ public class DBAdapter {
         stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, stadtrouteTags, "route_stadt.jpg");
+
+        List<SliderImage> sliderImages = new LinkedList<>();
+        sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
+        sliderImages.add(new SliderImage(799, "Phase 2.jpg"));
+        sliderImages.add(new SliderImage(836, "Phase 3.jpg"));
+        sliderImages.add(new SliderImage(900, "Phase 4.jpg"));
+        sliderImages.add(new SliderImage(938, "Phase 5.jpg"));
+        insertSlider(201, sliderImages);
+
+        addImage(R.drawable.phasei, 201, "Phase 1.jpg");
+        addImage(R.drawable.phaseii, 201, "Phase 2.jpg");
+        addImage(R.drawable.phaseiii, 201, "Phase 3.jpg");
+        addImage(R.drawable.phaseiv, 201, "Phase 4.jpg");
+        addImage(R.drawable.phasev, 201, "Phase 5.jpg");
     }
 
 
     /* adds an image from R.drawable to the document defined by document_id in local database */
-    private void addImage(int image_number, int document_id) {
+    private void addImage(int image_number, int document_id, String imageName) {
         InputStream image = context.getResources().openRawResource(+image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
-        addAttachment(document_id, "image.jpg", "image/jpeg", image);
+        addAttachment(document_id, imageName, "image/jpeg", image);
     }
 
     public void addAttachment(int document_id, String filename, String mimeType, InputStream attachment){
@@ -337,7 +353,7 @@ public class DBAdapter {
 
 
     /* insert a exhibit in the database */
-    public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags) {
+    public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags, int sliderId) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
@@ -349,6 +365,7 @@ public class DBAdapter {
         properties.put("lat", lat);
         properties.put("lng", lng);
         properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
+        properties.put(KEY_SLIDER_ID, sliderId);
 
 
         try {
@@ -360,6 +377,22 @@ public class DBAdapter {
 
     }
 
+    public void insertSlider(int id, List<SliderImage> sliderImages){
+        Document document = database.getDocument(String.valueOf(id));
+        Map<String, Object> properties = new HashMap<>();
+
+        if(sliderImages != null && !sliderImages.isEmpty()){
+            properties.put("type", "slider");
+            properties.put("sliderImages", sliderImages);
+        }
+
+        try {
+            // Save the properties to the document
+            document.putProperties(properties);
+        } catch (CouchbaseLiteException e) {
+            Log.e(TAG, "Error putting properties", e);
+        }
+    }
 
     /* insert a route in the database */
     public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<RouteTag> tags, String imageName) {
@@ -413,8 +446,8 @@ public class DBAdapter {
 
 
     /* returns an image from the database */
-    public static Drawable getImage(int id) {
-        Attachment att = getAttachment(id, "image.jpg");
+    public static Drawable getImage(int id, String imageName) {
+        Attachment att = getAttachment(id, imageName);
         Drawable d = null;
         if (att != null) {
             try {
@@ -452,8 +485,8 @@ public class DBAdapter {
     }
 
     /* returns an image from the database */
-    public static Drawable getImage(int id, int required_size) {
-        Attachment att = getAttachment(id, "image.jpg");
+    public static Drawable getImage(int id, String imageName, int required_size) {
+        Attachment att = getAttachment(id, imageName);
         Drawable d = null;
         if (att != null) {
             try {

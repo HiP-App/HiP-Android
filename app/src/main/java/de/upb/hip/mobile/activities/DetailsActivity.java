@@ -31,6 +31,7 @@ public class DetailsActivity extends ActionBarActivity {
     private TextView mTextView;
 
     private int exhibitId;
+    private boolean isSlider;
 
     //ActionBar
     private ActionBar actionBar;
@@ -43,7 +44,7 @@ public class DetailsActivity extends ActionBarActivity {
         openDatabase();
 
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
-        mImageView.setImageDrawable(database.getImage(1));
+        mImageView.setImageDrawable(database.getImage(1, "image.jpg"));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -61,12 +62,17 @@ public class DetailsActivity extends ActionBarActivity {
 
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        Drawable d = database.getImage(exhibitId);
+        Drawable d = database.getImage(exhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
         Document document = database.getDocument(exhibitId);
         Exhibit exhibit = new Exhibit(document);
         mTextView.setText(exhibit.name);
+        if(exhibit.sliderID != -1){
+            isSlider = true;
+        }else{
+            isSlider = false;
+        }
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
         txtDescription.setText(exhibit.description);
@@ -114,7 +120,7 @@ public class DetailsActivity extends ActionBarActivity {
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     // As the transition has ended, we can now load the full-size image
-                    Drawable d = database.getImage(exhibitId);
+                    Drawable d = database.getImage(exhibitId, "image.jpg");
                     mImageView.setImageDrawable(d);
 
                     // Make sure we remove ourselves as a listener
@@ -154,8 +160,7 @@ public class DetailsActivity extends ActionBarActivity {
     }
 
     public void onClick_imageViewDetail(View view) {
-        boolean hasSlider = true;
-        if(hasSlider) {
+        if(isSlider) {
             Intent intent = new Intent(this, DisplayImageSliderActivity.class);
             intent.putExtra("exhibit-id", exhibitId);
             startActivity(intent);

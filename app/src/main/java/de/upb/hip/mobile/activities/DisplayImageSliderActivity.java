@@ -1,5 +1,6 @@
 package de.upb.hip.mobile.activities;
 
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -8,12 +9,20 @@ import android.graphics.Color;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.couchbase.lite.Document;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
 import de.upb.hip.mobile.models.Exhibit;
+import de.upb.hip.mobile.models.SliderImage;
 
 public class DisplayImageSliderActivity extends ActionBarActivity {
     private DBAdapter database;
@@ -69,11 +78,11 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         }
 
         mImageViewTimeLine = (ImageView) findViewById(R.id.imageViewTimeLine);
-        mImageViewTimeLine.setImageResource(mPicDataList.get(0).id);
+        mImageViewTimeLine.setImageDrawable(mPicDataList.get(0).drawable);
 
         if (fontFading) {
             mImageViewTimeLine2 = (ImageView) findViewById(R.id.imageViewTimeLine2);
-            mImageViewTimeLine2.setImageResource(mPicDataList.get(1).id);
+            mImageViewTimeLine2.setImageDrawable(mPicDataList.get(1).drawable);
             mImageViewTimeLine.bringToFront();
         }
 
@@ -136,10 +145,10 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                     int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).dotPosition - mPicDataList.get(startNode).dotPosition);
                     float alpha = (float) actProgressAccordingStartNextNode / differenceStartNextNode;
 
-                    mImageViewTimeLine.setImageResource(mPicDataList.get(startNode).id);
+                    mImageViewTimeLine.setImageDrawable(mPicDataList.get(startNode).drawable);
                     mImageViewTimeLine.setAlpha(1 - alpha);
 
-                    mImageViewTimeLine2.setImageResource(mPicDataList.get(nextNode).id);
+                    mImageViewTimeLine2.setImageDrawable(mPicDataList.get(nextNode).drawable);
                     mImageViewTimeLine2.setAlpha(alpha);
 
                     mImageViewTimeLine.bringToFront();
@@ -169,7 +178,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if (!fontFading) {
                     seekBar.setProgress(mPicDataList.get(nearest).dotPosition);
-                    mImageViewTimeLine.setImageResource(mPicDataList.get(nearest).id);
+                    mImageViewTimeLine.setImageDrawable(mPicDataList.get(nearest).drawable);
                 }
             }
 
@@ -240,11 +249,14 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
     }
 
     private void setData(){
-        mPicDataList.add(new PictureData("phasei", 776));
-        mPicDataList.add(new PictureData("phaseii", 799));
-        mPicDataList.add(new PictureData("phaseiii", 836));
-        mPicDataList.add(new PictureData("phaseiv", 900));
-        mPicDataList.add(new PictureData("phasev", 938));
+
+        int sliderID = new Exhibit(database.getDocument(exhibitId)).sliderID;
+        ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)database.getDocument(sliderID).getProperty("sliderImages");
+
+        for(int i = 0; i < images.size(); i++){
+            Map<String, Object> properties = images.get(i);
+            mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID, (String)properties.get("imageName")), (int)properties.get("year")));
+        }
     }
 
     // create list for setting dots on seekbar
@@ -258,15 +270,14 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
     }
 
     private class PictureData {
-        private int id;
+        private Drawable drawable;
         private int year;
         private int dotPosition;
 
-        public PictureData(String strName, int iYear){
-            id = getResources().getIdentifier(strName, "drawable", getPackageName());
+        public PictureData(Drawable drawable, int iYear){
+            this.drawable = drawable;
             year = iYear;
             dotPosition = 0;
         }
-
     }
 }
