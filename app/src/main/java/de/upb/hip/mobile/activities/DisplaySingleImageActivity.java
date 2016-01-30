@@ -37,7 +37,7 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
 
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        Drawable d = DBAdapter.getImage(exhibitId);
+        Drawable d = DBAdapter.getImage(exhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
 

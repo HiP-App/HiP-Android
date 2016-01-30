@@ -86,7 +86,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         holder.mDistance.setText(distance);
 
-        Drawable d = DBAdapter.getImage(exhibit.id, 64);
+        Drawable d = DBAdapter.getImage(exhibit.id, "image.jpg", 64);
         BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
         Bitmap bmp = bitmapDrawable.getBitmap();
         ImageManipulation IM = new ImageManipulation();

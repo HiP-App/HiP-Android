@@ -181,7 +181,7 @@ public class ExhibitSet {
 
         while(iterator.hasNext()) {
             Exhibit exhibit = iterator.next();
-            Drawable d = DBAdapter.getImage(exhibit.id, 32);
+            Drawable d = DBAdapter.getImage(exhibit.id, "image.jpg", 32);
             BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
             Bitmap bitmap2 = bitmapDrawable.getBitmap();
 
