@@ -1,19 +1,23 @@
 package de.upb.hip.mobile.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,31 +26,44 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.GPSTracker;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.Waypoint;
 
-public class RouteDetailsActivity extends ActionBarActivity {
+public class RouteDetailsActivity extends Activity implements RoutingListener {
 
     //We need to store the markers we add to the map so that we can identify them in the listener
     private Map<String, Integer> markerMap = new HashMap<>();
-
+    private ArrayList<Polyline> polylines = new ArrayList<>();
+    private MapFragment map = null;
+    private Route route;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_details);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Route route = (Route) getIntent().getSerializableExtra("route");
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
+        route = (Route) getIntent().getSerializableExtra("route");
         showRouteDetails(route);
+
+        Button button = (Button) this.findViewById(R.id.activityRouteDetailsRouteStartButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRouteNavigation();
+            }
+        });
     }
 
     private void showRouteDetails(Route route) {
@@ -55,7 +72,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
         TextView duration = (TextView) findViewById(R.id.activityRouteDetailsRouteDuration);
         LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.activityRouteDetailsRouteTagsLayout);
         ImageView imageView = (ImageView) findViewById(R.id.activityRouteDetailsRouteImageView);
-        final MapFragment map = (MapFragment) getFragmentManager().findFragmentById(R.id.activityRouteDetailsMap);
+        map = (MapFragment) getFragmentManager().findFragmentById(R.id.activityRouteDetailsMap);
 
 
         description.setText(route.description);
@@ -89,13 +106,21 @@ public class RouteDetailsActivity extends ActionBarActivity {
             List<LatLng> waypointList = new LinkedList<>();
             //To move the camera such that it includes all the waypoints
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+            GPSTracker gps = new GPSTracker(RouteDetailsActivity.this);
+            if(gps.canGetLocation()) {
+                LatLng mLatLngLocation = new LatLng(gps.getLatitude(), gps.getLongitude());
+                waypointList.add(mLatLngLocation);
+                builder.include(mLatLngLocation);
+            }
+
             //Add all the waypoints to the map
             for (Waypoint waypoint : route.waypoints) {
                 LatLng latLng = new LatLng(waypoint.latitude, waypoint.longitude);
                 waypointList.add(latLng);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
-                if (waypoint.exhibit_id != -1) {
+                if(waypoint.exhibit_id != -1){
                     Exhibit exhibit = waypoint.getExhibit(db);
                     markerOptions.title(exhibit.name);
                     markerOptions.snippet(exhibit.description);
@@ -107,6 +132,13 @@ public class RouteDetailsActivity extends ActionBarActivity {
             LatLngBounds bounds = builder.build();
             int padding = 30; // offset from edges of the map in pixels
             final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(waypointList)
+                    .build();
+            routing.execute();
 
             //We need to wait for the map to finish loading until we can apply the camera update
             map.getMap().setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
@@ -128,18 +160,52 @@ public class RouteDetailsActivity extends ActionBarActivity {
                     return false;
                 }
             });
-
+/*
             //Add a line representing the route to the map
             PolylineOptions routePolyLine = new PolylineOptions().addAll(waypointList);
-            map.getMap().addPolyline(routePolyLine);
+            map.getMap().addPolyline(routePolyLine);*/
         }
         map.getMap().setMyLocationEnabled(true);
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    private void startRouteNavigation() {
+        Intent intent = new Intent(getApplicationContext(), RouteNavigationActivity.class);
+        intent.putExtra("route", route);
+        startActivityForResult(intent, 0);
     }
 
+    @Override
+    public void onRoutingFailure() {
+
+    }
+
+    @Override
+    public void onRoutingStart() {
+
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<com.directions.route.Route> routeList, int shortestRouteIndex) {
+        if(polylines.size()>0) {
+            for (Polyline poly : polylines) {
+                poly.remove();
+            }
+        }
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map.
+        for (int i = 0; i <routeList.size(); i++) {
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(getResources().getColor(R.color.colorPrimaryDark));
+            polyOptions.width(10 + i * 3);
+            polyOptions.addAll(routeList.get(i).getPoints());
+            Polyline polyline = map.getMap().addPolyline(polyOptions);
+            polylines.add(polyline);
+
+        }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+    }
 }

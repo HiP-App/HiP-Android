@@ -75,6 +75,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.upb.hip.mobile.activities.RouteActivity" />
         </activity>
+        <activity
+            android:name=".RouteNavigationActivity"
+            android:label="@string/title_activity_route_details"
+            android:parentActivityName=".RouteActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.upb.hip.mobile.activities.RouteDetailsActivity" />
+        </activity>
     </application>
 
 </manifest>
