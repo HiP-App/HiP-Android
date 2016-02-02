@@ -45,6 +45,9 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.0.+'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.couchbase.lite:couchbase-lite-android:1.1.0'
+    compile('com.github.jd-alexander:library:1.0.9') {
+        exclude group: 'com.google.android.gms'
+    }
 
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test:runner:0.2+'){
@@ -66,4 +69,7 @@ dependencies {
         exclude module: 'recyclerview-v7'
     }
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+
+    //including using JitPack:
+    compile 'com.github.MKergall.osmbonuspack:OSMBonusPack:v5.7'
 }

@@ -31,5 +31,14 @@
 
     <string name="drawer_open">Öffne Navigation</string>
     <string name="drawer_close">Schließ Navigation</string>
+    <string name="departure">Start</string>
+    <string name="viapoint">via</string>
+    <string name="destination">End</string>
+    <string name="step">Step</string>
+    <string name="itinerary_markers_title">Route Via-Points</string>
+    <string name="route">Route</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="wait">Wait</string>
 
 </resources>

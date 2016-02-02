@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +50,7 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
     private ArrayList<Polyline> polylines = new ArrayList<>();
     private MapFragment map = null;
     private Route route;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +91,6 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
                 tagsLayout.addView(tagImageView);
             }
         }
-
 
         //Add image
         Attachment att = DBAdapter.getAttachment(route.id, route.imageName);
@@ -196,7 +197,7 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
         //add route(s) to the map.
         for (int i = 0; i <routeList.size(); i++) {
             PolylineOptions polyOptions = new PolylineOptions();
-            polyOptions.color(getResources().getColor(R.color.colorPrimaryDark));
+            polyOptions.color(getResources().getColor(R.color.colorPrimary));
             polyOptions.width(10 + i * 3);
             polyOptions.addAll(routeList.get(i).getPoints());
             Polyline polyline = map.getMap().addPolyline(polyOptions);
