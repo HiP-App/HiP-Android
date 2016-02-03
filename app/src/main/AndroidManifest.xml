@@ -64,7 +64,8 @@
             android:theme="@style/AppTheme.WithActionBar"/>
         <activity
             android:name=".RouteFilterActivity"
-            android:theme="@style/AppTheme"/>
+            android:label="@string/title_activity_route_filter"
+            android:theme="@style/AppTheme.WithActionBar"/>
         <activity
             android:name=".RouteDetailsActivity"
             android:label="@string/title_activity_route_details"

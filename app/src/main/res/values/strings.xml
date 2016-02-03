@@ -6,6 +6,7 @@
     <string name="title_activity_display_single_image">Detailansicht</string>
     <string name="title_activity_display_image_slider">Zeitachsenansicht</string>
     <string name="title_activity_route">Routen</string>
+    <string name="title_activity_route_filter">Routenfilter</string>
 
     <string name="activity_route_filter">Filter</string>
     <string name="route_tag_label">Tags</string>
