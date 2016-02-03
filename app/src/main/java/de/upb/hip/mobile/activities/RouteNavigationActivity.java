@@ -15,7 +15,9 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -40,6 +42,7 @@ import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.NetworkLocationIgnorer;
 import org.osmdroid.views.MapView;
@@ -62,7 +65,6 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     static final int OSRM = 0;
     static final String userAgent = "OsmNavigator/1.0";
     public static Road[] mRoads;  //made static to pass between activities
-    public static ArrayList<POI> mPOIs; //made static to pass between activities
 
     protected static int START_INDEX = -2, DEST_INDEX = -1;
     //final OnItineraryMarkerDragListener mItineraryListener = new OnItineraryMarkerDragListener();
@@ -87,10 +89,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     float mAzimuthAngleSpeed = 0.0f;
 
     int mWhichRouteProvider;
-    RadiusMarkerClusterer mPoiMarkers;
     GPSTracker gps;
 
-    GeoPoint mClickedGeoPoint; //any other way to pass the position to the menu ???
     long mLastTime = 0; // milliseconds
     double mSpeed = 0.0; // km/h
     private Route route;
@@ -119,12 +119,13 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         map.getOverlays().add(overlay);
 
         gps = new GPSTracker(RouteNavigationActivity.this);
-        if (gps.canGetLocation()) {
-            mLatLngLocation = new LatLng(gps.getLatitude(), gps.getLongitude());
+        if (!gps.canGetLocation()) {
+            finish();
         }
+        mLatLngLocation = new LatLng(gps.getLatitude(), gps.getLongitude());
 
         //map prefs:
-        mapController.setZoom(50);
+        mapController.setZoom(19);
         mapController.animateTo(new GeoPoint(mLatLngLocation.latitude, mLatLngLocation.longitude));
         //mapController.setCenter(new GeoPoint(mLatLngLocation.latitude, mLatLngLocation.longitude));
 
@@ -246,10 +247,13 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             //keep the map view centered on current location:
             map.getController().animateTo(newLocation);
             map.setMapOrientation(-mAzimuthAngleSpeed);
+
+            getRoadAsync();
         } else {
             //just redraw the location overlay:
             map.invalidate();
         }
+
     }
 
     public void updateUIWithItineraryMarkers(){
@@ -597,6 +601,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
         if (roadStartPoint == null || destinationPoint == null){
             updateUIWithRoads(mRoads);
+            //updateUIWithPolygon(viaPoints, "");
             return;
         }
         ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>(2);
@@ -642,5 +647,101 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
 
     }
+/*
+    private class GeocodingTask extends AsyncTask<Object, Void, List<Address>> {
+        int mIndex;
+        protected List<Address> doInBackground(Object... params) {
+            String locationAddress = (String)params[0];
+            mIndex = (Integer)params[1];
+            GeocoderNominatim geocoder = new GeocoderNominatim(getApplicationContext(), userAgent);
+            geocoder.setOptions(true); //ask for enclosing polygon (if any)
+            try {
+                BoundingBoxE6 viewbox = map.getBoundingBox();
+                List<Address> foundAdresses = geocoder.getFromLocationName(locationAddress, 1,
+                        viewbox.getLatSouthE6()*1E-6, viewbox.getLonEastE6()*1E-6,
+                        viewbox.getLatNorthE6()*1E-6, viewbox.getLonWestE6()*1E-6, false);
+                return foundAdresses;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        protected void onPostExecute(List<Address> foundAdresses) {
+            if (foundAdresses == null) {
+                Toast.makeText(getApplicationContext(), "Geocoding error", Toast.LENGTH_SHORT).show();
+            } else if (foundAdresses.size() == 0) { //if no address found, display an error
+                Toast.makeText(getApplicationContext(), "Address not found.", Toast.LENGTH_SHORT).show();
+            } else {
+                Address address = foundAdresses.get(0); //get first address
+                String addressDisplayName = address.getExtras().getString("display_name");
+                if (mIndex == START_INDEX){
+                    startPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
+                    markerStart = updateItineraryMarker(markerStart, startPoint, START_INDEX,
+                            R.string.departure, R.drawable.marker_departure, -1, addressDisplayName);
+                    map.getController().setCenter(startPoint);
+                } else if (mIndex == DEST_INDEX){
+                    destinationPoint = new GeoPoint(address.getLatitude(), address.getLongitude());
+                    markerDestination = updateItineraryMarker(markerDestination, destinationPoint, DEST_INDEX,
+                            R.string.destination, R.drawable.marker_destination, -1, addressDisplayName);
+                    map.getController().setCenter(destinationPoint);
+                }
+                getRoadAsync();
+                //get and display enclosing polygon:
+                Bundle extras = address.getExtras();
+                if (extras != null && extras.containsKey("polygonpoints")){
+                    ArrayList<GeoPoint> polygon = extras.getParcelableArrayList("polygonpoints");
+                    //Log.d("DEBUG", "polygon:"+polygon.size());
+                    updateUIWithPolygon(polygon, addressDisplayName);
+                } else {
+                    updateUIWithPolygon(null, "");
+                }
+            }
+        }
+    }
+
+    *//**
+     * Geocoding of the departure or destination address
+     *//*
+    public void handleSearchButton(int index, int editResId){
+        EditText locationEdit = (EditText)findViewById(editResId);
+        //Hide the soft keyboard:
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(locationEdit.getWindowToken(), 0);
+
+        String locationAddress = locationEdit.getText().toString();
+
+        if (locationAddress.equals("")){
+            removePoint(index);
+            map.invalidate();
+            return;
+        }
+
+        Toast.makeText(this, "Searching:\n"+locationAddress, Toast.LENGTH_LONG).show();
+        new GeocodingTask().execute(locationAddress, index);
+    }
+*/
+    //add or replace the polygon overlay
+    public void updateUIWithPolygon(ArrayList<GeoPoint> polygon, String name){
+        List<Overlay> mapOverlays = map.getOverlays();
+        int location = -1;
+        if (mDestinationPolygon != null)
+            location = mapOverlays.indexOf(mDestinationPolygon);
+        mDestinationPolygon = new Polygon(this);
+        mDestinationPolygon.setFillColor(0x15FF0080);
+        mDestinationPolygon.setStrokeColor(0x800000FF);
+        mDestinationPolygon.setStrokeWidth(5.0f);
+        mDestinationPolygon.setTitle(name);
+        BoundingBoxE6 bb = null;
+        if (polygon != null){
+            mDestinationPolygon.setPoints(polygon);
+            bb = BoundingBoxE6.fromGeoPoints(polygon);
+        }
+        if (location != -1)
+            mapOverlays.set(location, mDestinationPolygon);
+        else
+            mapOverlays.add(1, mDestinationPolygon); //insert just above the MapEventsOverlay.
+        //setViewOn(bb);
+        map.invalidate();
+    }
+
 }
 
