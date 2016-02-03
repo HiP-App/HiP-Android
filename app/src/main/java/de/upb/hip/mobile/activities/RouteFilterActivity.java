@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +31,11 @@ import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.RouteTag;
 
-public class RouteFilterActivity extends Activity {
+public class RouteFilterActivity extends ActionBarActivity {
 
-    public static final int RETURN_SAVE = 0;
-    public static final int RETURN_NOSAVE = 1;
+    public static final int RETURN_SAVE = 1;
+    public static final int RETURN_NOSAVE = 2;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,18 @@ public class RouteFilterActivity extends Activity {
                 finish();
             }
         });
+
+        // Set back button on actionbar
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 
 
