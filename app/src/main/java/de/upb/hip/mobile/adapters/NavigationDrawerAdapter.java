@@ -78,8 +78,8 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
     private Integer[] mIcones =
             {
-                    R.drawable.ic_launcher,
-                    R.drawable.ic_launcher
+                    R.drawable.ic_home_black_48dp,
+                    R.drawable.ic_directions_black_48dp
             };
 
     private Class[] mActivities =
