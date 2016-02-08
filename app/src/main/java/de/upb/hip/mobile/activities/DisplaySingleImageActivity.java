@@ -16,6 +16,7 @@ import com.couchbase.lite.Document;
 public class DisplaySingleImageActivity extends ActionBarActivity {
 
     private DBAdapter database;
+    private Exhibit exhibit;
 
     private int exhibitId;
 
@@ -34,21 +35,19 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
         mTextView = (TextView) findViewById(R.id.TextView01);
 
         database = new DBAdapter(this);
-
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
+        exhibit = new Exhibit(database.getDocument(exhibitId));
 
         Drawable d = DBAdapter.getImage(exhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
-
-//        Document document = database.getDocument(exhibitId);
-//        Exhibit exhibit = new Exhibit(document);
+        mTextView.setText(exhibit.pictureDescriptions.get(getIntent().getStringExtra("imageName")));
 
         // Set back button on actionbar
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(new Exhibit(database.getDocument(exhibitId)).name);
+            actionBar.setTitle(exhibit.name);
         }
     }
 

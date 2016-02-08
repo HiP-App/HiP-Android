@@ -32,6 +32,7 @@ public class DetailsActivity extends ActionBarActivity {
 
     private int exhibitId;
     private boolean isSlider;
+    private String imageName;
 
     //ActionBar
     private ActionBar actionBar;
@@ -44,7 +45,8 @@ public class DetailsActivity extends ActionBarActivity {
         openDatabase();
 
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
-        mImageView.setImageDrawable(database.getImage(1, "image.jpg"));
+        imageName = "image.jpg";
+        mImageView.setImageDrawable(database.getImage(1, imageName));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         if (Build.VERSION.SDK_INT >= 21) {
@@ -163,10 +165,12 @@ public class DetailsActivity extends ActionBarActivity {
         if(isSlider) {
             Intent intent = new Intent(this, DisplayImageSliderActivity.class);
             intent.putExtra("exhibit-id", exhibitId);
+            intent.putExtra("imageName", imageName);
             startActivity(intent);
         }else{
             Intent intent = new Intent(this, DisplaySingleImageActivity.class);
             intent.putExtra("exhibit-id", exhibitId);
+            intent.putExtra("imageName", imageName);
             startActivity(intent);
         }
     }

@@ -1,16 +1,13 @@
 package de.upb.hip.mobile.models;
 
-import de.upb.hip.mobile.activities.*;
 import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
-
-import android.database.Cursor;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.couchbase.lite.Document;
@@ -25,18 +22,21 @@ public class Exhibit {
     public String[] tags;
     public double distance;
     public int sliderID;
+    public HashMap<String, String> pictureDescriptions;
 
     public Exhibit (Document document) {
 
         Map<String, Object> properties = document.getProperties();
         int id = Integer.valueOf(document.getId());
-        String name = (String)properties.get(DBAdapter.KEY_NAME);
-        String description = (String)properties.get(DBAdapter.KEY_DESCRIPTION);
-        double lat = (double)properties.get(DBAdapter.KEY_LAT);
-        double lng = (double)properties.get(DBAdapter.KEY_LNG);
-        String categories = (String)properties.get(DBAdapter.KEY_CATEGORIES);
-        String tags = (String)properties.get(DBAdapter.KEY_TAGS);
-        int sliderID = (int)properties.get(DBAdapter.KEY_SLIDER_ID);
+        String name = (String)properties.get(DBAdapter.KEY_EXHIBIT_NAME);
+        String description = (String)properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
+        double lat = (double)properties.get(DBAdapter.KEY_EXHIBIT_LAT);
+        double lng = (double)properties.get(DBAdapter.KEY_EXHIBIT_LNG);
+        String categories = (String)properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
+        String tags = (String)properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
+        int sliderID = (int)properties.get(DBAdapter.KEY_EXHIBIT_SLIDER_ID);
+
+        this.pictureDescriptions = (LinkedHashMap<String, String>)document.getProperty(DBAdapter.KEY_EXHIBIT_PICTURE_DESCRIPTIONS);
 
         this.id = id;
         this.name = name;
