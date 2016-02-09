@@ -41,5 +41,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="wait">Wait</string>
+    <string name="route_calculating_dialog">Calculating the route...</string>
 
 </resources>
