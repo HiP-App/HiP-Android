@@ -1,4 +1,4 @@
-package de.upb.hip.mobile;
+package de.upb.hip.mobile.activities;
 
 //import android.test.ActivityUnitTestCase;
 
@@ -18,12 +18,12 @@ import de.upb.hip.mobile.models.Waypoint;
 /**
  * Created by Lobner on 13.12.2015.
  */
-public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
+public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteActivity>
 {
     public static final int TEST_ID = 127;
     private RouteActivity activity;
 //    private Activity activity;
-    public RouteTest()
+    public RouteActivityTest()
     {
         super(RouteActivity.class);
 
