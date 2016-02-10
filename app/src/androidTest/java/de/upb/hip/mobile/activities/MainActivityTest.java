@@ -6,8 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.test.ActivityInstrumentationTestCase2;
 import android.support.test.InstrumentationRegistry;
 import static android.support.test.espresso.Espresso.*;
-import static android.support.test.espresso.contrib.DrawerActions.closeDrawer;
-import static android.support.test.espresso.contrib.DrawerActions.openDrawer;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -86,14 +84,5 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
                 textMatcher.describeTo(description);
             }
         };
-    }
-
-    public void testOpenAndCloseDrawer(){
-
-        openDrawer(R.id.drawer_layout);
-
-        onView(withId(R.id.navigation_drawer)).check(matches(hasDescendant(withText("Übersicht"))));
-
-        closeDrawer(R.id.drawer_layout);
     }
 }
