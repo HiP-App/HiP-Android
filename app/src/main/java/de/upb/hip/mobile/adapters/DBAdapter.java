@@ -107,7 +107,7 @@ public class DBAdapter {
         staticcontext = ctx;
         if (database == null) {
             initDatabase(false);
-            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
+//            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
     }
 
