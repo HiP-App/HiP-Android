@@ -33,8 +33,8 @@
     <string name="drawer_open">Öffne Navigation</string>
     <string name="drawer_close">Schließ Navigation</string>
     <string name="departure">Start</string>
-    <string name="viapoint">via</string>
-    <string name="destination">End</string>
+    <string name="viapoint">Unknown via point</string>
+    <string name="destination">Destination</string>
     <string name="step">Step</string>
     <string name="itinerary_markers_title">Route Via-Points</string>
     <string name="route">Route</string>
