@@ -176,6 +176,12 @@ public class DetailsActivity extends ActionBarActivity {
     }
 
     @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
     }
