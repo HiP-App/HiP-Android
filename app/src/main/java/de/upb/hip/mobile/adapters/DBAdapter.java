@@ -1,9 +1,6 @@
 package de.upb.hip.mobile.adapters;
 
 import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
 import de.upb.hip.mobile.models.*;
 
 import android.app.Activity;
@@ -16,9 +13,6 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 import android.util.Log;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.widget.ListView;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -39,12 +33,12 @@ import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
 import com.couchbase.lite.support.CouchbaseLiteHttpClientFactory;
 import com.couchbase.lite.support.PersistentCookieStore;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -53,11 +47,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
@@ -67,13 +63,29 @@ public class DBAdapter {
 
 
     /* field descriptions in database */
-    public static final String KEY_NAME = "name";
-    public static final String KEY_DESCRIPTION = "description";
-    public static final String KEY_LAT = "lat";
-    public static final String KEY_LNG = "lng";
-    public static final String KEY_CATEGORIES = "categories";
-    public static final String KEY_TAGS = "tags";
-    public static final String KEY_SLIDER_ID = "sliderId";
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_CHANNELS = "channels";
+    public static final String KEY_ID = "_id";
+
+    public static final String KEY_EXHIBIT_NAME = "name";
+    public static final String KEY_EXHIBIT_DESCRIPTION = "description";
+    public static final String KEY_EXHIBIT_LAT = "lat";
+    public static final String KEY_EXHIBIT_LNG = "lng";
+    public static final String KEY_EXHIBIT_CATEGORIES = "categories";
+    public static final String KEY_EXHIBIT_TAGS = "tags";
+    public static final String KEY_EXHIBIT_PICTURE_DESCRIPTIONS = "pictureDescriptions";
+    public static final String KEY_EXHIBIT_SLIDER_ID = "sliderId";
+
+    public static final String KEY_SLIDER_IMAGES = "sliderImages";
+    public static final String KEY_SLIDER_IMAGE_NAME = "imageName";
+    public static final String KEY_SLIDER_IMAGE_YEAR = "year";
+
+    public static final String KEY_ROUTE_TITLE = "title";
+    public static final String KEY_ROUTE_DESCRIPTION = "description";
+    public static final String KEY_ROUTE_WAYPOINTS = "waypoints";
+    public static final String KEY_ROUTE_DURATION = "duration";
+    public static final String KEY_ROUTE_TAGS = "tags";
+    public static final String KEY_ROUTE_IMAGE_NAME = "imageName";
 
 
     public static final String DB_NAME = "hip"; // local database name
@@ -114,19 +126,41 @@ public class DBAdapter {
         }
 
         /* insert text and images*/
-        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom", -1);
-        addImage(R.drawable.dom, 1, "image.jpg");
-        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", -1);
-        addImage(R.drawable.uni, 2, "image.jpg");
-        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", -1);
-        addImage(R.drawable.hnf, 3, "image.jpg");
-        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "", 201);
-        addImage(R.drawable.pfalz, 4, "image.jpg");
-        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", -1);
+        HashMap<String, String> pictureDescriptions = new HashMap<>();
+        String pictureName = "image.jpg";
+
+        pictureDescriptions.put(pictureName, "Dom zu Paderborn (Südseite)");
+        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom", pictureDescriptions, -1);
+        addImage(R.drawable.dom, 1, pictureName);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Gebäude O");
+        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
+        addImage(R.drawable.uni, 2, pictureName);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
+        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
+        addImage(R.drawable.hnf, 3, pictureName);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Museum in der Kaiserpfalz (aus Richtung Dom)");
+        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "", pictureDescriptions, 201);
+        addImage(R.drawable.pfalz, 4, pictureName);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
+        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.abdinghof, 5, "image.jpg");
-        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", -1);
-        addImage(R.drawable.busdorfkirche_aussen, 6, "image.jpg");
-        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", -1);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
+        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", pictureDescriptions, -1);
+        addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
+        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
@@ -353,19 +387,20 @@ public class DBAdapter {
 
 
     /* insert a exhibit in the database */
-    public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags, int sliderId) {
+    public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags, HashMap<String, String> pictureDescriptions, int sliderId) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("type", "exhibit");
-        properties.put("name", name);
-        properties.put("description", description);
-        properties.put("categories", categories);
-        properties.put("tags", tags);
-        properties.put("lat", lat);
-        properties.put("lng", lng);
-        properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
-        properties.put(KEY_SLIDER_ID, sliderId);
+        properties.put(KEY_TYPE, "exhibit");
+        properties.put(KEY_EXHIBIT_NAME, name);
+        properties.put(KEY_EXHIBIT_DESCRIPTION, description);
+        properties.put(KEY_EXHIBIT_CATEGORIES, categories);
+        properties.put(KEY_EXHIBIT_TAGS, tags);
+        properties.put(KEY_EXHIBIT_LAT, lat);
+        properties.put(KEY_EXHIBIT_LNG, lng);
+        properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
+        properties.put(KEY_EXHIBIT_PICTURE_DESCRIPTIONS, pictureDescriptions);
+        properties.put(KEY_EXHIBIT_SLIDER_ID, sliderId);
 
 
         try {
@@ -382,8 +417,9 @@ public class DBAdapter {
         Map<String, Object> properties = new HashMap<>();
 
         if(sliderImages != null && !sliderImages.isEmpty()){
-            properties.put("type", "slider");
-            properties.put("sliderImages", sliderImages);
+            properties.put(KEY_TYPE, "slider");
+            properties.put(KEY_SLIDER_IMAGES, sliderImages);
+            properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
         }
 
         try {
@@ -399,14 +435,14 @@ public class DBAdapter {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("type", "route");
-        properties.put("title", title);
-        properties.put("description", description);
-        properties.put("waypoints", waypoints);
-        properties.put("duration", duration);
-        properties.put("tags", tags);
-        properties.put("imageName", imageName);
-        properties.put("channels", "*"); // ensures the access for all users in the Couchbase database
+        properties.put(KEY_TYPE, "route");
+        properties.put(KEY_ROUTE_TITLE, title);
+        properties.put(KEY_ROUTE_DESCRIPTION, description);
+        properties.put(KEY_ROUTE_WAYPOINTS, waypoints);
+        properties.put(KEY_ROUTE_DURATION, duration);
+        properties.put(KEY_ROUTE_TAGS, tags);
+        properties.put(KEY_ROUTE_IMAGE_NAME, imageName);
+        properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
 
         try {
             // Save the properties to the document

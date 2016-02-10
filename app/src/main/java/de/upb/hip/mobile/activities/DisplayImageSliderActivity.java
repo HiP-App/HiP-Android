@@ -26,6 +26,7 @@ import de.upb.hip.mobile.models.SliderImage;
 
 public class DisplayImageSliderActivity extends ActionBarActivity {
     private DBAdapter database;
+    private Exhibit exhibit;
     private int exhibitId;
     private ImageView mImageViewTimeLine;
     private ImageView mImageViewTimeLine2;
@@ -44,19 +45,20 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         // TODO read and set data from Database
         database = new DBAdapter(this);
         exhibitId = getIntent().getIntExtra("exhibit-id", 0);
+        exhibit = new Exhibit(database.getDocument(exhibitId));
 
         setData();
 
         init();
 
         mTextView = (TextView) findViewById(R.id.TextView01);
-        mTextView.setText("Dies ist die Zeitachsenansicht der Kaiserfpfalz");
+        mTextView.setText(exhibit.pictureDescriptions.get(getIntent().getStringExtra("imageName")));
 
         // Set back button on actionbar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(new Exhibit(database.getDocument(exhibitId)).name);
+        actionBar.setTitle(exhibit.name);
     }
 
     @Override
@@ -250,12 +252,12 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
 
     private void setData(){
 
-        int sliderID = new Exhibit(database.getDocument(exhibitId)).sliderID;
-        ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)database.getDocument(sliderID).getProperty("sliderImages");
+        int sliderID = exhibit.sliderID;
+        ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)database.getDocument(sliderID).getProperty(DBAdapter.KEY_SLIDER_IMAGES);
 
         for(int i = 0; i < images.size(); i++){
             Map<String, Object> properties = images.get(i);
-            mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID, (String)properties.get("imageName")), (int)properties.get("year")));
+            mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID, (String)properties.get(DBAdapter.KEY_SLIDER_IMAGE_NAME)), (int)properties.get(DBAdapter.KEY_SLIDER_IMAGE_YEAR)));
         }
     }
 
