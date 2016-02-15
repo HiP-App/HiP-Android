@@ -1,24 +1,13 @@
 package de.upb.hip.mobile.models;
 
-import de.upb.hip.mobile.activities.*;
 import de.upb.hip.mobile.adapters.*;
 import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.util.Log;
 
-import com.couchbase.lite.QueryEnumerator;
-import com.couchbase.lite.QueryRow;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -27,7 +16,6 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +34,13 @@ public class ExhibitSet {
 
         for (int i=0; i<list.size(); i++) {
             Map<String, Object> properties = list.get(i);
-            int id = Integer.valueOf((String)properties.get("_id"));
-            String name = (String)properties.get(DBAdapter.KEY_NAME);
-            String description = (String)properties.get(DBAdapter.KEY_DESCRIPTION);
-            double lat = (double)properties.get(DBAdapter.KEY_LAT);
-            double lng = (double)properties.get(DBAdapter.KEY_LNG);
-            String categories = (String)properties.get(DBAdapter.KEY_CATEGORIES);
-            String tags = (String)properties.get(DBAdapter.KEY_TAGS);
+            int id = Integer.valueOf((String)properties.get(DBAdapter.KEY_ID));
+            String name = (String)properties.get(DBAdapter.KEY_EXHIBIT_NAME);
+            String description = (String)properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
+            double lat = (double)properties.get(DBAdapter.KEY_EXHIBIT_LAT);
+            double lng = (double)properties.get(DBAdapter.KEY_EXHIBIT_LNG);
+            String categories = (String)properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
+            String tags = (String)properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
 
             Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
             exhibit.setDistance(this.position);
