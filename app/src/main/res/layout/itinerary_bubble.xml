@@ -40,10 +40,4 @@
 			android:text="Address"
 			android:visibility="gone" />
 	</LinearLayout>
-	<Button android:id="@+id/bubble_delete" 
-		android:background="@drawable/btn_delete"
-		android:visibility="visible"
-		android:layout_width="25dp"
-		android:layout_height="25dp" 
-		android:layout_gravity="right" />
 </LinearLayout>

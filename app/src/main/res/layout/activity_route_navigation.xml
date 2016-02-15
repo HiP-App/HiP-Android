@@ -16,11 +16,26 @@
             android:id="@+id/imageView_maneuverIcon"
             android:src="@drawable/ic_empty" />
 
-        <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView_routeStepInfo"
-            android:src="@drawable/ic_empty" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="3">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView_routeInstruction"
+                android:src="@drawable/ic_empty"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView_routeDistance"
+                android:src="@drawable/ic_empty"
+                android:layout_weight="2" />
+        </LinearLayout>
 
     </LinearLayout>
 

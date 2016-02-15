@@ -83,7 +83,7 @@
             android:parentActivityName=".RouteActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.upb.hip.mobile.activities.RouteDetailsActivity" />
+                android:value=".RouteDetailsActivity" />
         </activity>
     </application>
 
