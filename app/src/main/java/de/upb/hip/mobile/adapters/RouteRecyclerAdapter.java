@@ -107,9 +107,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         Route route = getFilteredRoutes().getRouteByPosition(position);
         holder.mTitle.setText(route.title);
         String description;
-        if (route.description.length() > 32)
-            description = route.description.substring(0, 32).concat("...");
-        else description = route.description;
+        description = route.description;
         holder.mDescription.setText(description);
         int durationInMinutes = route.duration / 60;
         holder.mDuration.setText(context.getResources().getQuantityString(R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
