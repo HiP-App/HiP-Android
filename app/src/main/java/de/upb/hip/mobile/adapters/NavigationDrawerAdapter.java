@@ -20,11 +20,13 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     private DrawerLayout mDrawerLayout;
     private ListView mNavigationDrawerList;
 
-    public NavigationDrawerAdapter(Context c, DrawerLayout mDrawerLayout, ListView mNavigationDrawerList) {
+    public NavigationDrawerAdapter(Context c, DrawerLayout mDrawerLayout, ListView mNavigationDrawerList, String[] mDescriptions) {
         mContext = c;
         mInflater = LayoutInflater.from(c);
         this.mDrawerLayout = mDrawerLayout;
         this.mNavigationDrawerList = mNavigationDrawerList;
+        this.mDescriptions = new String[mDescriptions.length];
+        System.arraycopy(mDescriptions, 0, this.mDescriptions, 0, mDescriptions.length);
     }
 
     @Override
@@ -88,9 +90,5 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                     RouteActivity.class
             };
 
-    private String[] mDescriptions =
-            {
-                    "Übersicht",
-                    "Routen"
-            };
+    private String[] mDescriptions;
 }

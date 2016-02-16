@@ -24,4 +24,9 @@
     <string name="drawer_open">Öffne Navigation</string>
     <string name="drawer_close">Schließ Navigation</string>
 
+    <string-array name="nav_drawer_entries">
+        <item>Übersicht</item>
+        <item>Routen</item>
+    </string-array>
+
 </resources>
