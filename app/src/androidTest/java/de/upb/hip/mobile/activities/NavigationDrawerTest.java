@@ -1,5 +1,6 @@
 package de.upb.hip.mobile.activities;
 
+import android.content.res.Resources;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.v4.widget.DrawerLayout;
@@ -57,29 +58,19 @@ public class NavigationDrawerTest extends ActivityInstrumentationTestCase2<MainA
         closeDrawer(R.id.drawer_layout);
     }
 
-    public void testSwitchToOtherView(){
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+    public void testSwitchToOtherView() {
+        Resources res = getInstrumentation().getTargetContext().getResources();
+        String[] navDrawerDescriptions = res.getStringArray(R.array.nav_drawer_entries);
 
-        openDrawer(R.id.drawer_layout);
-        onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
+        assertNotNull(navDrawerDescriptions);
 
-        onView(allOf(withId(R.id.navigation_drawer_item_text), hasSibling(withText("Übersicht")))).perform(click());
-        //click onto "Übersicht"
+        for(int i = 0; i < navDrawerDescriptions.length; i++) {
+            onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
 
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+            openDrawer(R.id.drawer_layout);
+            onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
 
-        openDrawer(R.id.drawer_layout);
-        onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
-
-        onView(allOf(withId(R.id.navigation_drawer_item_text), hasSibling(withText("Routen")))).perform(click());
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
-
-        openDrawer(R.id.drawer_layout);
-        onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
-
-        onView(allOf(withId(R.id.navigation_drawer_item_text), hasSibling(withText("Übersicht")))).perform(click());
-        //click onto "Übersicht"
-
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+            onView(allOf(withId(R.id.navigation_drawer_item_text), hasSibling(withText(navDrawerDescriptions[i])))).perform(click());
+        }
     }
 }
