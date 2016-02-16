@@ -5,11 +5,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -46,19 +48,26 @@ import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.Waypoint;
 
-public class RouteDetailsActivity extends Activity implements RoutingListener {
+public class RouteDetailsActivity extends BaseActivity implements RoutingListener {
 
     //We need to store the markers we add to the map so that we can identify them in the listener
     private Map<String, Integer> markerMap = new HashMap<>();
     private ArrayList<Polyline> polylines = new ArrayList<>();
     private MapFragment map = null;
     private Route route;
+    private DrawerLayout mDrawerLayout;
+
+    private GPSTracker gps;
+    private boolean bRefresh = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_details);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        gps = new GPSTracker(RouteDetailsActivity.this);
+
         route = (Route) getIntent().getSerializableExtra("route");
         showRouteDetails(route);
 
@@ -66,9 +75,18 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startRouteNavigation();
+                if (gps.canGetLocation()) {
+                    startRouteNavigation();
+                }
+                else{
+                    gps.showSettingsAlert();
+                }
             }
         });
+
+        //setUp navigation drawer
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        super.setUpNavigationDrawer(this, mDrawerLayout);
     }
 
     private void showRouteDetails(Route route) {
@@ -111,7 +129,6 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
             //To move the camera such that it includes all the waypoints
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-            GPSTracker gps = new GPSTracker(RouteDetailsActivity.this);
             if(gps.canGetLocation()) {
                 LatLng mLatLngLocation = new LatLng(gps.getLatitude(), gps.getLongitude());
                 waypointList.add(mLatLngLocation);
@@ -175,7 +192,7 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
     private void startRouteNavigation() {
         Intent intent = new Intent(getApplicationContext(), RouteNavigationActivity.class);
         intent.putExtra("route", route);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     @Override
@@ -211,5 +228,30 @@ public class RouteDetailsActivity extends Activity implements RoutingListener {
 
     @Override
     public void onRoutingCancelled() {
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+/*
+        gps = new GPSTracker(RouteDetailsActivity.this);
+        if (!bRefresh && gps.canGetLocation()){
+            startRouteNavigation();
+        }*/
+    }
+
+    @Override protected void onPause() {
+        super.onPause();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                bRefresh = data.getBooleanExtra("onBackPressed", false);
+            }
+        }
     }
 }
