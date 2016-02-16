@@ -2,6 +2,7 @@ package de.upb.hip.mobile.activities;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -24,7 +25,11 @@ public abstract class BaseActivity extends ActionBarActivity {
 
         mDrawerLayout = drawerLayout;
         mNavigationDrawerList = (ListView) findViewById(R.id.navigation_drawer);
-        final NavigationDrawerAdapter navigationDrawerAdapter = new NavigationDrawerAdapter(this, mDrawerLayout, mNavigationDrawerList);
+        //get the drawer entries
+        Resources res = getResources();
+        String[] mDrawerDescriptions = res.getStringArray(R.array.nav_drawer_entries);
+
+        final NavigationDrawerAdapter navigationDrawerAdapter = new NavigationDrawerAdapter(this, mDrawerLayout, mNavigationDrawerList, mDrawerDescriptions);
         mNavigationDrawerList.setAdapter(navigationDrawerAdapter);
         mNavigationDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
