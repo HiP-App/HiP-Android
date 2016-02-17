@@ -20,6 +20,8 @@
     <string name="title_activity_route_details">Routendetails</string>
     <string name="route_activity_details_start">Tour beginnen</string>
     <string name="route_activity_duration">Dauer: </string>
+    <string name="route_activity_distance">Distanz: </string>
+    <string name="route_activity_distance_kilometer">%s km</string>
     <string name="route_activity_description">Beschreibung</string>
     <string name="route_activity_title">Titel</string>
 
