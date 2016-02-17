@@ -113,8 +113,7 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         holder.mDescription.setText(description);
         int durationInMinutes = route.duration / 60;
         holder.mDuration.setText(context.getResources().getQuantityString(R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
-        double distance = route.distance;
-        holder.mDistance.setText(String.format(context.getResources().getString(R.string.route_activity_distance_kilometer), distance));
+        holder.mDistance.setText(String.format(context.getResources().getString(R.string.route_activity_distance_kilometer), route.distance));
 
         //Check if there are actually tags for this route
         if (route.tags != null) {

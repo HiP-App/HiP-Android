@@ -53,6 +53,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
         TextView description = (TextView) findViewById(R.id.activityRouteDetailsRouteDescription);
         TextView title = (TextView) findViewById(R.id.activityRouteDetailsRouteTitle);
         TextView duration = (TextView) findViewById(R.id.activityRouteDetailsRouteDuration);
+        TextView distance = (TextView) findViewById(R.id.activityRouteDetailsRouteDistance);
         LinearLayout tagsLayout = (LinearLayout) findViewById(R.id.activityRouteDetailsRouteTagsLayout);
         ImageView imageView = (ImageView) findViewById(R.id.activityRouteDetailsRouteImageView);
         final MapFragment map = (MapFragment) getFragmentManager().findFragmentById(R.id.activityRouteDetailsMap);
@@ -62,7 +63,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
         title.setText(route.title);
         int durationInMinutes = route.duration / 60;
         duration.setText(getResources().getQuantityString(R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
-
+        distance.setText(String.format(getResources().getString(R.string.route_activity_distance_kilometer), route.distance));
         //Add tags
         if (route.tags != null) {
             tagsLayout.removeAllViews();
