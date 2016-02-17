@@ -84,6 +84,7 @@ public class DBAdapter {
     public static final String KEY_ROUTE_DESCRIPTION = "description";
     public static final String KEY_ROUTE_WAYPOINTS = "waypoints";
     public static final String KEY_ROUTE_DURATION = "duration";
+    public static final String KEY_ROUTE_DISTANCE = "distance";
     public static final String KEY_ROUTE_TAGS = "tags";
     public static final String KEY_ROUTE_IMAGE_NAME = "imageName";
 
@@ -177,7 +178,7 @@ public class DBAdapter {
         ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
         ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, ringrouteTags, "route_ring.jpg");
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(51.718590, 8.752206, 5));
@@ -190,7 +191,7 @@ public class DBAdapter {
         List<RouteTag> stadtrouteTags = new LinkedList<>();
         stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, stadtrouteTags, "route_stadt.jpg");
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
 
         List<SliderImage> sliderImages = new LinkedList<>();
         sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
@@ -431,7 +432,7 @@ public class DBAdapter {
     }
 
     /* insert a route in the database */
-    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, List<RouteTag> tags, String imageName) {
+    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, double distance, List<RouteTag> tags, String imageName) {
         Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
         Map<String, Object> properties = new HashMap<>();
 
@@ -440,6 +441,7 @@ public class DBAdapter {
         properties.put(KEY_ROUTE_DESCRIPTION, description);
         properties.put(KEY_ROUTE_WAYPOINTS, waypoints);
         properties.put(KEY_ROUTE_DURATION, duration);
+        properties.put(KEY_ROUTE_DISTANCE, distance);
         properties.put(KEY_ROUTE_TAGS, tags);
         properties.put(KEY_ROUTE_IMAGE_NAME, imageName);
         properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
