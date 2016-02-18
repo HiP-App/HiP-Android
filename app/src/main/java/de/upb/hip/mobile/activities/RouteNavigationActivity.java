@@ -1,5 +1,22 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -21,18 +38,14 @@ import android.hardware.SensorEventListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import org.apache.commons.lang3.StringUtils;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
@@ -42,7 +55,6 @@ import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
 import org.osmdroid.bonuspack.overlays.Polygon;
 import org.osmdroid.bonuspack.overlays.Polyline;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
-import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
@@ -54,134 +66,131 @@ import org.osmdroid.views.overlay.DirectedLocationOverlay;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import de.upb.hip.mobile.helpers.GPSTracker;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.models.Route;
 
+/**
+ * Create the route on the map and show step by step instruction for the navigation
+ */
+
 public class RouteNavigationActivity extends Activity implements MapEventsReceiver, LocationListener, SensorEventListener {
-    public static Road[] mRoads;  //made static to pass between activities
-
-    protected static int START_INDEX = -2, DEST_INDEX = -1;
-    //final OnItineraryMarkerDragListener mItineraryListener = new OnItineraryMarkerDragListener();
-    //------------ LocationListener implementation
-    protected MapView map;
-    protected GeoPoint startPoint, destinationPoint;
-    protected LatLng mLatLngLocation;
-    protected ArrayList<GeoPoint> viaPoints;
+    protected final int START_INDEX = -2, DEST_INDEX = -1;
+    protected final long LOCATION_UPDATES_TIME = 2000; //in miliseconds
+    protected final float LOCATION_UPDATES_DIST = 2; // in meters
+    protected final int ROUTE_REJECT = 25; //in meters
+    protected final String PROX_ALERT = getPackageName() + ".PROX_ALERT";
+    protected final long POINT_RADIUS = 5; // in Meters
+    protected final long PROX_ALERT_EXPIRATION = -1; //indicate no expiration
+    protected Road[] mRoads;
+    // LocationListener implementation
+    protected MapView mMap;
+    protected GeoPoint mStartPoint, mDestinationPoint;
+    protected ArrayList<GeoPoint> mViaPoints;
     protected FolderOverlay mItineraryMarkers;
-
-    //for departure, destination and viapoints
-    protected Marker markerStart, markerDestination;
+    // for departure, destination and viapoints
+    protected Marker mMarkerStart, mMarkerDestination;
     protected ViaPointInfoWindow mViaPointInfoWindow;
-    protected DirectedLocationOverlay myLocationOverlay;
-    protected boolean mTrackingMode = false;
+    protected DirectedLocationOverlay mLocationOverlay;
     protected Polygon mDestinationPolygon; //enclosing polygon of destination location
-    protected int mSelectedRoad;
     protected Polyline[] mRoadOverlays;
     protected FolderOverlay mRoadNodeMarkers;
-    Button mTrackingModeButton;
-    float mAzimuthAngleSpeed = 0.0f;
-
-    public GPSTracker gps;
-
-    private static final long POINT_RADIUS = 5; // in Meters
-    private static final long PROX_ALERT_EXPIRATION = -1;
-    private int reachedNode = -1;
-    private int nextNode = 0;
-    private int nextVia = 0;
-
-    private int distanceBetweenLoc = -1;
-
-    public ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
-    private final int ROUTE_REJECT = 50;
-    private String PROX_ALERT = "de.upb.hip.mobile.activities.PROX_ALERT";
-    private PendingIntent proximityIntent = null;
+    protected Button mTrackingModeButton;
+    protected boolean mTrackingMode;
+    protected float mAzimuthAngleSpeed = 0.0f;
+    protected int mSelectedRoad;
+    protected int mReachedNode = -1;
+    protected int mNextNode = 0;
+    protected int mNextViaPoint = 0;
+    // setup the UI before the reaching the start point only once
+    protected boolean mUpdateStartPointOnce = true;
+    // for location, location manager and setting dialog if no location
+    protected GPSTracker mGPSTracker;
+    // for the recalculation the route
+    protected int mDistanceBetweenLoc = -1;
+    // shows creation and loading route and map steps
+    protected ProgressDialog mProgressDialog;
+    // for the detecting that location is reached
+    protected ProximityIntentReceiver mProximityIntentReceiver = new ProximityIntentReceiver();
+    protected PendingIntent mProximityIntent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route_navigation);
 
-        appendLog(StringUtils.repeat("=", 80));
-        appendLog("start of onCreate");
-        appendLog(StringUtils.repeat("=", 80));
+        // init progress dialog
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setCancelable(true);
 
+        // getting the map
         GenericMapView genericMap = (GenericMapView) findViewById(R.id.map);
         MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
         genericMap.setTileProvider(bitmapProvider);
-        map = genericMap.getMapView();
+        mMap = genericMap.getMapView();
 
-        map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setBuiltInZoomControls(true);
-        map.setMultiTouchControls(true);
+        mMap.setTileSource(TileSourceFactory.MAPNIK);
 
-        gps = new GPSTracker(RouteNavigationActivity.this);
-        mLatLngLocation = new LatLng(gps.getLatitude(), gps.getLongitude());
+        // getting location
+        mGPSTracker = new GPSTracker(RouteNavigationActivity.this);
+        GeoPoint geoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
 
-        //map prefs:
-        IMapController mapController = map.getController();
+        // mMap prefs:
+        IMapController mapController = mMap.getController();
         mapController.setZoom(19);
-        mapController.setCenter(new GeoPoint(mLatLngLocation.latitude, mLatLngLocation.longitude));
+        mapController.setCenter(geoLocation);
 
         // Itinerary markers:
         mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
-        map.getOverlays().add(mItineraryMarkers);
-        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.itinerary_bubble, map);
+        mMap.getOverlays().add(mItineraryMarkers);
+        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap);
 
-        myLocationOverlay = new DirectedLocationOverlay(this);
-        map.getOverlays().add(myLocationOverlay);
+        mLocationOverlay = new DirectedLocationOverlay(this);
+        mMap.getOverlays().add(mLocationOverlay);
 
         if (savedInstanceState == null) {
+            //getting route from intent
             Route route = (Route) getIntent().getSerializableExtra("route");
-            Location location = gps.getLocation();
 
-            if (location != null) {
-                //location known:
-                onLocationChanged(location);
-            } else {
-                //no location known: hide myLocationOverlay
-                myLocationOverlay.setEnabled(false);
-            }
-
+            // init start and end point
             int size = route.waypoints.size();
-            startPoint = new GeoPoint(mLatLngLocation.latitude, mLatLngLocation.longitude);
-            destinationPoint = new GeoPoint(route.waypoints.get(size - 1).latitude, route.waypoints.get(size - 1).longitude);
+            mStartPoint = geoLocation;
+            mDestinationPoint = new GeoPoint(route.waypoints.get(size - 1).latitude,
+                    route.waypoints.get(size - 1).longitude);
 
-            viaPoints = new ArrayList<>();
-            for (int i = 0; i < (size - 1); i++){
-                GeoPoint via = new GeoPoint(route.waypoints.get(i).latitude, route.waypoints.get(i).longitude);
+            // add viapoints
+            mViaPoints = new ArrayList<>();
+            for (int i = 0; i < (size - 1); i++) {
+                GeoPoint via = new GeoPoint(route.waypoints.get(i).latitude,
+                        route.waypoints.get(i).longitude);
                 addViaPoint(via);
             }
-            getRoadAsync();
-        } else {
-            myLocationOverlay.setLocation((GeoPoint) savedInstanceState.getParcelable("location"));
-            startPoint = savedInstanceState.getParcelable("start");
-            destinationPoint = savedInstanceState.getParcelable("destination");
-            viaPoints = savedInstanceState.getParcelableArrayList("viapoints");
-            reachedNode = savedInstanceState.getInt("reachedNode");
-            nextNode = savedInstanceState.getInt("nextNode");
-            nextVia = savedInstanceState.getInt("nextVia");
 
-            setNextStepToAlert(null);
+            getRoadAsync();
+
+        } else {
+            mLocationOverlay.setLocation((GeoPoint) savedInstanceState.getParcelable("location"));
+            mStartPoint = savedInstanceState.getParcelable("start");
+            mDestinationPoint = savedInstanceState.getParcelable("destination");
+            mViaPoints = savedInstanceState.getParcelableArrayList("viapoints");
+            mReachedNode = savedInstanceState.getInt("mReachedNode");
+            mNextNode = savedInstanceState.getInt("mNextNode");
+            mNextViaPoint = savedInstanceState.getInt("mNextViaPoint");
         }
 
-        distanceBetweenLoc = new GeoPoint(gps.getLocation()).distanceTo(startPoint);
+        // calculate distance between current location and start point
+        // if the start location was not reached
+        mDistanceBetweenLoc = geoLocation.distanceTo(mStartPoint);
 
         updateUIWithItineraryMarkers();
 
         // a scale bar in the top-left corner of the screen
-        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(map);
-        map.getOverlays().add(scaleBarOverlay);
+        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mMap);
+        mMap.getOverlays().add(scaleBarOverlay);
 
         //Tracking system:
         mTrackingModeButton = (Button) findViewById(R.id.buttonTrackingMode);
@@ -192,201 +201,249 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             }
         });
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mTrackingMode = savedInstanceState.getBoolean("tracking_mode");
             updateUIWithTrackingMode();
         } else
             mTrackingMode = false;
 
         mRoadNodeMarkers = new FolderOverlay(this);
-        mRoadNodeMarkers.setName("Route Steps");
-        map.getOverlays().add(mRoadNodeMarkers);
+        //mRoadNodeMarkers.setName("Route Steps");
+        mMap.getOverlays().add(mRoadNodeMarkers);
 
         if (savedInstanceState != null) {
             updateUIWithRoads(mRoads);
-            setNextStepToAlert(new GeoPoint(gps.getLocation()));
         }
-
-        appendLog(StringUtils.repeat("-", 80));
-        appendLog("end of onCreate");
-        appendLog(StringUtils.repeat("-", 80));
     }
 
-    //------------ LocationListener implementation
-    @Override public void onLocationChanged(final Location pLoc) {
+    /**
+     * LocationListener implementation
+     */
+    @Override
+    public void onLocationChanged(final Location pLoc) {
 
         GeoPoint newLocation = new GeoPoint(pLoc);
-        if (!myLocationOverlay.isEnabled()){
+        if (!mLocationOverlay.isEnabled()) {
             //we get the location for the first time:
-            myLocationOverlay.setEnabled(true);
-            map.getController().animateTo(newLocation);
+            mLocationOverlay.setEnabled(true);
+            mMap.getController().animateTo(newLocation);
         }
 
-        if (reachedNode == nextNode) {
-            appendLog(String.format("onLocationChanged() reachedNode %s == nextNode %s", reachedNode, nextNode));
-            nextNode += 1;
+        if (mReachedNode == mNextNode) {
+            mNextNode += 1;
             setNextStepToAlert(newLocation);
-        }
-        else if (reachedNode == -1){
-            appendLog(String.format("onLocationChanged() reachedNode %s", reachedNode));
+        } else if (mReachedNode == -1 && mUpdateStartPointOnce) {
+            // start node is not reached, update only once
             setNextStepToAlert(newLocation);
         }
 
         recalculateRoute(newLocation);
 
-        GeoPoint prevLocation = myLocationOverlay.getLocation();
-        myLocationOverlay.setLocation(newLocation);
-        myLocationOverlay.setAccuracy((int) pLoc.getAccuracy());
+        GeoPoint prevLocation = mLocationOverlay.getLocation();
+        mLocationOverlay.setLocation(newLocation);
+        mLocationOverlay.setAccuracy((int) pLoc.getAccuracy());
 
-        GeoPoint nextNearestLocation = getNextLocation();
-        if (nextNearestLocation != null && pLoc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-
-            mAzimuthAngleSpeed = (float)prevLocation.bearingTo(nextNearestLocation);
-            //mAzimuthAngleSpeed = pLoc.getBearing();
-            myLocationOverlay.setBearing(mAzimuthAngleSpeed);
+        GeoPoint nextNearestLocation = getNextNodeLocation();
+        if (nextNearestLocation != null && prevLocation != null) {
+            if (pLoc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+                // setup next node(location) to the north
+                mAzimuthAngleSpeed = (float) prevLocation.bearingTo(nextNearestLocation);
+                mLocationOverlay.setBearing(mAzimuthAngleSpeed);
+            }
         }
 
-        if (mTrackingMode){
-            //keep the map view centered on current location:
-            map.getController().animateTo(newLocation);
-            map.setMapOrientation(-mAzimuthAngleSpeed);
+        if (mTrackingMode) {
+            //keep the mMap view centered on current location:
+            mMap.getController().animateTo(newLocation);
+            mMap.setMapOrientation(-mAzimuthAngleSpeed);
         } else {
             //just redraw the location overlay:
-            map.invalidate();
+            mMap.invalidate();
         }
-
     }
 
-    private GeoPoint getNextLocation(){
-        if (mRoads == null){
+    /**
+     * Returns the geopoint of next node
+     */
+    private GeoPoint getNextNodeLocation() {
+        if (mRoads == null) {
             return null;
         }
 
-        GeoPoint nextNearestLocation = null;
+        GeoPoint nextNodeLocation;
 
-        // find next point after start:
-        // firstly check minimal point (Node)
         if (mRoads[0].mNodes != null && mRoads[0].mNodes.size() > 0) {
-            nextNearestLocation = mRoads[0].mNodes.get(nextNode).mLocation;
-        }
-        // if no node and via => it is destination point
-        else{
-            nextNearestLocation = destinationPoint;
+            // find next point
+            nextNodeLocation = mRoads[0].mNodes.get(mNextNode).mLocation;
+        } else {
+            // if no node anymore => destination point
+            nextNodeLocation = mDestinationPoint;
         }
 
-        return nextNearestLocation;
+        return nextNodeLocation;
     }
 
-    private void recalculateRoute(GeoPoint currentLoc){
-        GeoPoint nextLoc = getNextLocation();
-        if (nextLoc == null){
+    /**
+     * Recalculate the route if
+     * distance between current location and next node >= 'ROUTE_REJECT' (20m)
+     * distance between reached node and and next node
+     */
+    private void recalculateRoute(GeoPoint currentLoc) {
+        GeoPoint nextLoc = getNextNodeLocation();
+        if (nextLoc == null) {
             return;
         }
 
+        // distance from current loc to next node
         int distFromCurrent = currentLoc.distanceTo(nextLoc);
 
+        // update distance info on imageview
         updateDistanceInfo(String.valueOf(distFromCurrent) + " m");
 
-        if ( (distFromCurrent - distanceBetweenLoc) >= ROUTE_REJECT){
-            reachedNode = -1;
-            nextNode    = 0;
-            nextVia     = 0;
+        // check if difference >= 'ROUTE_REJECT' (20m)
+        if ((distFromCurrent - mDistanceBetweenLoc) >= ROUTE_REJECT) {
 
-            startPoint = currentLoc;
-            getRoadAsync(nextVia);
-            updateUIWithItineraryMarkers(nextVia);
+            // set to default
+            mReachedNode = -1;
+            mNextNode = 0;
+            mNextViaPoint = 0;
+            mStartPoint = currentLoc;
+
+            // get route
+            getRoadAsync(mNextViaPoint);
+            // update markers on the map
+            updateUIWithItineraryMarkers();
+
+            if (mProgressDialog.isShowing()) {
+                mProgressDialog.dismiss();
+            }
         }
     }
 
+    /**
+     * Setup next node for the proximity alert
+     * set instruction maneuver and distance in imageview
+     */
     private void setNextStepToAlert(GeoPoint geo) {
-        // mRoads == null    --> no sence to do anything
-        // reachedNode == -1 --> that means ProximityAlert didnt happen or we didnt go through first nearest point
-        if (mRoads == null || reachedNode >= mRoads[0].mNodes.size()){
-            appendLog("mRoads == null || reachedNode >= mRoads[0].mNodes.size()");
+        if (mRoads == null || mReachedNode >= mRoads[0].mNodes.size()) {
             return;
         }
 
-        // this "if clauses" is for first run to setup the nearest point from current point to ProximityAlert
-        // reachedNode would be set to -1
-        if (reachedNode == -1){ // init step
-            appendLog("setNextStepToAlert(): reachedNode == -1");
-            appendLog(String.format("setNextStepToAlert(): nextNode == %s", nextNode));
-
+        // setup the nearest point from current point to ProximityAlert
+        if (mReachedNode == -1) {
             GeoPoint nextLocation = new GeoPoint(mRoads[0].mNodes.get(0).mLocation.getLatitude(), mRoads[0].mNodes.get(0).mLocation.getLongitude());
-            addProximityAlert(nextLocation.getLatitude(), nextLocation.getLongitude(), reachedNode);
+            addProximityAlert(nextLocation.getLatitude(), nextLocation.getLongitude());
             int distToStartLoc = geo.distanceTo(nextLocation);
 
-            drawStepInfo(getResources().getDrawable(R.drawable.marker_departure), "Start in ", distToStartLoc + " m");
+            drawStepInfo(ContextCompat.getDrawable(this, R.drawable.marker_departure), getString(R.string.start_point), distToStartLoc + " m");
+
+            mUpdateStartPointOnce = false;
+            mProgressDialog.dismiss();
+
             return;
         }
 
-        appendLog(String.format("setNextStepToAlert(): reachedNode == %s", reachedNode));
-        appendLog(String.format("setNextStepToAlert(): nextNode == %s", nextNode));
-
         // getting direction icon depending on maneuver
+        @SuppressLint("Recycle")
         TypedArray iconIds = getResources().obtainTypedArray(R.array.direction_icons);
-        int iconId = iconIds.getResourceId(mRoads[0].mNodes.get(reachedNode).mManeuverType, R.drawable.ic_empty);
-        Drawable image = getResources().getDrawable(iconId);
-        if (iconId != R.drawable.ic_empty){
-            image = getResources().getDrawable(iconId);
+        int iconId = iconIds.getResourceId(mRoads[0].mNodes.get(mReachedNode).mManeuverType, R.drawable.ic_empty);
+        Drawable image = ContextCompat.getDrawable(this, iconId);
+        if (iconId != R.drawable.ic_empty) {
+            image = ContextCompat.getDrawable(this, iconId);
         }
 
         // getting info from the current step to next.
-        String instructions = (mRoads[0].mNodes.get(reachedNode).mInstructions==null ? "" : mRoads[0].mNodes.get(reachedNode).mInstructions);
-        String length = String.valueOf(mRoads[0].mNodes.get(reachedNode).mLength) + " m";
+        String instructions = (mRoads[0].mNodes.get(mReachedNode).mInstructions == null ? "" : mRoads[0].mNodes.get(mReachedNode).mInstructions);
+        String length = String.valueOf(mRoads[0].mNodes.get(mReachedNode).mLength) + " m";
         drawStepInfo(image, instructions, length);
 
-        int type = 0;
+        int type = -1;
         for (int iLeg = 0; iLeg < mRoads[0].mLegs.size(); iLeg++) {
 
             int mStartNodeIndex = mRoads[0].mLegs.get(iLeg).mStartNodeIndex;
             int mEndNodeIndex = mRoads[0].mLegs.get(iLeg).mEndNodeIndex;
 
-            if (reachedNode == mEndNodeIndex) {
-                nextVia += 1;
-                type = 0; // update via
+            if (mReachedNode == mEndNodeIndex) {
+                mNextViaPoint += 1;
+                type = 0; // update via and node
                 break;
             }
 
-            if (reachedNode >= mStartNodeIndex && reachedNode < mEndNodeIndex) {
-                nextVia = iLeg;
-                type = 1; // updatenode
+            if (mReachedNode >= mStartNodeIndex && mReachedNode < mEndNodeIndex) {
+                mNextViaPoint = iLeg;
+                type = 1; // update node
                 break;
             }
         }
 
-        if (nextVia >= viaPoints.size()){ // no via anymore --> destination point
-            updateUIWithItineraryMarkers(nextVia);
+        // no via anymore --> destination point
+        if (mNextViaPoint == mViaPoints.size()) {
+            // delete last viaPoint from mapOverlay
+            updateUIWithItineraryMarkers(mNextViaPoint);
         }
 
-        if (nextNode >= mRoads[0].mNodes.size()){ // no nodes anymore --> destination point
-            updateRoadNodes(mRoads[0], nextNode);
+        // no nodes anymore --> destination point
+        if (mNextNode == mRoads[0].mNodes.size()) {
+            // delete last node from mapOverlay
+            updateRoadNodes(mRoads[0], mNextNode);
 
-            distanceBetweenLoc = mRoads[0].mNodes.get(reachedNode - 1).mLocation.distanceTo(mRoads[0].mNodes.get(reachedNode).mLocation);
+            // set distance between current node and destination point
+            GeoPoint prevReachedNodeLoc = mRoads[0].mNodes.get(mReachedNode - 1).mLocation;
+            GeoPoint lastReachedNodeLoc = mRoads[0].mNodes.get(mReachedNode).mLocation;
+            mDistanceBetweenLoc = prevReachedNodeLoc.distanceTo(lastReachedNodeLoc);
+
+            // add alert for the last point
+            addProximityAlert(mDestinationPoint.getLatitude(), mDestinationPoint.getLongitude());
+        }
+
+        if (mNextNode >= mRoads[0].mNodes.size()) {
+            type = 2;
         }
 
         switch (type) {
-            case 0: // update via and 1 node
-                updateUIWithItineraryMarkers(nextVia);
+            case 0:
+                // update viaPoints and 1 node
+                updateUIWithItineraryMarkers(mNextViaPoint);
 
-            case 1: // update only node
-                if (reachedNode == 0){
-                    markerStart = updateItineraryMarker(null, startPoint, START_INDEX,
-                            R.string.departure, R.drawable.marker_departure_visited, -1, null);
+            case 1:
+                // update only node and if needed start marker
+                if (mReachedNode == 0) {
+                    if (mStartPoint != null) {
+                        // set start marker as visited if we reached the first node
+                        mMarkerStart = updateItineraryMarker(null, mStartPoint, START_INDEX,
+                                R.string.departure, R.drawable.marker_departure_visited, -1, null);
+                    }
                 }
-                updateRoadNodes(mRoads[0], nextNode);
 
-                GeoPoint nextNodeLocation = viaPoints.get(nextVia);
-                addProximityAlert(nextNodeLocation.getLatitude(), nextNodeLocation.getLongitude(), reachedNode);
+                // update nodes on map overlay
+                updateRoadNodes(mRoads[0], mNextNode);
 
-                distanceBetweenLoc = mRoads[0].mNodes.get(reachedNode).mLocation.distanceTo(mRoads[0].mNodes.get(nextNode).mLocation);
+                // add alert for next location
+                GeoPoint nextNodeLocation = mRoads[0].mNodes.get(mNextNode).mLocation;
+                addProximityAlert(nextNodeLocation.getLatitude(), nextNodeLocation.getLongitude());
+
+                // set new distance between current node and next node
+                mDistanceBetweenLoc = mRoads[0].mNodes.get(mReachedNode).mLocation.distanceTo(mRoads[0].mNodes.get(mNextNode).mLocation);
+                break;
+            case 2:
+                if (mDestinationPoint != null) {
+                    mMarkerDestination = updateItineraryMarker(null, mDestinationPoint, DEST_INDEX,
+                            R.string.destination, R.drawable.marker_destination_visited, -1, null);
+                }
                 break;
             default:
                 break;
         }
+
+        if (mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
-    private void drawStepInfo(Drawable drawable, String instructions, String length){
+    /**
+     * setup UI info about the route for the user
+     */
+    private void drawStepInfo(Drawable drawable, String instructions, String length) {
         // set maneuver icon
         updateManeuverIcon(drawable);
 
@@ -397,11 +454,15 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         updateDistanceInfo(length);
     }
 
-    private void updateManeuverIcon(Drawable drawable){
+    /**
+     * update maneuver icon until the next step
+     */
+    private void updateManeuverIcon(Drawable drawable) {
+
         // set maneuver icon
-        ImageView ivManeuverIcon = (ImageView)findViewById(R.id.imageView_maneuverIcon);
+        ImageView ivManeuverIcon = (ImageView) findViewById(R.id.imageView_maneuverIcon);
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
         Bitmap newImage = Bitmap.createBitmap(ivManeuverIcon.getWidth(), ivManeuverIcon.getHeight(), Bitmap.Config.ARGB_8888);
-        Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
 
         int maneuverIconCenterX = (ivManeuverIcon.getWidth() - bitmap.getWidth()) / 2;
         int maneuverIconCenterY = (ivManeuverIcon.getHeight() - bitmap.getHeight()) / 2;
@@ -412,17 +473,16 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         ivManeuverIcon.setImageBitmap(newImage);
     }
 
+    /**
+     * update textual instruction until the next step
+     */
     //TODO calculate position for instruction if instruction too long for one line
-    private void updateInstructionInfo(String instructions){
-        int textSize = 50;
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(textSize);
+    private void updateInstructionInfo(String instructions) {
+
+        Paint paint = getPaintForTextInstructions();
 
         // set maneuver instruction
-        ImageView ivManeuverInstruction = (ImageView)findViewById(R.id.imageView_routeInstruction);
+        ImageView ivManeuverInstruction = (ImageView) findViewById(R.id.imageView_routeInstruction);
         Bitmap newImage = Bitmap.createBitmap(ivManeuverInstruction.getWidth(), ivManeuverInstruction.getHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas cManeuverInfo = new Canvas(newImage);
@@ -431,23 +491,20 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         paint.getTextBounds(instructions, 0, instructions.length(), bounds);
 
         int textY = cManeuverInfo.getHeight() / 2 - bounds.height() / 2;
-        int textX=cManeuverInfo.getWidth() / 2;
+        int textX = cManeuverInfo.getWidth() / 2;
 
         cManeuverInfo.drawText(instructions, textX, textY, paint);
         ivManeuverInstruction.setImageBitmap(newImage);
     }
 
-    private void updateDistanceInfo(String length){
+    /**
+     * update textual distance for user information
+     */
+    private void updateDistanceInfo(String length) {
 
-        int textSize = 50;
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(textSize);
+        Paint paint = getPaintForTextInstructions();
 
-        // set maneuver distance
-        ImageView ivManeuverDistance = (ImageView)findViewById(R.id.imageView_routeDistance);
+        ImageView ivManeuverDistance = (ImageView) findViewById(R.id.imageView_routeDistance);
         Bitmap newImage = Bitmap.createBitmap(ivManeuverDistance.getWidth(), ivManeuverDistance.getHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas cManeuverDistance = new Canvas(newImage);
@@ -462,60 +519,81 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         ivManeuverDistance.setImageBitmap(newImage);
     }
 
-    public void addViaPoint(GeoPoint p){
-        viaPoints.add(p);
-        updateItineraryMarker(null, p, viaPoints.size() - 1,
+    /**
+     * get style for drawing the text
+     */
+    private Paint getPaintForTextInstructions() {
+        int textSize = 50;
+        Paint paint = new Paint();
+
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(textSize);
+
+        return paint;
+    }
+
+    /**
+     * add via point on map overlay
+     */
+    public void addViaPoint(GeoPoint p) {
+        mViaPoints.add(p);
+        updateItineraryMarker(null, p, mViaPoints.size() - 1,
                 R.string.viapoint, R.drawable.marker_via, -1, null);
     }
 
+    /** update all itinenary markers */
     public void updateUIWithItineraryMarkers() {
         updateUIWithItineraryMarkers(0);
     }
 
-    public void updateUIWithItineraryMarkers(int iVia){
+    /**
+     * update itinenary markers from specific one
+     */
+    public void updateUIWithItineraryMarkers(int iVia) {
         mItineraryMarkers.closeAllInfoWindows();
         mItineraryMarkers.getItems().clear();
+
         //Start marker:
-        if (startPoint != null){
-            if (reachedNode >= 0){
-                markerStart = updateItineraryMarker(null, startPoint, START_INDEX,
+        if (mStartPoint != null) {
+            if (mReachedNode >= 0) {
+                // set start marker as visited if we reached the first node
+                mMarkerStart = updateItineraryMarker(null, mStartPoint, START_INDEX,
                         R.string.departure, R.drawable.marker_departure_visited, -1, null);
-            }
-            else {
-                markerStart = updateItineraryMarker(null, startPoint, START_INDEX,
+            } else {
+                mMarkerStart = updateItineraryMarker(null, mStartPoint, START_INDEX,
                         R.string.departure, R.drawable.marker_departure, -1, null);
             }
         }
-        //Via-points markers if any:
-        for (int index=0; index < iVia; index++){
-            updateItineraryMarker(null, viaPoints.get(index), index,
+
+        // update via markers before specific one as visited
+        for (int index = 0; index < iVia; index++) {
+            updateItineraryMarker(null, mViaPoints.get(index), index,
                     R.string.viapoint, R.drawable.marker_via_visited, -1, null);
         }
-        for (int index=iVia; index < viaPoints.size(); index++){
-            updateItineraryMarker(null, viaPoints.get(index), index,
+        // update via markers after specific one as non-visited
+        for (int index = iVia; index < mViaPoints.size(); index++) {
+            updateItineraryMarker(null, mViaPoints.get(index), index,
                     R.string.viapoint, R.drawable.marker_via, -1, null);
         }
 
-        //Destination marker if any:
-        if (destinationPoint != null){
-            if (iVia >= viaPoints.size() - 1 ){
-                markerDestination = updateItineraryMarker(null, destinationPoint, DEST_INDEX,
-                        R.string.destination, R.drawable.marker_destination_visited, -1, null);
-            }
-            else {
-                markerDestination = updateItineraryMarker(null, destinationPoint, DEST_INDEX,
-                        R.string.destination, R.drawable.marker_destination, -1, null);
-            }
+        // Destination marker: (as visited would be set
+        if (mDestinationPoint != null) {
+            mMarkerDestination = updateItineraryMarker(null, mDestinationPoint, DEST_INDEX,
+                    R.string.destination, R.drawable.marker_destination, -1, null);
         }
     }
 
-    /** Update (or create if null) a marker in itineraryMarkers. */
+    /**
+     * Update (or create if null) a marker in itineraryMarkers.
+     */
     public Marker updateItineraryMarker(Marker marker, GeoPoint p, int index,
                                         int titleResId, int markerResId, int imageResId, String address) {
-        Drawable icon = getResources().getDrawable(markerResId);
+        Drawable icon = ContextCompat.getDrawable(this, markerResId);
         String title = getResources().getString(titleResId);
-        if (marker == null){
-            marker = new Marker(map);
+        if (marker == null) {
+            marker = new Marker(mMap);
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setInfoWindow(mViaPointInfoWindow);
             marker.setDraggable(true);
@@ -525,62 +603,71 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         marker.setPosition(p);
         marker.setIcon(icon);
         if (imageResId != -1)
-            marker.setImage(getResources().getDrawable(imageResId));
+            marker.setImage(ContextCompat.getDrawable(this, imageResId));
         marker.setRelatedObject(index);
-        map.invalidate();
+        mMap.invalidate();
 
         return marker;
     }
 
-    void updateUIWithTrackingMode(){
-        if (mTrackingMode){
+    /**
+     * setup map orientation if tracking mode is on
+     */
+    void updateUIWithTrackingMode() {
+        if (mTrackingMode) {
             mTrackingModeButton.setBackgroundResource(R.drawable.btn_tracking_on);
-            if (myLocationOverlay.isEnabled()&& myLocationOverlay.getLocation() != null){
-                map.getController().animateTo(myLocationOverlay.getLocation());
+            if (mLocationOverlay.isEnabled() && mLocationOverlay.getLocation() != null) {
+                mMap.getController().animateTo(mLocationOverlay.getLocation());
             }
-            map.setMapOrientation(-mAzimuthAngleSpeed);
+            mMap.setMapOrientation(-mAzimuthAngleSpeed);
             mTrackingModeButton.setKeepScreenOn(true);
         } else {
             mTrackingModeButton.setBackgroundResource(R.drawable.btn_tracking_off);
-            map.setMapOrientation(0.0f);
+            mMap.setMapOrientation(0.0f);
             mTrackingModeButton.setKeepScreenOn(false);
         }
     }
 
-    boolean startLocationUpdates(){
+    boolean startLocationUpdates() {
         boolean result = false;
-        for (final String provider : gps.getLocationManager().getProviders(true)) {
-            gps.getLocationManager().requestLocationUpdates(provider, 4000, 0.0f, this);
+        for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
+            mGPSTracker.getLocationManager().requestLocationUpdates(provider, LOCATION_UPDATES_TIME, LOCATION_UPDATES_DIST, this);
             result = true;
         }
         return result;
     }
 
-    private void putRoadNodes(Road road){
+    /**
+     * show all nodes on map overlay
+     */
+    private void putRoadNodes(Road road) {
         updateRoadNodes(road, 0);
     }
 
-    private void updateRoadNodes(Road road, int index){
+    /**
+     * update nodes on map overlay from specific one
+     */
+    private void updateRoadNodes(Road road, int index) {
         mRoadNodeMarkers.getItems().clear();
-        Drawable icon = getResources().getDrawable(R.drawable.marker_node);
+        Drawable icon = ContextCompat.getDrawable(this, R.drawable.marker_node);
         int n = road.mNodes.size();
 
-        MarkerInfoWindow infoWindow = new MarkerInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, map);
+        MarkerInfoWindow infoWindow = new MarkerInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mMap);
         TypedArray iconIds = getResources().obtainTypedArray(R.array.direction_icons);
 
-        for (int i=index; i<n; i++){
+        for (int i = index; i < n; i++) {
             RoadNode node = road.mNodes.get(i);
-            String instructions = (node.mInstructions==null ? "" : node.mInstructions);
-            Marker nodeMarker = new Marker(map);
-            nodeMarker.setTitle(getString(R.string.step)+ " " + (i+1));
+            String instructions = (node.mInstructions == null ? "" : node.mInstructions);
+            Marker nodeMarker = new Marker(mMap);
+            nodeMarker.setTitle(getString(R.string.step) + " " + (i + 1));
             nodeMarker.setSnippet(instructions);
             nodeMarker.setSubDescription(Road.getLengthDurationText(this, node.mLength, node.mDuration));
             nodeMarker.setPosition(node.mLocation);
             nodeMarker.setIcon(icon);
             nodeMarker.setInfoWindow(infoWindow); //use a shared infowindow.
             int iconId = iconIds.getResourceId(node.mManeuverType, R.drawable.ic_empty);
-            if (iconId != R.drawable.ic_empty){
-                Drawable image = getResources().getDrawable(iconId);
+            if (iconId != R.drawable.ic_empty) {
+                Drawable image = ContextCompat.getDrawable(this, iconId);
                 nodeMarker.setImage(image);
             }
             mRoadNodeMarkers.add(nodeMarker);
@@ -588,42 +675,44 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         iconIds.recycle();
     }
 
-    void selectRoad(int roadIndex){
+    /** paint road lines with colors blue or red */
+    void selectRoad(int roadIndex) {
         mSelectedRoad = roadIndex;
         putRoadNodes(mRoads[roadIndex]);
 
-        for (int i=0; i<mRoadOverlays.length; i++){
+        for (int i = 0; i < mRoadOverlays.length; i++) {
             Paint p = mRoadOverlays[i].getPaint();
             if (i == roadIndex)
-                p.setColor(0x800000FF); //blue
+                p.setColor(getResources().getColor(R.color.colorPrimaryDark)); //blue
             else
-                p.setColor(0x90666666); //grey
+                p.setColor(getResources().getColor(R.color.colorAccent)); // red
         }
-        map.invalidate();
+        mMap.invalidate();
     }
 
-    void updateUIWithRoads(Road[] roads){
+    void updateUIWithRoads(Road[] roads) {
         mRoadNodeMarkers.getItems().clear();
-        List<Overlay> mapOverlays = map.getOverlays();
-        if (mRoadOverlays != null){
-            for (int i=0; i<mRoadOverlays.length; i++)
-                mapOverlays.remove(mRoadOverlays[i]);
+        List<Overlay> mapOverlays = mMap.getOverlays();
+        if (mRoadOverlays != null) {
+            for (Polyline mRoadOverlay : mRoadOverlays) {
+                mapOverlays.remove(mRoadOverlay);
+            }
             mRoadOverlays = null;
         }
         if (roads == null)
             return;
         if (roads[0].mStatus == Road.STATUS_TECHNICAL_ISSUE)
-            Toast.makeText(map.getContext(), "Technical issue when getting the route", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mMap.getContext(), R.string.technical_issue, Toast.LENGTH_SHORT).show();
         else if (roads[0].mStatus > Road.STATUS_TECHNICAL_ISSUE) //functional issues
-            Toast.makeText(map.getContext(), "No possible route here", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mMap.getContext(), R.string.no_route, Toast.LENGTH_SHORT).show();
         mRoadOverlays = new Polyline[roads.length];
-        for (int i=0; i<roads.length; i++) {
+        for (int i = 0; i < roads.length; i++) {
             Polyline roadPolyline = RoadManager.buildRoadOverlay(roads[i], this);
             mRoadOverlays[i] = roadPolyline;
 
             String routeDesc = roads[i].getLengthDurationText(this, -1);
             roadPolyline.setTitle(getString(R.string.route) + " - " + routeDesc);
-            roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, map));
+            roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mMap));
             roadPolyline.setRelatedObject(i);
             mapOverlays.add(1, roadPolyline);
             //we insert the road overlays at the "bottom", just above the MapEventsOverlay,
@@ -632,100 +721,41 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         selectRoad(0);
     }
 
-    /**
-     * Async task to get the road in a separate thread.
-     */
-    private class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
-
-        private final Context mContext;
-        private final ProgressDialog dialog = new ProgressDialog(RouteNavigationActivity.this);
-
-        public UpdateRoadTask(Context context) {
-            this.mContext = context;
-        }
-
-        protected void onPreExecute(){
-            this.dialog.setMessage(getString(R.string.route_calculating_dialog));
-            this.dialog.setCancelable(true);
-            this.dialog.show();
-        }
-
-        protected Road[] doInBackground(Object... params) {
-            @SuppressWarnings("unchecked")
-            ArrayList<GeoPoint> waypoints = (ArrayList<GeoPoint>)params[0];
-            RoadManager roadManager = new OSRMRoadManager(mContext);
-
-            //roadManager = new MapQuestRoadManager("Fmjtd%7Cluubn10zn9%2C8s%3Do5-90rnq6");
-            roadManager = new MapQuestRoadManager("VvR4CnlGhrT4AwOXLFCQPzSuuDxbfYEg");
-            roadManager.addRequestOption("routeType=pedestrian");
-
-            return roadManager.getRoads(waypoints);
-        }
-
-        protected void onPostExecute(Road[] result) {
-            this.dialog.dismiss();
-            mRoads = result;
-            updateUIWithRoads(result);
-        }
-    }
-
     public void getRoadAsync() {
         getRoadAsync(0);
     }
 
-    public void getRoadAsync(int index){
+    public void getRoadAsync(int index) {
         mRoads = null;
         GeoPoint roadStartPoint = null;
-        if (startPoint != null){
-            roadStartPoint = startPoint;
-        } else if (myLocationOverlay.isEnabled() && myLocationOverlay.getLocation() != null){
+        if (mStartPoint != null) {
+            roadStartPoint = mStartPoint;
+        } else if (mLocationOverlay.isEnabled() && mLocationOverlay.getLocation() != null) {
             //use my current location as itinerary start point:
-            roadStartPoint = myLocationOverlay.getLocation();
+            roadStartPoint = mLocationOverlay.getLocation();
         }
-        if (roadStartPoint == null || destinationPoint == null){
-            updateUIWithRoads(mRoads);
-            updateUIWithPolygon(viaPoints, "");
+        if (roadStartPoint == null || mDestinationPoint == null) {
+            updateUIWithRoads(null);
+            updateUIWithPolygon(mViaPoints, "");
             return;
         }
-        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>(2);
+        ArrayList<GeoPoint> waypoints = new ArrayList<>(2);
         waypoints.add(roadStartPoint);
 
         //add intermediate via points:
-        for (int i = index; i < viaPoints.size(); i++){
-            waypoints.add(viaPoints.get(i));
+        for (int i = index; i < mViaPoints.size(); i++) {
+            waypoints.add(mViaPoints.get(i));
         }
 
-        waypoints.add(destinationPoint);
+        waypoints.add(mDestinationPoint);
         new UpdateRoadTask(this).execute(waypoints);
     }
 
     /**
-     * A customized InfoWindow handling "itinerary" points (start, destination and via-points).
-     * We inherit from MarkerInfoWindow as it already provides most of what we want.
-     * And we just add support for a "remove" button.
-     *
-     * @author M.Kergall
+     * add or replace the polygon overlay
      */
-    public class ViaPointInfoWindow extends MarkerInfoWindow {
-
-        int mSelectedPoint;
-
-        public ViaPointInfoWindow(int layoutResId, MapView mapView) {
-            super(layoutResId, mapView);
-        }
-
-        @Override
-        public void onOpen(Object item) {
-            Marker eItem = (Marker) item;
-            mSelectedPoint = (Integer) eItem.getRelatedObject();
-            super.onOpen(item);
-        }
-
-    }
-
-    //add or replace the polygon overlay
-    public void updateUIWithPolygon(ArrayList<GeoPoint> polygon, String name){
-        List<Overlay> mapOverlays = map.getOverlays();
+    public void updateUIWithPolygon(ArrayList<GeoPoint> polygon, String name) {
+        List<Overlay> mapOverlays = mMap.getOverlays();
         int location = -1;
         if (mDestinationPolygon != null)
             location = mapOverlays.indexOf(mDestinationPolygon);
@@ -734,44 +764,26 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mDestinationPolygon.setStrokeColor(0x800000FF);
         mDestinationPolygon.setStrokeWidth(5.0f);
         mDestinationPolygon.setTitle(name);
-        if (polygon != null){
+        if (polygon != null) {
             mDestinationPolygon.setPoints(polygon);
         }
         if (location != -1)
             mapOverlays.set(location, mDestinationPolygon);
         else
             mapOverlays.add(1, mDestinationPolygon); //insert just above the MapEventsOverlay.
-        map.invalidate();
+        mMap.invalidate();
     }
 
-    public class ProximityIntentReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String key = LocationManager.KEY_PROXIMITY_ENTERING;
-            Boolean entering = intent.getBooleanExtra(key, false);
-            int nodeFromIntent = intent.getIntExtra("reachedNode", -2);
-            if (entering) {
-                appendLog(String.format("onReceive() nodeFromIntent %s == reachedNode %s", nodeFromIntent, reachedNode));
-                if (nodeFromIntent == reachedNode) {
-                    reachedNode++;
-                    appendLog(String.format("onReceive() reachedNode incremented %s", reachedNode));
-                }
-            }
-        }
-    }
+    private void addProximityAlert(double latitude, double longitude) {
+        Intent intent = new Intent(PROX_ALERT);
 
-    private void addProximityAlert(double latitude, double longitude, int reachedNode) {
-        Intent intent = new Intent(PROX_ALERT, Uri.parse("geo:"+latitude+","+longitude));
-        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra("reachedNode", reachedNode);
-
-        proximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        gps.getLocationManager().addProximityAlert(
+        mProximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mGPSTracker.getLocationManager().addProximityAlert(
                 latitude, // the latitude of the central point of the alert region
                 longitude, // the longitude of the central point of the alert region
                 POINT_RADIUS, // the radius of the central point of the alert region, in meters
                 PROX_ALERT_EXPIRATION, // time for this proximity alert, in milliseconds, or -1 to indicate no expiration
-                proximityIntent // will be used to generate an Intent to fire when entry to or exit from the alert region is detected
+                mProximityIntent // will be used to generate an Intent to fire when entry to or exit from the alert region is detected
         );
     }
 
@@ -779,15 +791,15 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      * callback to store activity status before a restart (orientation change for instance)
      */
     @Override
-    protected void onSaveInstanceState (Bundle outState){
-        outState.putParcelable("location", myLocationOverlay.getLocation());
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable("location", mLocationOverlay.getLocation());
         outState.putBoolean("tracking_mode", mTrackingMode);
-        outState.putParcelable("start", startPoint);
-        outState.putParcelable("destination", destinationPoint);
-        outState.putParcelableArrayList("viapoints", viaPoints);
-        outState.putInt("reachedNode", reachedNode);
-        outState.putInt("nextNode", nextNode);
-        outState.putInt("nextVia", nextVia);
+        outState.putParcelable("start", mStartPoint);
+        outState.putParcelable("destination", mDestinationPoint);
+        outState.putParcelableArrayList("viapoints", mViaPoints);
+        outState.putInt("mReachedNode", mReachedNode);
+        outState.putInt("mNextNode", mNextNode);
+        outState.putInt("mNextViaPoint", mNextViaPoint);
     }
 
     @Override
@@ -822,37 +834,36 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        myLocationOverlay.setAccuracy(accuracy);
-        map.invalidate();
+        mLocationOverlay.setAccuracy(accuracy);
+        mMap.invalidate();
 
     }
 
-    @Override protected void onResume() {
+    @Override
+    protected void onResume() {
         boolean isOneProviderEnabled = startLocationUpdates();
-        myLocationOverlay.setEnabled(isOneProviderEnabled);
+        mLocationOverlay.setEnabled(isOneProviderEnabled);
 
         IntentFilter filter = new IntentFilter(PROX_ALERT);
-        filter.addDataScheme("geo");
-        registerReceiver(proximityIntentReceiver, filter);
+        registerReceiver(mProximityIntentReceiver, filter);
 
         super.onResume();
     }
 
-    @Override protected void onPause() {
-        gps.getLocationManager().removeUpdates(this);
-        unregisterReceiver(proximityIntentReceiver);
+    @Override
+    protected void onPause() {
+        if (mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+
+        mGPSTracker.getLocationManager().removeUpdates(this);
+        unregisterReceiver(mProximityIntentReceiver);
 
         super.onPause();
     }
 
-    @Override protected void onDestroy() {
-        appendLog(StringUtils.repeat("=", 80));
-        appendLog("onDestroy");
-        appendLog(StringUtils.repeat("=", 80));
-
-        gps.getLocationManager().removeProximityAlert(proximityIntent);
-        mRoads = null;
-
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 
@@ -865,43 +876,69 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         super.onBackPressed();
     }
 
-    public void appendLog(String text)
-    {
-        File logFile;
-        if (text.startsWith("log_")){
-            logFile = new File(String.format("sdcard/HIPApp/%s", text));
-        }
-        else{
-            logFile = new File("sdcard/HIPApp/log.log");
+    /**
+     * Async task to get the road in a separate thread.
+     */
+    private class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
+        private final Context mContext;
+
+        private UpdateRoadTask(Context mContext) {
+            this.mContext = mContext;
         }
 
-        if (!logFile.exists())
-        {
-            try
-            {
-                logFile.createNewFile();
-            }
-            catch (IOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        protected void onPreExecute() {
+            mProgressDialog.setMessage(getString(R.string.downlod_road));
+            mProgressDialog.show();
         }
 
-        try
-        {
-            //BufferedWriter for performance, true to set append to file flag
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-            String newText = currentDateTimeString + ":    " + text;
-            buf.append(newText);
-            buf.newLine();
-            buf.close();
+        protected Road[] doInBackground(Object... params) {
+            @SuppressWarnings("unchecked")
+            ArrayList<GeoPoint> waypoints = (ArrayList<GeoPoint>) params[0];
+            RoadManager roadManager = new MapQuestRoadManager(getString(R.string.mapquest_key));
+            roadManager.addRequestOption("routeType=pedestrian");
+            roadManager.addRequestOption("locale=de_DE");
+
+            return roadManager.getRoads(waypoints);
         }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
+        protected void onPostExecute(Road[] result) {
+            mProgressDialog.setMessage(getString(R.string.creating_map));
+            mRoads = result;
+            if (mRoads != null) {
+                updateUIWithRoads(result);
+            }
+        }
+    }
+
+    /**
+     * A customized InfoWindow handling "itinerary" points (start, destination and via-points).
+     * We inherit from MarkerInfoWindow as it already provides most of what we want.
+     */
+    public class ViaPointInfoWindow extends MarkerInfoWindow {
+
+        int mSelectedPoint;
+
+        public ViaPointInfoWindow(int layoutResId, MapView mapView) {
+            super(layoutResId, mapView);
+        }
+
+        @Override
+        public void onOpen(Object item) {
+            Marker eItem = (Marker) item;
+            mSelectedPoint = (Integer) eItem.getRelatedObject();
+            super.onOpen(item);
+        }
+    }
+
+    public class ProximityIntentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String key = LocationManager.KEY_PROXIMITY_ENTERING;
+            Boolean entering = intent.getBooleanExtra(key, false);
+            if (entering) {
+                mReachedNode++;
+                mGPSTracker.getLocationManager().removeProximityAlert(mProximityIntent);
+            }
         }
     }
 }

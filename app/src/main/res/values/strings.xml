@@ -30,17 +30,21 @@
     <string name="splash_screen_no_connection_error_message">Bitte stellen Sie sicher, dass Sie über eine aktive Internetverbindung verfügen.</string>
     <string name="splash_screen_check_connection">Prüfe Internetverbindung.</string>
 
+    <!-- string for route navigation -->
     <string name="drawer_open">Öffne Navigation</string>
     <string name="drawer_close">Schließ Navigation</string>
-    <string name="departure">Start</string>
-    <string name="viapoint">Unknown via point</string>
-    <string name="destination">Destination</string>
-    <string name="step">Step</string>
-    <string name="itinerary_markers_title">Route Via-Points</string>
+    <string name="departure">Abfahrt</string>
+    <string name="viapoint">Wegpunkt</string>
+    <string name="destination">Ziel</string>
+    <string name="start_point">"Startpunkt in"</string>
+    <string name="step">Schritt</string>
+    <string name="itinerary_markers_title">Route Via-Punkte</string>
     <string name="route">Route</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="wait">Wait</string>
-    <string name="route_calculating_dialog">Calculating the route...</string>
+    <string name="no_route">Kein mögliche Route hier</string>
+    <string name="technical_issue">Technische Probleme eine Route zu bekommen</string>
+
+    <string name="mapquest_key">VvR4CnlGhrT4AwOXLFCQPzSuuDxbfYEg</string>
+    <string name="downlod_road">Downloading the road…</string>
+    <string name="creating_map">Creating the map...</string>
 
 </resources>

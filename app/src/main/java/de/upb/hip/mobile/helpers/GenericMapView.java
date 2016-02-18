@@ -29,7 +29,7 @@ public class GenericMapView extends FrameLayout {
         MapView newMapView = new MapView(this.getContext(), resourceProxy, aTileProvider);
 
         if (mMapView != null) {
-            //restore as much parameters as possible from previous map:
+            //restore as much parameters as possible from previous mMap:
             IMapController mapController = newMapView.getController();
             mapController.setZoom(mMapView.getZoomLevel());
             mapController.setCenter(mMapView.getMapCenter());

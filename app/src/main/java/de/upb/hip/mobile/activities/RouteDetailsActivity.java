@@ -1,11 +1,6 @@
 package de.upb.hip.mobile.activities;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -58,7 +52,7 @@ public class RouteDetailsActivity extends BaseActivity implements RoutingListene
     private DrawerLayout mDrawerLayout;
 
     private GPSTracker gps;
-    private boolean bRefresh = false;
+    private boolean bCanGetLocation = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +69,13 @@ public class RouteDetailsActivity extends BaseActivity implements RoutingListene
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                gps = new GPSTracker(RouteDetailsActivity.this);
                 if (gps.canGetLocation()) {
                     startRouteNavigation();
                 }
                 else{
                     gps.showSettingsAlert();
+                    bCanGetLocation = false;
                 }
             }
         });
@@ -232,11 +228,11 @@ public class RouteDetailsActivity extends BaseActivity implements RoutingListene
 
     @Override protected void onResume() {
         super.onResume();
-/*
+
         gps = new GPSTracker(RouteDetailsActivity.this);
-        if (!bRefresh && gps.canGetLocation()){
+        if (!bCanGetLocation && gps.canGetLocation()) {
             startRouteNavigation();
-        }*/
+        }
     }
 
     @Override protected void onPause() {
@@ -250,7 +246,7 @@ public class RouteDetailsActivity extends BaseActivity implements RoutingListene
         if (requestCode == 1) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                bRefresh = data.getBooleanExtra("onBackPressed", false);
+                bCanGetLocation = data.getBooleanExtra("onBackPressed", false);
             }
         }
     }
