@@ -79,8 +79,6 @@ import de.upb.hip.mobile.models.Route;
 
 public class RouteNavigationActivity extends Activity implements MapEventsReceiver, LocationListener, SensorEventListener {
     protected final int START_INDEX = -2, DEST_INDEX = -1;
-    protected final long LOCATION_UPDATES_TIME = 2000; //in miliseconds
-    protected final float LOCATION_UPDATES_DIST = 2; // in meters
     protected final int ROUTE_REJECT = 25; //in meters
     protected final String PROX_ALERT = getPackageName() + ".PROX_ALERT";
     protected final long POINT_RADIUS = 5; // in Meters
@@ -131,6 +129,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
         genericMap.setTileProvider(bitmapProvider);
         mMap = genericMap.getMapView();
+        mMap.setBuiltInZoomControls(true);
+        mMap.setMultiTouchControls(true);
 
         mMap.setTileSource(TileSourceFactory.MAPNIK);
 
@@ -631,7 +631,11 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     boolean startLocationUpdates() {
         boolean result = false;
         for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
-            mGPSTracker.getLocationManager().requestLocationUpdates(provider, LOCATION_UPDATES_TIME, LOCATION_UPDATES_DIST, this);
+            mGPSTracker.getLocationManager().requestLocationUpdates(
+                    provider,
+                    GPSTracker.MIN_TIME_BW_UPDATES,
+                    GPSTracker.MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                    this);
             result = true;
         }
         return result;

@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.helpers;
 
 import android.app.AlertDialog;
@@ -9,37 +25,30 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 
+import de.upb.hip.mobile.activities.R;
+
 public class GPSTracker extends Service implements LocationListener {
 
+    // The minimum distance to change Updates in meters
+    public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 2; // 2 meters
+    // The minimum time between updates in milliseconds
+    public static final long MIN_TIME_BW_UPDATES = 2000; // 2 sec
     private final Context mContext;
-
+    // Declaring a Location Manager
+    protected LocationManager locationManager;
     // Flag for GPS status
     boolean isGPSEnabled = false;
-
     // Flag for network status
     boolean isNetworkEnabled = false;
-
     // Flag for GPS status
     boolean canGetLocation = false;
-
     Location location; // Location
     double latitude; // Latitude
     double longitude; // Longitude
-
-    // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 4; // 1 meters
-
-    // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 4000; // 4 sec
-
-    // Declaring a Location Manager
-    protected LocationManager locationManager;
 
     public GPSTracker(Context context) {
         this.mContext = context;
@@ -97,8 +106,7 @@ public class GPSTracker extends Service implements LocationListener {
                     }
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -109,9 +117,9 @@ public class GPSTracker extends Service implements LocationListener {
     /**
      * Stop using GPS listener
      * Calling this function will stop using GPS in your app.
-     * */
-    public void stopUsingGPS(){
-        if(locationManager != null){
+     */
+    public void stopUsingGPS() {
+        if (locationManager != null) {
             locationManager.removeUpdates(GPSTracker.this);
         }
     }
@@ -119,9 +127,9 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Function to get latitude
-     * */
-    public double getLatitude(){
-        if(location != null){
+     */
+    public double getLatitude() {
+        if (location != null) {
             latitude = location.getLatitude();
         }
 
@@ -132,9 +140,9 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Function to get longitude
-     * */
-    public double getLongitude(){
-        if(location != null){
+     */
+    public double getLongitude() {
+        if (location != null) {
             longitude = location.getLongitude();
         }
 
@@ -144,8 +152,8 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Function to get longitude
-     * */
-    public LocationManager getLocationManager(){
+     */
+    public LocationManager getLocationManager() {
 
         // return locationManager
         return locationManager;
@@ -153,8 +161,9 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Function to check GPS/Wi-Fi enabled
+     *
      * @return boolean
-     * */
+     */
     public boolean canGetLocation() {
         return this.canGetLocation;
     }
@@ -163,26 +172,26 @@ public class GPSTracker extends Service implements LocationListener {
     /**
      * Function to show settings alert dialog.
      * On pressing the Settings button it will launch Settings Options.
-     * */
-    public void showSettingsAlert(){
+     */
+    public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
         // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle(R.string.gps_settings);
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+        alertDialog.setMessage(R.string.gps_not_enabled_message);
 
         // On pressing the Settings button.
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog,int which) {
+        alertDialog.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 mContext.startActivity(intent);
             }
         });
 
         // On pressing the cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }

@@ -47,4 +47,10 @@
     <string name="downlod_road">Downloading the road…</string>
     <string name="creating_map">Creating the map...</string>
 
+    <!-- string for GPSTracker -->
+    <string name="gps_settings">GPS Einstellungen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="cancel">Cancel</string>
+    <string name="gps_not_enabled_message">GPS ist nicht aktiviert. Wollen Sie die Einstellungsmenü öffnen?</string>
+
 </resources>
