@@ -41,6 +41,7 @@
     <string name="itinerary_markers_title">Route Via-Punkte</string>
     <string name="route">Route</string>
     <string name="no_route">Kein mögliche Route hier</string>
+    <string name="empty_route">Route ist empty</string>
     <string name="technical_issue">Technische Probleme eine Route zu bekommen</string>
 
     <string name="mapquest_key">VvR4CnlGhrT4AwOXLFCQPzSuuDxbfYEg</string>

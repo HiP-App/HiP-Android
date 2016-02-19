@@ -71,6 +71,7 @@ import java.util.List;
 
 import de.upb.hip.mobile.helpers.GPSTracker;
 import de.upb.hip.mobile.helpers.GenericMapView;
+import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.models.Route;
 
 /**
@@ -133,6 +134,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.setMultiTouchControls(true);
 
         mMap.setTileSource(TileSourceFactory.MAPNIK);
+        mMap.setTilesScaledToDpi(true);
+        mMap.setMaxZoomLevel(RouteDetailsActivity.MAX_ZOOM_LEVEL);
 
         // getting location
         mGPSTracker = new GPSTracker(RouteNavigationActivity.this);
@@ -140,7 +143,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
         // mMap prefs:
         IMapController mapController = mMap.getController();
-        mapController.setZoom(19);
+        mapController.setZoom(RouteDetailsActivity.ZOOM_LEVEL);
         mapController.setCenter(geoLocation);
 
         // Itinerary markers:
@@ -911,26 +914,6 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             if (mRoads != null) {
                 updateUIWithRoads(result);
             }
-        }
-    }
-
-    /**
-     * A customized InfoWindow handling "itinerary" points (start, destination and via-points).
-     * We inherit from MarkerInfoWindow as it already provides most of what we want.
-     */
-    public class ViaPointInfoWindow extends MarkerInfoWindow {
-
-        int mSelectedPoint;
-
-        public ViaPointInfoWindow(int layoutResId, MapView mapView) {
-            super(layoutResId, mapView);
-        }
-
-        @Override
-        public void onOpen(Object item) {
-            Marker eItem = (Marker) item;
-            mSelectedPoint = (Integer) eItem.getRelatedObject();
-            super.onOpen(item);
         }
     }
 
