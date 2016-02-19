@@ -1,47 +1,11 @@
 package de.upb.hip.mobile.activities;
 
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
-
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.app.ActivityOptions;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.transition.Explode;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
-
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,15 +14,19 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.adapters.RecyclerAdapter;
+import de.upb.hip.mobile.helpers.ImageLoader;
+import de.upb.hip.mobile.listeners.ExtendedLocationListener;
+import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
+import de.upb.hip.mobile.models.ExhibitSet;
 
 public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -115,7 +83,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
+        mAdapter = new RecyclerAdapter(this.exhibitSet);
         mRecyclerView.setAdapter(mAdapter);
 
         //getWindow().setExitTransition(new Explode());
@@ -155,7 +123,7 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
     public void notifyExhibitSetChanged() {
         mSwipeLayout.setRefreshing(false);
         this.exhibitSet = new ExhibitSet(database.getView("exhibits"), this.paderborn);
-        mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
+        mAdapter = new RecyclerAdapter(this.exhibitSet);
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();
         this.exhibitSet.addMarker(this.mMap, getApplicationContext());
