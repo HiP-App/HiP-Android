@@ -48,10 +48,13 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.PathOverlay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GPSTracker;
 import de.upb.hip.mobile.helpers.GenericMapView;
+import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
@@ -70,6 +73,9 @@ public class RouteDetailsActivity extends BaseActivity {
     private GPSTracker mGPSTracker;
     private boolean mCanGetLocation = true;
 
+    private DBAdapter db;
+    private ViaPointInfoWindow mViaPointInfoWindow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +90,8 @@ public class RouteDetailsActivity extends BaseActivity {
             if (mGPSTracker.canGetLocation()) {
                 mGeoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
             }
+
+            db = new DBAdapter(this);
 
             initRouteInfo();
             initMap();
@@ -124,7 +132,7 @@ public class RouteDetailsActivity extends BaseActivity {
 
                         BoundingBoxE6 boundingBoxE6 = getBoundingBoxE6();
                         if (boundingBoxE6 != null) {
-                            mMap.zoomToBoundingBox(boundingBoxE6, true);
+                            mMap.zoomToBoundingBox(boundingBoxE6, false);
                         }
                     }
                 });
@@ -170,6 +178,9 @@ public class RouteDetailsActivity extends BaseActivity {
      * init an overlay which is just a group of other overlays
      */
     private void initItineraryMarkers() {
+
+        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
+
         mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
@@ -177,73 +188,159 @@ public class RouteDetailsActivity extends BaseActivity {
 
     /**
      * add start point (our location) in FolderOverlay and refresh the map
+     * if no location for the marker => nothing to add
+     * there are 2 szenario of adding startpoint: with our location or without
+     * () - startpoint, [] - endpoint
+     *
+     * (our loc) -- 1waypoint -- 2waypoint -- ... -- [N-waypoint]
+     * (our loc) -- 1waypoint -- [2waypoint]
+     * (our loc) -- [1waypoint]
+     *
+     * (1waypoint) -- 2waypoint -- ... -- [N-waypoint]
+     * (1waypoint) -- [2waypoint]
+     *  1waypoint                                      <-- no start or endpoint marker
      */
     private void addStartPointOnMap() {
         GeoPoint geoLocation = null;
+        String title = getResources().getString(R.string.departure);
+        String description = "";
+        Map<String, Integer> mViaPointData = new HashMap<>();
+        Drawable drawable = null;
 
         if (this.mGeoLocation != null) {
             // setup our current location as start point
             geoLocation = this.mGeoLocation;
-        } else if (mRoute.waypoints.size() > 0) {
-            // if no current location then use first waypoint as start point
+        } else if (mRoute.waypoints.size() > 1) {
+            // if no current location then use first waypoint as start point only if >=2 waypoints
             geoLocation = new GeoPoint(mRoute.waypoints.get(0).latitude,
                     mRoute.waypoints.get(0).longitude);
+
+            // add related data to marker if start point is first waypoint
+            if (mRoute.waypoints.get(0).exhibit_id != -1) {
+                Exhibit exhibit = mRoute.waypoints.get(0).getExhibit(db);
+                title = exhibit.name;
+                description = exhibit.description;
+                mViaPointData.put(title, exhibit.id);
+
+                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+            }
         }
 
         if (geoLocation != null) {
-            // init start point
-            Drawable markerIcon = ContextCompat.getDrawable(this, R.drawable.marker_departure);
-            Marker marker = new Marker(mMap);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setTitle(getString(R.string.departure));
-            marker.setPosition(geoLocation);
-            marker.setIcon(markerIcon);
-            //marker.setRelatedObject(index);
-            mItineraryMarkers.add(marker);
-            mMap.invalidate();
+            // set and fill start point with data
+            updateMarker(geoLocation, drawable, R.drawable.marker_departure, title, description,
+                    mViaPointData);
+        }
+    }
+
+    /**
+     * adding waypoints between our start and end-point
+     * and depends on if we have our location or not
+     * there are 2 szenario of adding endpoint: with our location or without
+     * () - startpoint, [] - endpoint
+     * <p/>
+     * (our loc) -- 1waypoint -- 2waypoint -- ... -- [N-waypoint]
+     * (our loc) -- 1waypoint -- [2waypoint]
+     * (our loc) -- [1waypoint]                 <-- no waypoints, only-begotten is used for endpoint
+     * <p/>
+     * (1waypoint) -- 2waypoint -- ... -- [N-waypoint]
+     * (1waypoint) -- [2waypoint]               <-- only 2 waypoint, which is used for start and endpoint
+     * 1waypoint                               <-- no start or endpoint marker
+     */
+    private void addViaPoints() {
+
+        String title = getResources().getString(R.string.viapoint);
+        String description = "";
+        Map<String, Integer> mViaPointData = new HashMap<>();
+        Drawable drawable = null;
+
+        int waypointIndex = -1;
+
+        if (this.mGeoLocation != null && mRoute.waypoints.size() > 1) {
+            waypointIndex = 0;
+        } else if (this.mGeoLocation == null) {
+            if (mRoute.waypoints.size() > 2) {
+                waypointIndex = 1;
+            } else if (mRoute.waypoints.size() == 1) {
+                waypointIndex = 0;
+            }
+        }
+
+        if (waypointIndex > -1) {
+            //Add all waypoints to the map except the last one, it would be marked as destination marker
+            for (int index = waypointIndex; index < mRoute.waypoints.size() - 1; index++) {
+                Waypoint waypoint = mRoute.waypoints.get(index);
+                GeoPoint geoPoint = new GeoPoint(waypoint.latitude, waypoint.longitude);
+
+                if (waypoint.exhibit_id != -1) {
+                    Exhibit exhibit = waypoint.getExhibit(db);
+                    title = exhibit.name;
+                    description = exhibit.description;
+                    mViaPointData.put(title, exhibit.id);
+
+                    drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                }
+
+                // set final point
+                updateMarker(geoPoint, drawable, R.drawable.marker_via, title, description,
+                        mViaPointData);
+            }
         }
     }
 
     /**
      * add final point or one of the waypoint in FolderOverlay and refresh the map
+     * if no location for the marker => nothing to add
+     * if no waypoints => nothing to add
+     * there are 2 szenario of adding endpoint: with our location or without
+     * () - startpoint, [] - endpoint
+     *
+     * (our loc) -- 1waypoint -- 2waypoint -- ... -- [N-waypoint]
+     * (our loc) -- 1waypoint -- [2waypoint]
+     * (our loc) -- [1waypoint]
+     *
+     * (1waypoint) -- 2waypoint -- ... -- [N-waypoint]
+     * (1waypoint) -- [2waypoint]
+     *  1waypoint                                      <-- no start or endpoint marker
      */
     private void addFinalPointOnMap() {
-        GeoPoint geoLastWaypoint = null;
+        GeoPoint geoLocation = null;
+        String title = getResources().getString(R.string.destination);
+        String description = "";
+        Map<String, Integer> mViaPointData = new HashMap<>();
+        Drawable drawable = null;
 
-        if (this.mGeoLocation != null) {
-            if (mRoute.waypoints.size() == 1) {
-                // if current location is not null and we have at least one waypoint, then
-                // use this waypoint as destination point
-                geoLastWaypoint = new GeoPoint(mRoute.waypoints.get(0).latitude,
-                        mRoute.waypoints.get(0).longitude);
-            } else if (mRoute.waypoints.size() > 1) {
-                // if current location is not null and we have more than two waypoints, then
-                // use last waypoint as destination point
-                int size = mRoute.waypoints.size();
+        int waypointIndex = -1;
 
-                geoLastWaypoint = new GeoPoint(mRoute.waypoints.get(size - 1).latitude,
-                        mRoute.waypoints.get(size - 1).longitude);
-            }
-        } else if (mRoute.waypoints.size() > 0) {
-            // if current location is null and we have at least one waypoint, then
+        if ((this.mGeoLocation != null) && (mRoute.waypoints.size() > 0)) {
+            // if current location is not null and we have at least one waypoint, then
+            // use last one as destination point
+            waypointIndex = mRoute.waypoints.size() - 1;
+        } else {
+            if (mRoute.waypoints.size() > 1) {
+                // if current location is null and we have more then one waypoint, then
             // use last waypoint as destination point
-            int size = mRoute.waypoints.size();
-
-            geoLastWaypoint = new GeoPoint(mRoute.waypoints.get(size - 1).latitude,
-                    mRoute.waypoints.get(size - 1).longitude);
+                waypointIndex = mRoute.waypoints.size() - 1;
+            }
         }
 
-        if (geoLastWaypoint != null) {
+        if (waypointIndex > -1) {
+            geoLocation = new GeoPoint(mRoute.waypoints.get(waypointIndex).latitude,
+                    mRoute.waypoints.get(waypointIndex).longitude);
+
+            // add related data to marker
+            if (mRoute.waypoints.get(waypointIndex).exhibit_id != -1) {
+                Exhibit exhibit = mRoute.waypoints.get(waypointIndex).getExhibit(db);
+                title = exhibit.name;
+                description = exhibit.description;
+                mViaPointData.put(title, exhibit.id);
+
+                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+            }
+
             // set final point
-            Drawable markerIcon = ContextCompat.getDrawable(this, R.drawable.marker_destination);
-            Marker marker = new Marker(mMap);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setTitle(getString(R.string.destination));
-            marker.setPosition(geoLastWaypoint);
-            marker.setIcon(markerIcon);
-            //marker.setRelatedObject(index);
-            mItineraryMarkers.add(marker);
-            mMap.invalidate();
+            updateMarker(geoLocation, drawable, R.drawable.marker_destination, title, description,
+                    mViaPointData);
         }
     }
 
@@ -260,7 +357,8 @@ public class RouteDetailsActivity extends BaseActivity {
         description.setText(mRoute.description);
         title.setText(mRoute.title);
         int durationInMinutes = mRoute.duration / 60;
-        duration.setText(getResources().getQuantityString(R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
+        duration.setText(getResources().getQuantityString(R.plurals.route_activity_duration_minutes,
+                durationInMinutes, durationInMinutes));
 
         //Add tags
         if (mRoute.tags != null) {
@@ -283,45 +381,28 @@ public class RouteDetailsActivity extends BaseActivity {
         }
     }
 
-    private void addViaPoints() {
+    /**
+     * fill the marker with data and put on the map
+     */
+    private void updateMarker(GeoPoint geoLocation, Drawable drawable, int marker_id, String title,
+                              String description, Map<String, Integer> mViaPointData) {
+        Marker marker = new Marker(mMap);
+        Drawable markerIcon = ContextCompat.getDrawable(this, marker_id);
 
-        DBAdapter db = new DBAdapter(this);
-        if (mRoute.waypoints != null && mRoute.waypoints.size() > 0) {
-            //Add all the waypoints to the map
-            for (Waypoint waypoint : mRoute.waypoints) {
-                GeoPoint geoPoint = new GeoPoint(waypoint.latitude, waypoint.longitude);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setInfoWindow(mViaPointInfoWindow);
+        marker.setTitle(title);
+        marker.setPosition(geoLocation);
+        marker.setIcon(markerIcon);
+        marker.setSnippet(description);
 
-                Drawable markerIcon = ContextCompat.getDrawable(this, R.drawable.marker_via);
-                Marker marker = new Marker(mMap);
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-
-                if (waypoint.exhibit_id != -1) {
-                    Exhibit exhibit = waypoint.getExhibit(db);
-                    marker.setTitle(exhibit.name + "\n" + exhibit.description);
-                }
-
-                marker.setPosition(geoPoint);
-                marker.setIcon(markerIcon);
-                //marker.setRelatedObject(index);
-                mItineraryMarkers.add(marker);
-                mMap.invalidate();
-            }
-
-/*            mItineraryMarkers.
-                    map.getMap().setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    if (markerMap.containsKey(marker.getId()) && markerMap.get(marker.getId()) != -1) {
-                        Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
-                        intent.putExtra("exhibit-id", markerMap.get(marker.getId()));
-                        startActivity(intent);
-                        return true;
-                    }
-                    return false;
-                }
-            });*/
-
+        if (mViaPointData != null) {
+            marker.setRelatedObject(mViaPointData);
+            marker.setImage(drawable);
         }
+
+        mItineraryMarkers.add(marker);
+        mMap.invalidate();
     }
 
     /**
@@ -348,6 +429,11 @@ public class RouteDetailsActivity extends BaseActivity {
         mMap.invalidate();
     }
 
+    /**
+     * getting boundingbox to fit all marker on the map
+     *
+     * @return BoundingBox
+     */
     public BoundingBoxE6 getBoundingBoxE6() {
         ArrayList<GeoPoint> points = new ArrayList<>();
 
@@ -364,6 +450,10 @@ public class RouteDetailsActivity extends BaseActivity {
         return BoundingBoxE6.fromGeoPoints(points);
     }
 
+    /**
+     * start navigation
+     * can be started only if we have gps signal
+     */
     private void startRouteNavigation() {
         if (mRoute != null) {
             Intent intent = new Intent(getApplicationContext(), RouteNavigationActivity.class);

@@ -78,7 +78,8 @@ import de.upb.hip.mobile.models.Route;
  * Create the route on the map and show step by step instruction for the navigation
  */
 
-public class RouteNavigationActivity extends Activity implements MapEventsReceiver, LocationListener, SensorEventListener {
+public class RouteNavigationActivity extends Activity implements MapEventsReceiver,
+        LocationListener, SensorEventListener {
     protected final int START_INDEX = -2, DEST_INDEX = -1;
     protected final int ROUTE_REJECT = 25; //in meters
     protected final String PROX_ALERT = getPackageName() + ".PROX_ALERT";
@@ -150,7 +151,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
-        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap);
+        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
 
         mLocationOverlay = new DirectedLocationOverlay(this);
         mMap.getOverlays().add(mLocationOverlay);
@@ -334,11 +335,13 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
         // setup the nearest point from current point to ProximityAlert
         if (mReachedNode == -1) {
-            GeoPoint nextLocation = new GeoPoint(mRoads[0].mNodes.get(0).mLocation.getLatitude(), mRoads[0].mNodes.get(0).mLocation.getLongitude());
+            GeoPoint nextLocation = new GeoPoint(mRoads[0].mNodes.get(0).mLocation.getLatitude(),
+                    mRoads[0].mNodes.get(0).mLocation.getLongitude());
             addProximityAlert(nextLocation.getLatitude(), nextLocation.getLongitude());
             int distToStartLoc = geo.distanceTo(nextLocation);
 
-            drawStepInfo(ContextCompat.getDrawable(this, R.drawable.marker_departure), getString(R.string.start_point), distToStartLoc + " m");
+            drawStepInfo(ContextCompat.getDrawable(this, R.drawable.marker_departure),
+                    getString(R.string.start_point), distToStartLoc + " m");
 
             mUpdateStartPointOnce = false;
             mProgressDialog.dismiss();
@@ -349,14 +352,18 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         // getting direction icon depending on maneuver
         @SuppressLint("Recycle")
         TypedArray iconIds = getResources().obtainTypedArray(R.array.direction_icons);
-        int iconId = iconIds.getResourceId(mRoads[0].mNodes.get(mReachedNode).mManeuverType, R.drawable.ic_empty);
+        int iconId = iconIds.getResourceId(mRoads[0].mNodes.get(mReachedNode).mManeuverType,
+                R.drawable.ic_empty);
         Drawable image = ContextCompat.getDrawable(this, iconId);
         if (iconId != R.drawable.ic_empty) {
             image = ContextCompat.getDrawable(this, iconId);
         }
 
         // getting info from the current step to next.
-        String instructions = (mRoads[0].mNodes.get(mReachedNode).mInstructions == null ? "" : mRoads[0].mNodes.get(mReachedNode).mInstructions);
+        String instructions = "";
+        if (mRoads[0].mNodes.get(mReachedNode).mInstructions != null) {
+            instructions = mRoads[0].mNodes.get(mReachedNode).mInstructions;
+        }
         String length = String.valueOf(mRoads[0].mNodes.get(mReachedNode).mLength) + " m";
         drawStepInfo(image, instructions, length);
 
@@ -426,7 +433,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
                 addProximityAlert(nextNodeLocation.getLatitude(), nextNodeLocation.getLongitude());
 
                 // set new distance between current node and next node
-                mDistanceBetweenLoc = mRoads[0].mNodes.get(mReachedNode).mLocation.distanceTo(mRoads[0].mNodes.get(mNextNode).mLocation);
+                GeoPoint reachedNodeLocation = mRoads[0].mNodes.get(mReachedNode).mLocation;
+                mDistanceBetweenLoc = reachedNodeLocation.distanceTo(nextNodeLocation);
                 break;
             case 2:
                 if (mDestinationPoint != null) {
@@ -465,7 +473,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         // set maneuver icon
         ImageView ivManeuverIcon = (ImageView) findViewById(R.id.imageView_maneuverIcon);
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Bitmap newImage = Bitmap.createBitmap(ivManeuverIcon.getWidth(), ivManeuverIcon.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap newImage = Bitmap.createBitmap(ivManeuverIcon.getWidth(), ivManeuverIcon.getHeight(),
+                Bitmap.Config.ARGB_8888);
 
         int maneuverIconCenterX = (ivManeuverIcon.getWidth() - bitmap.getWidth()) / 2;
         int maneuverIconCenterY = (ivManeuverIcon.getHeight() - bitmap.getHeight()) / 2;
@@ -486,7 +495,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
         // set maneuver instruction
         ImageView ivManeuverInstruction = (ImageView) findViewById(R.id.imageView_routeInstruction);
-        Bitmap newImage = Bitmap.createBitmap(ivManeuverInstruction.getWidth(), ivManeuverInstruction.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap newImage = Bitmap.createBitmap(ivManeuverInstruction.getWidth(),
+                ivManeuverInstruction.getHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas cManeuverInfo = new Canvas(newImage);
 
@@ -508,7 +518,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         Paint paint = getPaintForTextInstructions();
 
         ImageView ivManeuverDistance = (ImageView) findViewById(R.id.imageView_routeDistance);
-        Bitmap newImage = Bitmap.createBitmap(ivManeuverDistance.getWidth(), ivManeuverDistance.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap newImage = Bitmap.createBitmap(ivManeuverDistance.getWidth(),
+                ivManeuverDistance.getHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas cManeuverDistance = new Canvas(newImage);
 
@@ -592,7 +603,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      * Update (or create if null) a marker in itineraryMarkers.
      */
     public Marker updateItineraryMarker(Marker marker, GeoPoint p, int index,
-                                        int titleResId, int markerResId, int imageResId, String address) {
+                                        int titleResId, int markerResId, int imageResId,
+                                        String address) {
         Drawable icon = ContextCompat.getDrawable(this, markerResId);
         String title = getResources().getString(titleResId);
         if (marker == null) {
@@ -709,7 +721,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         if (roads == null)
             return;
         if (roads[0].mStatus == Road.STATUS_TECHNICAL_ISSUE)
-            Toast.makeText(mMap.getContext(), R.string.technical_issue, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mMap.getContext(), R.string.technical_issue,
+                    Toast.LENGTH_SHORT).show();
         else if (roads[0].mStatus > Road.STATUS_TECHNICAL_ISSUE) //functional issues
             Toast.makeText(mMap.getContext(), R.string.no_route, Toast.LENGTH_SHORT).show();
         mRoadOverlays = new Polyline[roads.length];

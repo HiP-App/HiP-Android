@@ -16,9 +16,20 @@
 
 package de.upb.hip.mobile.helpers;
 
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+import android.widget.Button;
+
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
 import org.osmdroid.views.MapView;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import de.upb.hip.mobile.activities.DetailsActivity;
+import de.upb.hip.mobile.activities.R;
 
 /**
  * A customized InfoWindow handling "itinerary" points (start, destination and via-points).
@@ -26,16 +37,35 @@ import org.osmdroid.views.MapView;
  */
 public class ViaPointInfoWindow extends MarkerInfoWindow {
 
-    int mSelectedPoint;
+    private Map<String, Integer> mViaPointData = new HashMap<>();
+    private String title;
 
-    public ViaPointInfoWindow(int layoutResId, MapView mapView) {
+    public ViaPointInfoWindow(int layoutResId, MapView mapView, final Context context) {
         super(layoutResId, mapView);
+        Button btnInfo = (Button) (mView.findViewById(R.id.bubble_info));
+        btnInfo.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                if (mViaPointData.containsKey(title) && mViaPointData.get(title) != -1) {
+                    Intent intent = new Intent(context, DetailsActivity.class);
+                    intent.putExtra("exhibit-id", mViaPointData.get(title));
+                    context.startActivity(intent);
+                }
+                close();
+            }
+        });
     }
 
     @Override
     public void onOpen(Object item) {
-        Marker eItem = (Marker) item;
-        mSelectedPoint = (Integer) eItem.getRelatedObject();
+        Marker marker = (Marker) item;
+        title = marker.getTitle();
+        try {
+            mViaPointData = (Map<String, Integer>) marker.getRelatedObject();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+
         super.onOpen(item);
     }
+
 }
