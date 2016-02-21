@@ -53,5 +53,6 @@
 		android:layout_height="25dp"
 		android:layout_gravity="right"
 		android:background="@drawable/btn_info"
+		android:gravity="right"
 		android:visibility="visible" />
 </LinearLayout>

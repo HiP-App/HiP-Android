@@ -191,14 +191,14 @@ public class RouteDetailsActivity extends BaseActivity {
      * if no location for the marker => nothing to add
      * there are 2 szenario of adding startpoint: with our location or without
      * () - startpoint, [] - endpoint
-     *
+     * <p/>
      * (our loc) -- 1waypoint -- 2waypoint -- ... -- [N-waypoint]
      * (our loc) -- 1waypoint -- [2waypoint]
      * (our loc) -- [1waypoint]
-     *
+     * <p/>
      * (1waypoint) -- 2waypoint -- ... -- [N-waypoint]
      * (1waypoint) -- [2waypoint]
-     *  1waypoint                                      <-- no start or endpoint marker
+     * 1waypoint                                      <-- no start or endpoint marker
      */
     private void addStartPointOnMap() {
         GeoPoint geoLocation = null;
@@ -227,6 +227,11 @@ public class RouteDetailsActivity extends BaseActivity {
         }
 
         if (geoLocation != null) {
+            if (drawable == null) {
+                // set default image in info window
+                drawable = ContextCompat.getDrawable(this, R.drawable.marker_departure);
+            }
+
             // set and fill start point with data
             updateMarker(geoLocation, drawable, R.drawable.marker_departure, title, description,
                     mViaPointData);
@@ -248,12 +253,6 @@ public class RouteDetailsActivity extends BaseActivity {
      * 1waypoint                               <-- no start or endpoint marker
      */
     private void addViaPoints() {
-
-        String title = getResources().getString(R.string.viapoint);
-        String description = "";
-        Map<String, Integer> mViaPointData = new HashMap<>();
-        Drawable drawable = null;
-
         int waypointIndex = -1;
 
         if (this.mGeoLocation != null && mRoute.waypoints.size() > 1) {
@@ -269,6 +268,10 @@ public class RouteDetailsActivity extends BaseActivity {
         if (waypointIndex > -1) {
             //Add all waypoints to the map except the last one, it would be marked as destination marker
             for (int index = waypointIndex; index < mRoute.waypoints.size() - 1; index++) {
+                String title = getResources().getString(R.string.viapoint);
+                String description = "";
+                Drawable drawable;
+                Map<String, Integer> mViaPointData = new HashMap<>();
                 Waypoint waypoint = mRoute.waypoints.get(index);
                 GeoPoint geoPoint = new GeoPoint(waypoint.latitude, waypoint.longitude);
 
@@ -279,11 +282,14 @@ public class RouteDetailsActivity extends BaseActivity {
                     mViaPointData.put(title, exhibit.id);
 
                     drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                } else {
+                    drawable = ContextCompat.getDrawable(this, R.drawable.marker_via);
+                    mViaPointData.put(title, -1);
                 }
 
                 // set final point
-                updateMarker(geoPoint, drawable, R.drawable.marker_via, title, description,
-                        mViaPointData);
+                updateMarker(geoPoint, drawable, R.drawable.marker_via, title,
+                        description, mViaPointData);
             }
         }
     }
@@ -294,21 +300,21 @@ public class RouteDetailsActivity extends BaseActivity {
      * if no waypoints => nothing to add
      * there are 2 szenario of adding endpoint: with our location or without
      * () - startpoint, [] - endpoint
-     *
+     * <p/>
      * (our loc) -- 1waypoint -- 2waypoint -- ... -- [N-waypoint]
      * (our loc) -- 1waypoint -- [2waypoint]
      * (our loc) -- [1waypoint]
-     *
+     * <p/>
      * (1waypoint) -- 2waypoint -- ... -- [N-waypoint]
      * (1waypoint) -- [2waypoint]
-     *  1waypoint                                      <-- no start or endpoint marker
+     * 1waypoint                                      <-- no start or endpoint marker
      */
     private void addFinalPointOnMap() {
-        GeoPoint geoLocation = null;
+        GeoPoint geoLocation;
         String title = getResources().getString(R.string.destination);
         String description = "";
         Map<String, Integer> mViaPointData = new HashMap<>();
-        Drawable drawable = null;
+        Drawable drawable;
 
         int waypointIndex = -1;
 
@@ -319,7 +325,7 @@ public class RouteDetailsActivity extends BaseActivity {
         } else {
             if (mRoute.waypoints.size() > 1) {
                 // if current location is null and we have more then one waypoint, then
-            // use last waypoint as destination point
+                // use last waypoint as destination point
                 waypointIndex = mRoute.waypoints.size() - 1;
             }
         }
@@ -336,6 +342,8 @@ public class RouteDetailsActivity extends BaseActivity {
                 mViaPointData.put(title, exhibit.id);
 
                 drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+            } else {
+                drawable = ContextCompat.getDrawable(this, R.drawable.marker_destination);
             }
 
             // set final point
