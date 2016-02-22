@@ -16,6 +16,7 @@
 
 package de.upb.hip.mobile.helpers;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
+import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
 
 public class GPSTracker extends Service implements LocationListener {
@@ -70,6 +72,7 @@ public class GPSTracker extends Service implements LocationListener {
 
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // No network provider is enabled
+                canGetLocation = false;
             } else {
                 this.canGetLocation = true;
                 if (isNetworkEnabled) {
@@ -205,6 +208,12 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         this.location = location;
+
+        Activity activity = (Activity) this.mContext;
+        if (activity.getClass().equals(MainActivity.class)) {
+            MainActivity mainActivity = (MainActivity) activity;
+            mainActivity.updatePosition(location);
+        }
     }
 
 

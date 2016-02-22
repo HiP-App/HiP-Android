@@ -39,7 +39,6 @@ import com.couchbase.lite.CouchbaseLiteException;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
-import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
@@ -58,6 +57,7 @@ import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
+import de.upb.hip.mobile.models.SetMarker;
 import de.upb.hip.mobile.models.Waypoint;
 
 public class RouteDetailsActivity extends BaseActivity {
@@ -67,6 +67,7 @@ public class RouteDetailsActivity extends BaseActivity {
     private FolderOverlay mItineraryMarkers;
     private GeoPoint mGeoLocation;
     private MapView mMap = null;
+    private SetMarker mMarker;
     private Route mRoute;
     private DrawerLayout mDrawerLayout;
 
@@ -184,6 +185,8 @@ public class RouteDetailsActivity extends BaseActivity {
         mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
+
+        mMarker = new SetMarker(mMap, mItineraryMarkers, mViaPointInfoWindow);
     }
 
     /**
@@ -394,23 +397,14 @@ public class RouteDetailsActivity extends BaseActivity {
      */
     private void updateMarker(GeoPoint geoLocation, Drawable drawable, int marker_id, String title,
                               String description, Map<String, Integer> mViaPointData) {
-        Marker marker = new Marker(mMap);
-        Drawable markerIcon = ContextCompat.getDrawable(this, marker_id);
 
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        marker.setInfoWindow(mViaPointInfoWindow);
-        marker.setTitle(title);
-        marker.setPosition(geoLocation);
-        marker.setIcon(markerIcon);
-        marker.setSnippet(description);
+        Drawable icon = ContextCompat.getDrawable(this, marker_id);
 
-        if (mViaPointData != null) {
-            marker.setRelatedObject(mViaPointData);
-            marker.setImage(drawable);
-        }
+        Map<String, Integer> data = new HashMap<>();
+        data.put(title, mViaPointData.get(title));
 
-        mItineraryMarkers.add(marker);
-        mMap.invalidate();
+        mMarker.addMarker(null, title, description, geoLocation, drawable, icon, data);
+
     }
 
     /**

@@ -1,73 +1,63 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.activities;
 
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
-
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.app.ActivityOptions;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.transition.Explode;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.view.ViewTreeObserver;
 
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.SphericalUtil;
+
+import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.overlays.FolderOverlay;
+import org.osmdroid.tileprovider.MapTileProviderBasic;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBoxE6;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.DirectedLocationOverlay;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.adapters.RecyclerAdapter;
+import de.upb.hip.mobile.helpers.GPSTracker;
+import de.upb.hip.mobile.helpers.GenericMapView;
+import de.upb.hip.mobile.helpers.ImageLoader;
+import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+import de.upb.hip.mobile.listeners.ExtendedLocationListener;
+import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
+import de.upb.hip.mobile.models.Exhibit;
+import de.upb.hip.mobile.models.ExhibitSet;
+import de.upb.hip.mobile.models.SetMarker;
+
+public class MainActivity extends BaseActivity {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
 
     public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private DBAdapter database;
     private ExhibitSet exhibitSet;
@@ -87,24 +77,34 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
     private DrawerLayout mDrawerLayout;
 
+    private GPSTracker mGPSTracker;
+    private GeoPoint mGeoLocation;
+    private MapView mMap = null;
+    private SetMarker mMarker;
+    private FolderOverlay mItineraryMarkers;
+    private ViaPointInfoWindow mViaPointInfoWindow;
+
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
+    private DirectedLocationOverlay mLocationOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Location Manager
-        mGoogleApiClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this).addOnConnectionFailedListener(this).addApi(LocationServices.API).build();
-        mGoogleApiClient.connect();
-        //LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        mGPSTracker = new GPSTracker(MainActivity.this);
+
+        // getting location
+        if (mGPSTracker.canGetLocation()) {
+            mGeoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
+        }
 
         openDatabase();
         this.exhibitSet = new ExhibitSet(database.getView("exhibits"), this.paderborn);
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 10, new ExtendedLocationListener(this));
 
-        setUpMapIfNeeded();
+        setupMap();
+        exhibitSet.addMarker(mMarker, getApplicationContext());
 
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -134,6 +134,23 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
         */
 
+        // detecting that the current view is compleatly created and then
+        // zoom to boundingbox on map
+        // it should be done only if the view completely created
+        final View view = this.findViewById(android.R.id.content);
+        view.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                        BoundingBoxE6 boundingBoxE6 = getBoundingBoxE6();
+                        if (boundingBoxE6 != null) {
+                            mMap.zoomToBoundingBox(boundingBoxE6, false);
+                        }
+                    }
+                });
+
         //setUp navigation drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         super.setUpNavigationDrawer(this, mDrawerLayout);
@@ -149,7 +166,73 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
             }
         });
         mSwipeLayout.setEnabled(false);
+    }
 
+    /**
+     * init the map
+     * set the tile source
+     * set zoom
+     */
+    private void setupMap() {
+        // getting the map
+        GenericMapView genericMap = (GenericMapView) findViewById(R.id.map_main);
+        MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
+        genericMap.setTileProvider(bitmapProvider);
+        mMap = genericMap.getMapView();
+        mMap.setBuiltInZoomControls(false);
+        mMap.setMultiTouchControls(true);
+
+        mMap.setTileSource(TileSourceFactory.MAPNIK);
+        mMap.setTilesScaledToDpi(true);
+        mMap.setMaxZoomLevel(RouteDetailsActivity.MAX_ZOOM_LEVEL);
+
+        // mMap prefs:
+        IMapController mapController = mMap.getController();
+        mapController.setZoom(RouteDetailsActivity.ZOOM_LEVEL);
+        if (mGeoLocation != null) {
+            // set center to current location
+            mapController.setCenter(mGeoLocation);
+        }
+
+        // init info window for the markers
+        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
+
+        // add location overlay
+        mLocationOverlay = new DirectedLocationOverlay(this);
+        mMap.getOverlays().add(mLocationOverlay);
+
+        // add overlay for the markers
+        mItineraryMarkers = new FolderOverlay(this);
+        mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
+        mMap.getOverlays().add(mItineraryMarkers);
+
+        mMarker = new SetMarker(mMap, mItineraryMarkers, mViaPointInfoWindow);
+
+        // add Scale Bar
+        ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(mMap);
+        mMap.getOverlays().add(myScaleBarOverlay);
+    }
+
+    /**
+     * getting boundingbox to fit all marker on the map
+     *
+     * @return BoundingBox
+     */
+    public BoundingBoxE6 getBoundingBoxE6() {
+        ArrayList<GeoPoint> points = new ArrayList<>();
+
+        if (mGeoLocation != null) {
+            points.add(mGeoLocation);
+        }
+
+        for (int i = 0; i < this.exhibitSet.getSize(); i++) {
+            Exhibit exhibit = this.exhibitSet.getExhibit(i);
+            GeoPoint geo = new GeoPoint(exhibit.latlng.latitude, exhibit.latlng.longitude);
+
+            points.add(geo);
+        }
+
+        return BoundingBoxE6.fromGeoPoints(points);
     }
 
     public void notifyExhibitSetChanged() {
@@ -158,53 +241,50 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
         mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();
-        this.exhibitSet.addMarker(this.mMap, getApplicationContext());
+        this.exhibitSet.addMarker(mMarker, getApplicationContext());
     }
 
     public void updateCategories(String categorie) {
-        if(categorie != null) {
-            if(this.activeFilter.contains(categorie)) this.activeFilter.remove(categorie);
+        if (categorie != null) {
+            if (this.activeFilter.contains(categorie)) this.activeFilter.remove(categorie);
             else this.activeFilter.add(categorie);
             this.mFilterAdapter.notifyDataSetChanged();
             this.exhibitSet.updateCategories(this.activeFilter);
             this.mAdapter.notifyDataSetChanged();
-            this.exhibitSet.addMarker(this.mMap, getApplicationContext());
+            this.exhibitSet.addMarker(mMarker, getApplicationContext());
         }
-
     }
 
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if(mLastLocation != null) this.updatePosition(mLastLocation);
-        startLocationUpdates();
-    }
-
-    protected void startLocationUpdates() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(500);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, mLocationListener);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
+    protected boolean startLocationUpdates() {
+        boolean result = false;
+        for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
+            mGPSTracker.getLocationManager().requestLocationUpdates(provider,
+                    GPSTracker.MIN_TIME_BW_UPDATES,
+                    GPSTracker.MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                    mGPSTracker);
+            result = true;
+        }
+        return result;
     }
 
     public void updatePosition(Location position) {
         this.exhibitSet.updatePosition(new LatLng(position.getLatitude(), position.getLongitude()));
         this.mAdapter.notifyDataSetChanged();
+
+        if (!mLocationOverlay.isEnabled()) {
+            mLocationOverlay.setEnabled(true);
+        }
+
+        mLocationOverlay.setLocation(new GeoPoint(position.getLatitude(), position.getLongitude()));
+        mMap.invalidate();
     }
 
     @Override
     protected void onResume() {
+        boolean isOneProviderEnabled = startLocationUpdates();
+        mLocationOverlay.setEnabled(isOneProviderEnabled);
+
         super.onResume();
-        setUpMapIfNeeded();
-        if (mGoogleApiClient.isConnected()) {
-            startLocationUpdates();
-        }
     }
 
     @Override
@@ -218,64 +298,12 @@ public class MainActivity extends BaseActivity implements GoogleApiClient.Connec
 
     @Override
     protected void onPause() {
-        super.onPause();
         stopLocationUpdates();
+
+        super.onPause();
     }
 
     protected void stopLocationUpdates() {
-        if(mGoogleApiClient.isConnected()) LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mLocationListener);
-    }
-
-
-
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p/>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
-    private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
-        if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
-            }
-        }
-
-        mMap.setMyLocationEnabled(true);
-        UiSettings settings = mMap.getUiSettings();
-        settings.setZoomControlsEnabled(true);
-    }
-
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
-    private void setUpMap() {
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(this.paderborn, 12);
-        mMap.animateCamera(update);
-
-        exhibitSet.addMarker(mMap, getApplicationContext());
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        mGPSTracker.stopUsingGPS();
     }
 }

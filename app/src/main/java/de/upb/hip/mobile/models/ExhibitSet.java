@@ -1,24 +1,23 @@
 package de.upb.hip.mobile.models;
 
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.adapters.DBAdapter;
 
 
 public class ExhibitSet {
@@ -162,21 +161,24 @@ public class ExhibitSet {
         return list;
     }
 
-    public void addMarker(GoogleMap mMap, Context ctx) {
-        mMap.clear();
+    public void addMarker(SetMarker mMarker, Context ctx) {
+        mMarker.mFolderOverlay.closeAllInfoWindows();
+        mMarker.mFolderOverlay.getItems().clear();
 
         Iterator<Exhibit> iterator = activeSet.iterator();
 
         while(iterator.hasNext()) {
             Exhibit exhibit = iterator.next();
             Drawable d = DBAdapter.getImage(exhibit.id, "image.jpg", 32);
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
-            Bitmap bitmap2 = bitmapDrawable.getBitmap();
 
-            ImageManipulation IM = new ImageManipulation();
+            Map<String, Integer> data = new HashMap<>();
+            data.put(exhibit.name, exhibit.id);
 
+            Drawable icon = ContextCompat.getDrawable(ctx, R.drawable.marker_via);
 
-            mMap.addMarker(new MarkerOptions().position(exhibit.latlng).title(exhibit.name).icon(BitmapDescriptorFactory.fromBitmap(IM.getMarker(bitmap2, ctx))));
+            mMarker.addMarker(null, exhibit.name, exhibit.description,
+                    new GeoPoint(exhibit.latlng.latitude, exhibit.latlng.longitude), d, icon, data);
+
         }
     }
 

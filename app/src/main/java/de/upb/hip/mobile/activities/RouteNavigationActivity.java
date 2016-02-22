@@ -77,6 +77,7 @@ import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
+import de.upb.hip.mobile.models.SetMarker;
 import de.upb.hip.mobile.models.ViaPointData;
 
 /**
@@ -92,6 +93,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     protected Road[] mRoads;
     // LocationListener implementation
     protected MapView mMap;
+    protected SetMarker mMarker;
     protected GeoPoint mStartPoint;
     protected ArrayList<ViaPointData> mViaPoints;
     protected FolderOverlay mItineraryMarkers;
@@ -155,7 +157,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
         mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
-
+        mMarker = new SetMarker(mMap, mItineraryMarkers, mViaPointInfoWindow);
         mLocationOverlay = new DirectedLocationOverlay(this);
         mMap.getOverlays().add(mLocationOverlay);
 
@@ -598,29 +600,17 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      */
     public Marker updateItineraryMarker(Marker marker, ViaPointData viaPointData, int markerResId) {
         Drawable icon = ContextCompat.getDrawable(this, markerResId);
-        if (marker == null) {
-            marker = new Marker(mMap);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setInfoWindow(mViaPointInfoWindow);
-            marker.setDraggable(true);
-            mItineraryMarkers.add(marker);
-        }
-        marker.setTitle(viaPointData.getTitle());
-        marker.setSnippet(viaPointData.getDescription());
-        marker.setPosition(viaPointData.getGeoPoint());
-        marker.setIcon(icon);
-
-        if (viaPointData.getExhibitsId() > -1) {
-            Drawable drawable = DBAdapter.getImage(viaPointData.getExhibitsId(), "image.jpg", 65);
-            if (drawable != null) {
-                marker.setImage(drawable);
-            }
-        }
+        Drawable drawable = null;
 
         Map<String, Integer> data = new HashMap<>();
         data.put(viaPointData.getTitle(), viaPointData.getExhibitsId());
-        marker.setRelatedObject(data);
-        mMap.invalidate();
+
+        if (viaPointData.getExhibitsId() > -1) {
+            drawable = DBAdapter.getImage(viaPointData.getExhibitsId(), "image.jpg", 65);
+        }
+
+        marker = mMarker.addMarker(null, viaPointData.getTitle(), viaPointData.getDescription(),
+                viaPointData.getGeoPoint(), drawable, icon, data);
 
         return marker;
     }
