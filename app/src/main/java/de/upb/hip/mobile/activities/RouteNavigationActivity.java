@@ -72,9 +72,9 @@ import java.util.List;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
-import de.upb.hip.mobile.helpers.GPSTracker;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+import de.upb.hip.mobile.listeners.GPSTrackerListner;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.SetMarker;
@@ -113,7 +113,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     // setup the UI before the reaching the start point only once
     protected boolean mUpdateStartPointOnce = true;
     // for location, location manager and setting dialog if no location
-    protected GPSTracker mGPSTracker;
+    protected GPSTrackerListner mGPSTracker;
     // for the recalculation the route
     protected int mDistanceBetweenLoc = -1;
     // shows creation and loading route and map steps
@@ -144,7 +144,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.setMaxZoomLevel(RouteDetailsActivity.MAX_ZOOM_LEVEL);
 
         // getting location
-        mGPSTracker = new GPSTracker(RouteNavigationActivity.this);
+        mGPSTracker = new GPSTrackerListner(RouteNavigationActivity.this);
         GeoPoint geoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
 
         // mMap prefs:
@@ -292,11 +292,13 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             return null;
         }
 
-        GeoPoint nextNodeLocation = null;
+        GeoPoint nextNodeLocation;
 
-        if (mRoads[0].mNodes != null && mRoads[0].mNodes.size() < mNextNode) {
+        if (mNextNode < mRoads[0].mNodes.size()) {
             // find next point
             nextNodeLocation = mRoads[0].mNodes.get(mNextNode).mLocation;
+        } else {
+            nextNodeLocation = mViaPoints.get(mViaPoints.size() - 1).getGeoPoint();
         }
 
         return nextNodeLocation;
@@ -638,8 +640,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
             mGPSTracker.getLocationManager().requestLocationUpdates(
                     provider,
-                    GPSTracker.MIN_TIME_BW_UPDATES,
-                    GPSTracker.MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                    GPSTrackerListner.MIN_TIME_BW_UPDATES,
+                    GPSTrackerListner.MIN_DISTANCE_CHANGE_FOR_UPDATES,
                     this);
             result = true;
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.upb.hip.mobile.helpers;
+package de.upb.hip.mobile.listeners;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,7 +33,7 @@ import android.util.Log;
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
 
-public class GPSTracker extends Service implements LocationListener {
+public class GPSTrackerListner extends Service implements LocationListener {
 
     // The minimum distance to change Updates in meters
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 2; // 2 meters
@@ -52,7 +52,7 @@ public class GPSTracker extends Service implements LocationListener {
     double latitude; // Latitude
     double longitude; // Longitude
 
-    public GPSTracker(Context context) {
+    public GPSTrackerListner(Context context) {
         this.mContext = context;
         getLocation();
     }
@@ -123,7 +123,7 @@ public class GPSTracker extends Service implements LocationListener {
      */
     public void stopUsingGPS() {
         if (locationManager != null) {
-            locationManager.removeUpdates(GPSTracker.this);
+            locationManager.removeUpdates(GPSTrackerListner.this);
         }
     }
 

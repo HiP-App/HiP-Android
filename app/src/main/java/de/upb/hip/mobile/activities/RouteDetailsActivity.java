@@ -51,9 +51,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
-import de.upb.hip.mobile.helpers.GPSTracker;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+import de.upb.hip.mobile.listeners.GPSTrackerListner;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
@@ -71,7 +71,7 @@ public class RouteDetailsActivity extends BaseActivity {
     private Route mRoute;
     private DrawerLayout mDrawerLayout;
 
-    private GPSTracker mGPSTracker;
+    private GPSTrackerListner mGPSTracker;
     private boolean mCanGetLocation = true;
 
     private DBAdapter db;
@@ -85,7 +85,7 @@ public class RouteDetailsActivity extends BaseActivity {
         mRoute = (Route) getIntent().getSerializableExtra("route");
 
         if (mRoute != null) {
-            mGPSTracker = new GPSTracker(RouteDetailsActivity.this);
+            mGPSTracker = new GPSTrackerListner(RouteDetailsActivity.this);
 
             // getting location
             if (mGPSTracker.canGetLocation()) {
@@ -111,7 +111,7 @@ public class RouteDetailsActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGPSTracker = new GPSTracker(RouteDetailsActivity.this);
+                mGPSTracker = new GPSTrackerListner(RouteDetailsActivity.this);
                 if (mGPSTracker.canGetLocation()) {
                     startRouteNavigation();
                 } else {
@@ -347,6 +347,7 @@ public class RouteDetailsActivity extends BaseActivity {
                 drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
             } else {
                 drawable = ContextCompat.getDrawable(this, R.drawable.marker_destination);
+                mViaPointData.put(title, -1);
             }
 
             // set final point
@@ -470,7 +471,7 @@ public class RouteDetailsActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        mGPSTracker = new GPSTracker(RouteDetailsActivity.this);
+        mGPSTracker = new GPSTrackerListner(RouteDetailsActivity.this);
         if (!mCanGetLocation && mGPSTracker.canGetLocation()) {
             startRouteNavigation();
         }

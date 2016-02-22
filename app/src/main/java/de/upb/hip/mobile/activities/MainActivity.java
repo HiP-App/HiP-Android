@@ -27,6 +27,7 @@ import android.view.ViewTreeObserver;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
 import org.osmdroid.tileprovider.MapTileProviderBasic;
@@ -34,7 +35,7 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.DirectedLocationOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
@@ -42,11 +43,11 @@ import java.util.List;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.adapters.RecyclerAdapter;
-import de.upb.hip.mobile.helpers.GPSTracker;
+import de.upb.hip.mobile.helpers.CustomisedIconOverlay;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ImageLoader;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
-import de.upb.hip.mobile.listeners.ExtendedLocationListener;
+import de.upb.hip.mobile.listeners.GPSTrackerListner;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.ExhibitSet;
@@ -58,12 +59,9 @@ public class MainActivity extends BaseActivity {
 
     public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
 
-    private Location mLastLocation;
     private DBAdapter database;
     private ExhibitSet exhibitSet;
     private List<String> activeFilter = new ArrayList<>();
-
-    private ExtendedLocationListener mLocationListener = new ExtendedLocationListener(this);
 
     // Recycler View: MainList
     private RecyclerView mRecyclerView;
@@ -77,23 +75,23 @@ public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
 
-    private GPSTracker mGPSTracker;
+    private GPSTrackerListner mGPSTracker;
     private GeoPoint mGeoLocation;
     private MapView mMap = null;
     private SetMarker mMarker;
     private FolderOverlay mItineraryMarkers;
     private ViaPointInfoWindow mViaPointInfoWindow;
+    private ArrayList<OverlayItem> overlayItemArray;
 
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
-    private DirectedLocationOverlay mLocationOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGPSTracker = new GPSTracker(MainActivity.this);
+        mGPSTracker = new GPSTrackerListner(MainActivity.this);
 
         // getting location
         if (mGPSTracker.canGetLocation()) {
@@ -197,9 +195,16 @@ public class MainActivity extends BaseActivity {
         // init info window for the markers
         mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
 
-        // add location overlay
-        mLocationOverlay = new DirectedLocationOverlay(this);
-        mMap.getOverlays().add(mLocationOverlay);
+        //-- Create location Overlay
+        overlayItemArray = new ArrayList<>();
+        DefaultResourceProxyImpl defaultResourceProxyImpl = new DefaultResourceProxyImpl(this);
+
+        // to use blue point (or other) as location marker set it in CustomizedIconOverlay
+        //Bitmap locationMarker = BitmapFactory.decodeResource(getResources(), R.drawable.ic_location);
+        CustomisedIconOverlay customisedIconOverlay = new CustomisedIconOverlay(this, null,
+                overlayItemArray, null, defaultResourceProxyImpl);
+        mMap.getOverlays().add(customisedIconOverlay);
+        //--
 
         // add overlay for the markers
         mItineraryMarkers = new FolderOverlay(this);
@@ -259,8 +264,8 @@ public class MainActivity extends BaseActivity {
         boolean result = false;
         for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
             mGPSTracker.getLocationManager().requestLocationUpdates(provider,
-                    GPSTracker.MIN_TIME_BW_UPDATES,
-                    GPSTracker.MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                    GPSTrackerListner.MIN_TIME_BW_UPDATES,
+                    GPSTrackerListner.MIN_DISTANCE_CHANGE_FOR_UPDATES,
                     mGPSTracker);
             result = true;
         }
@@ -271,18 +276,23 @@ public class MainActivity extends BaseActivity {
         this.exhibitSet.updatePosition(new LatLng(position.getLatitude(), position.getLongitude()));
         this.mAdapter.notifyDataSetChanged();
 
-        if (!mLocationOverlay.isEnabled()) {
-            mLocationOverlay.setEnabled(true);
-        }
+        setOverlayLoc(position);
+    }
 
-        mLocationOverlay.setLocation(new GeoPoint(position.getLatitude(), position.getLongitude()));
+    private void setOverlayLoc(Location overlayloc) {
+        GeoPoint overlocGeoPoint = new GeoPoint(overlayloc);
+
+        overlayItemArray.clear();
+
+        OverlayItem newMyLocationItem = new OverlayItem("", "", overlocGeoPoint);
+        overlayItemArray.add(newMyLocationItem);
+
         mMap.invalidate();
     }
 
     @Override
     protected void onResume() {
-        boolean isOneProviderEnabled = startLocationUpdates();
-        mLocationOverlay.setEnabled(isOneProviderEnabled);
+        startLocationUpdates();
 
         super.onResume();
     }
