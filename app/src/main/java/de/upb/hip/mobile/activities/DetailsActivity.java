@@ -1,8 +1,5 @@
 package de.upb.hip.mobile.activities;
 
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.models.*;
-
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -17,9 +14,32 @@ import android.widget.TextView;
 
 import com.couchbase.lite.Document;
 
+import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.Exhibit;
+
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * The Details Activity is opened upon clicking onto an exhibit in the Main Activity and
+ * Main Activity only. It shows a detailed description and image of an exhibit.
+ */
 public class DetailsActivity extends ActionBarActivity {
 
-    private DBAdapter database;
+    private DBAdapter mDatabase;
 
     // View name of the header image. Used for activity scene transitions
     public static final String VIEW_NAME_IMAGE = "detail:image";
@@ -30,12 +50,12 @@ public class DetailsActivity extends ActionBarActivity {
     private ImageView mImageView;
     private TextView mTextView;
 
-    private int exhibitId;
-    private boolean isSlider;
-    private String imageName;
+    private int mExhibitId;
+    private boolean mIsSlider;
+    private String mImageName;
 
     //ActionBar
-    private ActionBar actionBar;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +65,16 @@ public class DetailsActivity extends ActionBarActivity {
         openDatabase();
 
         mImageView = (ImageView) findViewById(R.id.imageViewDetail);
-        imageName = "image.jpg";
-        mImageView.setImageDrawable(database.getImage(1, imageName));
+        mImageName = "image.jpg";
+        mImageView.setImageDrawable(mDatabase.getImage(1, mImageName));
         mTextView = (TextView) findViewById(R.id.txtName);
 
         if (Build.VERSION.SDK_INT >= 21) {
             /**
-             * Set the name of the view's which will be transition to, using the static values above.
-             * This could be done in the layout XML, but exposing it via static variables allows easy
+             * Set the name of the view's which will be transitioned to,
+             * using the static values above.
+             * This could be done in the layout XML,
+             * but exposing it via static variables allows easy
              * querying from other Activities
              */
             ViewCompat.setTransitionName(mImageView, VIEW_NAME_IMAGE);
@@ -62,23 +84,24 @@ public class DetailsActivity extends ActionBarActivity {
             addTransitionListener();
         }
 
-        exhibitId = getIntent().getIntExtra("exhibit-id", 0);
+        mExhibitId = getIntent().getIntExtra("exhibit-id", 0);
 
-        Drawable d = database.getImage(exhibitId, "image.jpg");
+        Drawable d = mDatabase.getImage(mExhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
-        Document document = database.getDocument(exhibitId);
+        Document document = mDatabase.getDocument(mExhibitId);
         Exhibit exhibit = new Exhibit(document);
         mTextView.setText(exhibit.name);
-        if(exhibit.sliderID != -1){
-            isSlider = true;
-        }else{
-            isSlider = false;
+        if (exhibit.sliderID != -1) {
+            mIsSlider = true;
+        } else {
+            mIsSlider = false;
         }
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
         txtDescription.setText(exhibit.description);
 
+        //TODO: is this needed?
 //        // Set ActionBar
 //        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        if (toolbar != null) {
@@ -87,12 +110,13 @@ public class DetailsActivity extends ActionBarActivity {
 //        }
 
         // Set back button on actionbar
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(exhibit.name);
+        mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setTitle(exhibit.name);
         }
 
+        //TODO: is this needed?
         //ImageButton fab = (ImageButton) findViewById(R.id.fab);
 //        ViewOutlineProvider viewOutlineProvider = new ViewOutlineProvider() {
 //            @Override
@@ -107,11 +131,13 @@ public class DetailsActivity extends ActionBarActivity {
     }
 
     /**
-     * Try and add a {@link android.transition.Transition.TransitionListener} to the entering shared element
-     * {@link android.transition.Transition}. We do this so that we can load the full-size image after the transition
+     * Try and add a {@link android.transition.Transition.TransitionListener}
+     * to the entering shared element
+     * {@link android.transition.Transition}.
+     * We do this so that we can load the full-size image after the transition
      * has completed.
      *
-     * @return true if we were successful in adding a listener to the enter transition
+     * @return true if we were successful in adding a listener to the entered transition
      */
     private boolean addTransitionListener() {
         final Transition transition = getWindow().getSharedElementEnterTransition();
@@ -122,7 +148,7 @@ public class DetailsActivity extends ActionBarActivity {
                 @Override
                 public void onTransitionEnd(Transition transition) {
                     // As the transition has ended, we can now load the full-size image
-                    Drawable d = database.getImage(exhibitId, "image.jpg");
+                    Drawable d = mDatabase.getImage(mExhibitId, "image.jpg");
                     mImageView.setImageDrawable(d);
 
                     // Make sure we remove ourselves as a listener
@@ -153,30 +179,33 @@ public class DetailsActivity extends ActionBarActivity {
             return true;
         }
 
-        // If we reach here then we have not added a listener
+        // If we reach this then we have not added a listener
         return false;
     }
 
-    public void onClick_back(View view){
+    /**
+     * Closes the DetailsActivity
+     */
+    public void onClick_back(View view) {
         this.finish();
     }
 
     public void onClick_imageViewDetail(View view) {
-        if(isSlider) {
+        if (mIsSlider) {
             Intent intent = new Intent(this, DisplayImageSliderActivity.class);
-            intent.putExtra("exhibit-id", exhibitId);
-            intent.putExtra("imageName", imageName);
+            intent.putExtra("exhibit-id", mExhibitId);
+            intent.putExtra("imageName", mImageName);
             startActivity(intent);
-        }else{
+        } else {
             Intent intent = new Intent(this, DisplaySingleImageActivity.class);
-            intent.putExtra("exhibit-id", exhibitId);
-            intent.putExtra("imageName", imageName);
+            intent.putExtra("exhibit-id", mExhibitId);
+            intent.putExtra("imageName", mImageName);
             startActivity(intent);
         }
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
@@ -192,7 +221,7 @@ public class DetailsActivity extends ActionBarActivity {
     }
 
     private void openDatabase() {
-       database = new DBAdapter(this);
+        mDatabase = new DBAdapter(this);
     }
 
     @Override
@@ -200,6 +229,7 @@ public class DetailsActivity extends ActionBarActivity {
         this.finish();
     }
 
+    //TODO: is this needed?
     /*  Check later if this is needed
     public void onStop() {
         mImageView.destroyDrawingCache();
