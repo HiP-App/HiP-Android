@@ -17,6 +17,7 @@
 package de.upb.hip.mobile.activities;
 
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -97,6 +98,15 @@ public class MainActivity extends BaseActivity {
             mGeoLocation = new GeoPoint(mGpsTracker.getLatitude(), mGpsTracker.getLongitude());
         } else {
             // set default location Paderborn Hbf but not show it on the map
+            mGeoLocation = new GeoPoint(ExtendedLocationListener.PADERBORN_HBF.latitude,
+                    ExtendedLocationListener.PADERBORN_HBF.longitude);
+        }
+
+        // TODO Remove this as soon as no needs to run in emulator
+        // set default coordinats for emulator
+        if (Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK")) {
             mGeoLocation = new GeoPoint(ExtendedLocationListener.PADERBORN_HBF.latitude,
                     ExtendedLocationListener.PADERBORN_HBF.longitude);
         }
@@ -272,6 +282,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void updatePosition(Location location) {
+
         this.mExhibitSet.updatePosition(new LatLng(location.getLatitude(), location.getLongitude()));
         this.mAdapter.notifyDataSetChanged();
 

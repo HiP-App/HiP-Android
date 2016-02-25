@@ -24,6 +24,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -92,6 +93,15 @@ public class RouteDetailsActivity extends BaseActivity {
             // getting location
             if (mGpsTracker.canGetLocation()) {
                 mGeoLocation = new GeoPoint(mGpsTracker.getLatitude(), mGpsTracker.getLongitude());
+            }
+
+            // TODO Remove this as soon as no needs to run on emulator
+            // set default coordinats for emulator
+            if (Build.MODEL.contains("google_sdk") ||
+                    Build.MODEL.contains("Emulator") ||
+                    Build.MODEL.contains("Android SDK")) {
+                mGeoLocation = new GeoPoint(ExtendedLocationListener.PADERBORN_HBF.latitude,
+                        ExtendedLocationListener.PADERBORN_HBF.longitude);
             }
 
             db = new DBAdapter(this);

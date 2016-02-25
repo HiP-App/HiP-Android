@@ -39,6 +39,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -145,6 +146,15 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         // getting location
         mGpsTracker = new ExtendedLocationListener(RouteNavigationActivity.this);
         GeoPoint geoLocation = new GeoPoint(mGpsTracker.getLatitude(), mGpsTracker.getLongitude());
+
+        // TODO Remove this as soon as no needs to run in emulator
+        // set default coordinats for emulator
+        if (Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK")) {
+            geoLocation = new GeoPoint(ExtendedLocationListener.PADERBORN_HBF.latitude,
+                    ExtendedLocationListener.PADERBORN_HBF.longitude);
+        }
 
         // mMap prefs:
         IMapController mapController = mMap.getController();
@@ -929,6 +939,17 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             mRoads = result;
             if (mRoads != null) {
                 updateUIWithRoads(result);
+
+                // TODO Remove this as soon as no needs to run on emulator
+                // needed to set route info and dismiss busy waiting dialog on emulator
+                if (Build.MODEL.contains("google_sdk") ||
+                        Build.MODEL.contains("Emulator") ||
+                        Build.MODEL.contains("Android SDK")) {
+                    if (mRoads[0] != null && mRoads[0].mNodes != null) {
+                        setNextStepToAlert(mRoads[0].mNodes.get(0).mLocation);
+                    }
+                }
+
             }
         }
     }
