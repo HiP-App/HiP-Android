@@ -16,11 +16,14 @@
 
 package de.upb.hip.mobile.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -53,7 +56,7 @@ import java.util.Map;
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
-import de.upb.hip.mobile.listeners.GPSTrackerListner;
+import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
@@ -71,7 +74,7 @@ public class RouteDetailsActivity extends BaseActivity {
     private Route mRoute;
     private DrawerLayout mDrawerLayout;
 
-    private GPSTrackerListner mGPSTracker;
+    private ExtendedLocationListener mGpsTracker;
     private boolean mCanGetLocation = true;
 
     private DBAdapter db;
@@ -83,13 +86,12 @@ public class RouteDetailsActivity extends BaseActivity {
         setContentView(R.layout.activity_route_details);
 
         mRoute = (Route) getIntent().getSerializableExtra("route");
+        mGpsTracker = new ExtendedLocationListener(RouteDetailsActivity.this);
 
         if (mRoute != null) {
-            mGPSTracker = new GPSTrackerListner(RouteDetailsActivity.this);
-
             // getting location
-            if (mGPSTracker.canGetLocation()) {
-                mGeoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
+            if (mGpsTracker.canGetLocation()) {
+                mGeoLocation = new GeoPoint(mGpsTracker.getLatitude(), mGpsTracker.getLongitude());
             }
 
             db = new DBAdapter(this);
@@ -111,11 +113,20 @@ public class RouteDetailsActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGPSTracker = new GPSTrackerListner(RouteDetailsActivity.this);
-                if (mGPSTracker.canGetLocation()) {
+                mGpsTracker.getLocation();
+                boolean isNetworkAvailable = isNetworkAvailable();
+
+                if (mGpsTracker.canGetLocation() && isNetworkAvailable) {
                     startRouteNavigation();
-                } else {
-                    mGPSTracker.showSettingsAlert();
+                }
+
+                if (!isNetworkAvailable) {
+                    Toast.makeText(mMap.getContext(), R.string.network_message, Toast.LENGTH_LONG).show();
+                    mCanGetLocation = false;
+                }
+
+                if (!mGpsTracker.canGetLocation()) {
+                    mGpsTracker.showSettingsAlert();
                     mCanGetLocation = false;
                 }
             }
@@ -213,6 +224,7 @@ public class RouteDetailsActivity extends BaseActivity {
         if (this.mGeoLocation != null) {
             // setup our current location as start point
             geoLocation = this.mGeoLocation;
+            mViaPointData.put(title, -1);
         } else if (mRoute.waypoints.size() > 1) {
             // if no current location then use first waypoint as start point only if >=2 waypoints
             geoLocation = new GeoPoint(mRoute.waypoints.get(0).latitude,
@@ -471,14 +483,17 @@ public class RouteDetailsActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        mGPSTracker = new GPSTrackerListner(RouteDetailsActivity.this);
-        if (!mCanGetLocation && mGPSTracker.canGetLocation()) {
+        mGpsTracker.getLocation();
+        boolean isNetworkAvailable = isNetworkAvailable();
+
+        if (!mCanGetLocation && mGpsTracker.canGetLocation() && isNetworkAvailable) {
             startRouteNavigation();
         }
     }
 
     @Override
     protected void onPause() {
+        mGpsTracker.stopUsingGPS();
         super.onPause();
     }
 
@@ -491,5 +506,12 @@ public class RouteDetailsActivity extends BaseActivity {
                 mCanGetLocation = data.getBooleanExtra("onBackPressed", false);
             }
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

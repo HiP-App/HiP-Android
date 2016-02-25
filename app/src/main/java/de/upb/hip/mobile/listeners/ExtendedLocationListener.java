@@ -30,80 +30,83 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
 
-public class GPSTrackerListner extends Service implements LocationListener {
+public class ExtendedLocationListener extends Service implements LocationListener {
 
     // The minimum distance to change Updates in meters
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 2; // 2 meters
     // The minimum time between updates in milliseconds
     public static final long MIN_TIME_BW_UPDATES = 2000; // 2 sec
+    public static final LatLng PADERBORN_HBF = new LatLng(51.7276064, 8.7684325);
     private final Context mContext;
     // Declaring a Location Manager
-    protected LocationManager locationManager;
+    protected LocationManager mLocationManager;
     // Flag for GPS status
-    boolean isGPSEnabled = false;
+    private boolean mGpsEnabled = false;
     // Flag for network status
-    boolean isNetworkEnabled = false;
+    private boolean mNetworkEnabled = false;
     // Flag for GPS status
-    boolean canGetLocation = false;
-    Location location; // Location
-    double latitude; // Latitude
-    double longitude; // Longitude
+    private boolean mCanGetLocation = false;
+    private Location mLocation; // Location
+    private double mLatitude; // Latitude
+    private double mLongitude; // Longitude
 
-    public GPSTrackerListner(Context context) {
+    public ExtendedLocationListener(Context context) {
         this.mContext = context;
         getLocation();
     }
 
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) mContext
+            mLocationManager = (LocationManager) mContext
                     .getSystemService(LOCATION_SERVICE);
 
             // Getting GPS status
-            isGPSEnabled = locationManager
+            mGpsEnabled = mLocationManager
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             // Getting network status
-            isNetworkEnabled = locationManager
+            mNetworkEnabled = mLocationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-            if (!isGPSEnabled && !isNetworkEnabled) {
+            if (!mGpsEnabled && !mNetworkEnabled) {
                 // No network provider is enabled
-                canGetLocation = false;
+                mCanGetLocation = false;
             } else {
-                this.canGetLocation = true;
-                if (isNetworkEnabled) {
-                    locationManager.requestLocationUpdates(
+                this.mCanGetLocation = true;
+                if (mNetworkEnabled) {
+                    mLocationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                     Log.d("Network", "Network");
-                    if (locationManager != null) {
-                        location = locationManager
+                    if (mLocationManager != null) {
+                        mLocation = mLocationManager
                                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
+                        if (mLocation != null) {
+                            mLatitude = mLocation.getLatitude();
+                            mLongitude = mLocation.getLongitude();
                         }
                     }
                 }
-                // If GPS enabled, get latitude/longitude using GPS Services
-                if (isGPSEnabled) {
-                    if (location == null) {
-                        locationManager.requestLocationUpdates(
+                // If GPS enabled, get mLatitude/mLongitude using GPS Services
+                if (mGpsEnabled) {
+                    if (mLocation == null) {
+                        mLocationManager.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
                         Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null) {
-                            location = locationManager
+                        if (mLocationManager != null) {
+                            mLocation = mLocationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
+                            if (mLocation != null) {
+                                mLatitude = mLocation.getLatitude();
+                                mLongitude = mLocation.getLongitude();
                             }
                         }
                     }
@@ -113,7 +116,7 @@ public class GPSTrackerListner extends Service implements LocationListener {
             e.printStackTrace();
         }
 
-        return location;
+        return mLocation;
     }
 
 
@@ -122,44 +125,44 @@ public class GPSTrackerListner extends Service implements LocationListener {
      * Calling this function will stop using GPS in your app.
      */
     public void stopUsingGPS() {
-        if (locationManager != null) {
-            locationManager.removeUpdates(GPSTrackerListner.this);
+        if (mLocationManager != null) {
+            mLocationManager.removeUpdates(ExtendedLocationListener.this);
         }
     }
 
 
     /**
-     * Function to get latitude
+     * Function to get mLatitude
      */
     public double getLatitude() {
-        if (location != null) {
-            latitude = location.getLatitude();
+        if (mLocation != null) {
+            mLatitude = mLocation.getLatitude();
         }
 
-        // return latitude
-        return latitude;
+        // return mLatitude
+        return mLatitude;
     }
 
 
     /**
-     * Function to get longitude
+     * Function to get mLongitude
      */
     public double getLongitude() {
-        if (location != null) {
-            longitude = location.getLongitude();
+        if (mLocation != null) {
+            mLongitude = mLocation.getLongitude();
         }
 
-        // return longitude
-        return longitude;
+        // return mLongitude
+        return mLongitude;
     }
 
     /**
-     * Function to get longitude
+     * Function to get mLongitude
      */
     public LocationManager getLocationManager() {
 
-        // return locationManager
-        return locationManager;
+        // return mLocationManager
+        return mLocationManager;
     }
 
     /**
@@ -168,7 +171,7 @@ public class GPSTrackerListner extends Service implements LocationListener {
      * @return boolean
      */
     public boolean canGetLocation() {
-        return this.canGetLocation;
+        return this.mCanGetLocation;
     }
 
 
@@ -207,7 +210,7 @@ public class GPSTrackerListner extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        this.location = location;
+        this.mLocation = location;
 
         Activity activity = (Activity) this.mContext;
         if (activity.getClass().equals(MainActivity.class)) {

@@ -47,7 +47,7 @@ import de.upb.hip.mobile.helpers.CustomisedIconOverlay;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ImageLoader;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
-import de.upb.hip.mobile.listeners.GPSTrackerListner;
+import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.ExhibitSet;
@@ -57,11 +57,9 @@ public class MainActivity extends BaseActivity {
 
     private static final String BASE_URL = "http://tboegeholz.de/ba/index.php";
 
-    public LatLng paderborn = new LatLng(51.7276064, 8.7684325);
-
-    private DBAdapter database;
-    private ExhibitSet exhibitSet;
-    private List<String> activeFilter = new ArrayList<>();
+    private DBAdapter mDatabase;
+    private ExhibitSet mExhibitSet;
+    private List<String> mActiveFilter = new ArrayList<>();
 
     // Recycler View: MainList
     private RecyclerView mRecyclerView;
@@ -75,13 +73,14 @@ public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
 
-    private GPSTrackerListner mGPSTracker;
+    // map
+    private ExtendedLocationListener mGpsTracker;
     private GeoPoint mGeoLocation;
     private MapView mMap = null;
     private SetMarker mMarker;
     private FolderOverlay mItineraryMarkers;
     private ViaPointInfoWindow mViaPointInfoWindow;
-    private ArrayList<OverlayItem> overlayItemArray;
+    private ArrayList<OverlayItem> mOverlayItemArray;
 
     // Refresh
     private SwipeRefreshLayout mSwipeLayout;
@@ -91,18 +90,31 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mGPSTracker = new GPSTrackerListner(MainActivity.this);
+        mGpsTracker = new ExtendedLocationListener(MainActivity.this);
 
         // getting location
-        if (mGPSTracker.canGetLocation()) {
-            mGeoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
+        if (mGpsTracker.canGetLocation()) {
+            mGeoLocation = new GeoPoint(mGpsTracker.getLatitude(), mGpsTracker.getLongitude());
+        } else {
+            // set default location Paderborn Hbf but not show it on the map
+            mGeoLocation = new GeoPoint(ExtendedLocationListener.PADERBORN_HBF.latitude,
+                    ExtendedLocationListener.PADERBORN_HBF.longitude);
         }
 
-        openDatabase();
-        this.exhibitSet = new ExhibitSet(database.getView("exhibits"), this.paderborn);
-
+        // init map and update current location overlay
         setupMap();
-        exhibitSet.addMarker(mMarker, getApplicationContext());
+
+        // update our current location immediately, instead of waiting when it would be updated
+        // from locationlistner
+        updateOverlayLocation(mGeoLocation);
+
+        openDatabase();
+        this.mExhibitSet = new ExhibitSet(mDatabase.getView("exhibits"),
+                new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLongitude()));
+
+        // add markers on the map from exhibits
+        mMarker = new SetMarker(mMap, mItineraryMarkers, mViaPointInfoWindow);
+        this.mExhibitSet.addMarker(mMarker, this);
 
         // Recyler View
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -113,7 +125,7 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
+        mAdapter = new RecyclerAdapter(this.mExhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
         //getWindow().setExitTransition(new Explode());
@@ -125,9 +137,9 @@ public class MainActivity extends BaseActivity {
         mFilterRecyclerView.setHasFixedSize(true);
         mFilterLayoutManager = new LinearLayoutManager(this);
         mFilterRecyclerView.setLayoutManager(mFilterLayoutManager);
-        List<String> categories = this.exhibitSet.getCategories();
-        for(String item: categories) this.activeFilter.add(item);
-        mFilterAdapter = new FilterRecyclerAdapter(categories, this.activeFilter);
+        List<String> categories = this.mExhibitSet.getCategories();
+        for(String item: categories) this.mActiveFilter.add(item);
+        mFilterAdapter = new FilterRecyclerAdapter(categories, this.mActiveFilter);
         mFilterRecyclerView.setAdapter(mFilterAdapter);
         mFilterRecyclerView.addOnItemTouchListener(new FilterRecyclerClickListener(this));
         */
@@ -168,8 +180,6 @@ public class MainActivity extends BaseActivity {
 
     /**
      * init the map
-     * set the tile source
-     * set zoom
      */
     private void setupMap() {
         // getting the map
@@ -196,13 +206,14 @@ public class MainActivity extends BaseActivity {
         mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
 
         //-- Create location Overlay
-        overlayItemArray = new ArrayList<>();
+        mOverlayItemArray = new ArrayList<>();
+
         DefaultResourceProxyImpl defaultResourceProxyImpl = new DefaultResourceProxyImpl(this);
 
         // to use blue point (or other) as location marker set it in CustomizedIconOverlay
         //Bitmap locationMarker = BitmapFactory.decodeResource(getResources(), R.drawable.ic_location);
         CustomisedIconOverlay customisedIconOverlay = new CustomisedIconOverlay(this, null,
-                overlayItemArray, null, defaultResourceProxyImpl);
+                mOverlayItemArray, null, defaultResourceProxyImpl);
         mMap.getOverlays().add(customisedIconOverlay);
         //--
 
@@ -211,8 +222,6 @@ public class MainActivity extends BaseActivity {
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
 
-        mMarker = new SetMarker(mMap, mItineraryMarkers, mViaPointInfoWindow);
-
         // add Scale Bar
         ScaleBarOverlay myScaleBarOverlay = new ScaleBarOverlay(mMap);
         mMap.getOverlays().add(myScaleBarOverlay);
@@ -220,18 +229,19 @@ public class MainActivity extends BaseActivity {
 
     /**
      * getting boundingbox to fit all marker on the map
+     * and current location also if it is known
      *
      * @return BoundingBox
      */
     public BoundingBoxE6 getBoundingBoxE6() {
         ArrayList<GeoPoint> points = new ArrayList<>();
 
-        if (mGeoLocation != null) {
+        if (mGpsTracker.canGetLocation() && mGeoLocation != null) {
             points.add(mGeoLocation);
         }
 
-        for (int i = 0; i < this.exhibitSet.getSize(); i++) {
-            Exhibit exhibit = this.exhibitSet.getExhibit(i);
+        for (int i = 0; i < this.mExhibitSet.getSize(); i++) {
+            Exhibit exhibit = this.mExhibitSet.getExhibit(i);
             GeoPoint geo = new GeoPoint(exhibit.latlng.latitude, exhibit.latlng.longitude);
 
             points.add(geo);
@@ -242,57 +252,46 @@ public class MainActivity extends BaseActivity {
 
     public void notifyExhibitSetChanged() {
         mSwipeLayout.setRefreshing(false);
-        this.exhibitSet = new ExhibitSet(database.getView("exhibits"), this.paderborn);
-        mAdapter = new RecyclerAdapter(this.exhibitSet, getApplicationContext());
+        this.mExhibitSet = new ExhibitSet(mDatabase.getView("exhibits"),
+                new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLatitude()));
+        mAdapter = new RecyclerAdapter(this.mExhibitSet, getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();
-        this.exhibitSet.addMarker(mMarker, getApplicationContext());
+        this.mExhibitSet.addMarker(mMarker, getApplicationContext());
     }
 
     public void updateCategories(String categorie) {
         if (categorie != null) {
-            if (this.activeFilter.contains(categorie)) this.activeFilter.remove(categorie);
-            else this.activeFilter.add(categorie);
+            if (this.mActiveFilter.contains(categorie)) this.mActiveFilter.remove(categorie);
+            else this.mActiveFilter.add(categorie);
             this.mFilterAdapter.notifyDataSetChanged();
-            this.exhibitSet.updateCategories(this.activeFilter);
+            this.mExhibitSet.updateCategories(this.mActiveFilter);
             this.mAdapter.notifyDataSetChanged();
-            this.exhibitSet.addMarker(mMarker, getApplicationContext());
+            this.mExhibitSet.addMarker(mMarker, getApplicationContext());
         }
     }
 
-    protected boolean startLocationUpdates() {
-        boolean result = false;
-        for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
-            mGPSTracker.getLocationManager().requestLocationUpdates(provider,
-                    GPSTrackerListner.MIN_TIME_BW_UPDATES,
-                    GPSTrackerListner.MIN_DISTANCE_CHANGE_FOR_UPDATES,
-                    mGPSTracker);
-            result = true;
-        }
-        return result;
-    }
-
-    public void updatePosition(Location position) {
-        this.exhibitSet.updatePosition(new LatLng(position.getLatitude(), position.getLongitude()));
+    public void updatePosition(Location location) {
+        this.mExhibitSet.updatePosition(new LatLng(location.getLatitude(), location.getLongitude()));
         this.mAdapter.notifyDataSetChanged();
 
-        setOverlayLoc(position);
+        updateOverlayLocation(new GeoPoint(location.getLatitude(), location.getLongitude()));
     }
 
-    private void setOverlayLoc(Location overlayloc) {
-        GeoPoint overlocGeoPoint = new GeoPoint(overlayloc);
+    public void updateOverlayLocation(GeoPoint geoPoint) {
 
-        overlayItemArray.clear();
+        mOverlayItemArray.clear();
 
+        GeoPoint overlocGeoPoint = new GeoPoint(geoPoint);
         OverlayItem newMyLocationItem = new OverlayItem("", "", overlocGeoPoint);
-        overlayItemArray.add(newMyLocationItem);
+        mOverlayItemArray.add(newMyLocationItem);
 
         mMap.invalidate();
     }
 
     @Override
     protected void onResume() {
-        startLocationUpdates();
+        mGpsTracker.getLocation();
 
         super.onResume();
     }
@@ -303,17 +302,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private void openDatabase() {
-        database = new DBAdapter(this);
+        mDatabase = new DBAdapter(this);
     }
 
     @Override
     protected void onPause() {
-        stopLocationUpdates();
+        mGpsTracker.stopUsingGPS();
 
         super.onPause();
-    }
-
-    protected void stopLocationUpdates() {
-        mGPSTracker.stopUsingGPS();
     }
 }

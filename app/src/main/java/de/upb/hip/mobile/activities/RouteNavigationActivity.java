@@ -74,7 +74,7 @@ import java.util.Map;
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
-import de.upb.hip.mobile.listeners.GPSTrackerListner;
+import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.SetMarker;
@@ -87,17 +87,16 @@ import de.upb.hip.mobile.models.ViaPointData;
 public class RouteNavigationActivity extends Activity implements MapEventsReceiver,
         LocationListener, SensorEventListener {
     protected final int ROUTE_REJECT = 25; //in meters
-    protected final String PROX_ALERT = getPackageName() + ".PROX_ALERT";
+    protected final String PROX_ALERT = "de.upb.hip.mobile.activities.PROX_ALERT";
     protected final long POINT_RADIUS = 5; // in Meters
     protected final long PROX_ALERT_EXPIRATION = -1; //indicate no expiration
     protected Road[] mRoads;
-    // LocationListener implementation
+
     protected MapView mMap;
     protected SetMarker mMarker;
     protected GeoPoint mStartPoint;
     protected ArrayList<ViaPointData> mViaPoints;
     protected FolderOverlay mItineraryMarkers;
-    // for departure, destination and viapoints
     protected ViaPointInfoWindow mViaPointInfoWindow;
     protected DirectedLocationOverlay mLocationOverlay;
     protected Polygon mDestinationPolygon; //enclosing polygon of destination location
@@ -113,7 +112,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     // setup the UI before the reaching the start point only once
     protected boolean mUpdateStartPointOnce = true;
     // for location, location manager and setting dialog if no location
-    protected GPSTrackerListner mGPSTracker;
+    protected ExtendedLocationListener mGpsTracker;
     // for the recalculation the route
     protected int mDistanceBetweenLoc = -1;
     // shows creation and loading route and map steps
@@ -144,8 +143,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.setMaxZoomLevel(RouteDetailsActivity.MAX_ZOOM_LEVEL);
 
         // getting location
-        mGPSTracker = new GPSTrackerListner(RouteNavigationActivity.this);
-        GeoPoint geoLocation = new GeoPoint(mGPSTracker.getLatitude(), mGPSTracker.getLongitude());
+        mGpsTracker = new ExtendedLocationListener(RouteNavigationActivity.this);
+        GeoPoint geoLocation = new GeoPoint(mGpsTracker.getLatitude(), mGpsTracker.getLongitude());
 
         // mMap prefs:
         IMapController mapController = mMap.getController();
@@ -242,9 +241,9 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      * LocationListener implementation
      */
     @Override
-    public void onLocationChanged(final Location pLoc) {
+    public void onLocationChanged(final Location location) {
 
-        GeoPoint newLocation = new GeoPoint(pLoc);
+        GeoPoint newLocation = new GeoPoint(location);
         if (!mLocationOverlay.isEnabled()) {
             //we get the location for the first time:
             mLocationOverlay.setEnabled(true);
@@ -263,11 +262,11 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
         GeoPoint prevLocation = mLocationOverlay.getLocation();
         mLocationOverlay.setLocation(newLocation);
-        mLocationOverlay.setAccuracy((int) pLoc.getAccuracy());
+        mLocationOverlay.setAccuracy((int) location.getAccuracy());
 
         GeoPoint nextNearestLocation = getNextNodeLocation();
         if (nextNearestLocation != null && prevLocation != null) {
-            if (pLoc.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+            if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
                 // setup next node(location) to the north
                 mAzimuthAngleSpeed = (float) prevLocation.bearingTo(nextNearestLocation);
                 mLocationOverlay.setBearing(mAzimuthAngleSpeed);
@@ -637,11 +636,11 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
     boolean startLocationUpdates() {
         boolean result = false;
-        for (final String provider : mGPSTracker.getLocationManager().getProviders(true)) {
-            mGPSTracker.getLocationManager().requestLocationUpdates(
+        for (final String provider : mGpsTracker.getLocationManager().getProviders(true)) {
+            mGpsTracker.getLocationManager().requestLocationUpdates(
                     provider,
-                    GPSTrackerListner.MIN_TIME_BW_UPDATES,
-                    GPSTrackerListner.MIN_DISTANCE_CHANGE_FOR_UPDATES,
+                    ExtendedLocationListener.MIN_TIME_BW_UPDATES,
+                    ExtendedLocationListener.MIN_DISTANCE_CHANGE_FOR_UPDATES,
                     this);
             result = true;
         }
@@ -712,8 +711,11 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             }
             mRoadOverlays = null;
         }
-        if (roads == null)
+        if (roads == null || roads[0] == null) {
+
             return;
+        }
+
         if (roads[0].mStatus == Road.STATUS_TECHNICAL_ISSUE)
             Toast.makeText(mMap.getContext(), R.string.technical_issue,
                     Toast.LENGTH_SHORT).show();
@@ -799,7 +801,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         Intent intent = new Intent(PROX_ALERT);
 
         mProximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        mGPSTracker.getLocationManager().addProximityAlert(
+        mGpsTracker.getLocationManager().addProximityAlert(
                 latitude, // the latitude of the central point of the alert region
                 longitude, // the longitude of the central point of the alert region
                 POINT_RADIUS, // the radius of the central point of the alert region, in meters
@@ -877,7 +879,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             mProgressDialog.dismiss();
         }
 
-        mGPSTracker.getLocationManager().removeUpdates(this);
+        mGpsTracker.getLocationManager().removeUpdates(this);
         unregisterReceiver(mProximityIntentReceiver);
 
         super.onPause();
@@ -938,7 +940,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             Boolean entering = intent.getBooleanExtra(key, false);
             if (entering) {
                 mReachedNode++;
-                mGPSTracker.getLocationManager().removeProximityAlert(mProximityIntent);
+                mGpsTracker.getLocationManager().removeProximityAlert(mProximityIntent);
             }
         }
     }

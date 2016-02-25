@@ -45,6 +45,7 @@
     <string name="technical_issue">Technische Probleme eine Route zu bekommen</string>
     <string name="downlod_road">Downloading the road…</string>
     <string name="creating_map">Creating the map…</string>
+    <string name="osm_contributors">&#169; OpenStreetMap contributors</string>
 
     <string name="mapquest_key">VvR4CnlGhrT4AwOXLFCQPzSuuDxbfYEg</string>
 
@@ -53,5 +54,9 @@
     <string name="settings">Einstellungen</string>
     <string name="cancel">Cancel</string>
     <string name="gps_not_enabled_message">GPS ist nicht aktiviert. Wollen Sie die Einstellungsmenü öffnen?</string>
+
+    <!-- string for network connection -->
+    <string name="network_connection">Netzwerkverbindung</string>
+    <string name="network_message">Internetverbindung erforderlich</string>
 
 </resources>

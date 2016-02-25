@@ -38,7 +38,7 @@ public class CustomisedIconOverlay extends ItemizedIconOverlay<OverlayItem> {
     private List<OverlayItem> mOverlayItemArray;
     private ResourceProxy pResourceProxy;
     private Bitmap mLocationMarker;
-    private Context context;
+    private Context mContext;
 
     public CustomisedIconOverlay(Context contex, Bitmap locationMarker,
                                  List<OverlayItem> pList,
@@ -46,7 +46,7 @@ public class CustomisedIconOverlay extends ItemizedIconOverlay<OverlayItem> {
                                  ResourceProxy pResourceProxy) {
         super(pList, pOnItemGestureListener, pResourceProxy);
 
-        this.context = contex;
+        this.mContext = contex;
         this.mLocationMarker = locationMarker;
         this.mOverlayItemArray = pList;
         this.pResourceProxy = pResourceProxy;
