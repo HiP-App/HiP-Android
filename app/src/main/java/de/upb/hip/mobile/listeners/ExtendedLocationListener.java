@@ -1,41 +1,48 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.listeners;
 
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
-
-import android.app.Activity;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
+import de.upb.hip.mobile.activities.MainActivity;
 
+/**
+ * Listener Class for updating the location.
+ */
 public class ExtendedLocationListener implements com.google.android.gms.location.LocationListener {
-    MainActivity mActivity;
+    private MainActivity mActivity;
 
-    public ExtendedLocationListener (MainActivity mActivity) {
+    /**
+     * Constructor of ExtendedLocationListener
+     *
+     * @param mActivity MainActivity
+     */
+    public ExtendedLocationListener(MainActivity mActivity) {
         super();
         this.mActivity = mActivity;
     }
 
+    /**
+     * Calls {@link de.upb.hip.mobile.activities.MainActivity[#updatePosition(Location)}]}
+     *
+     * @param location Android Location
+     */
     public void onLocationChanged(Location location) {
         this.mActivity.updatePosition(location);
-    }
-
-    public void onProviderDisabled(String provider) {
-        // required for interface, not used
-    }
-
-    public void onProviderEnabled(String provider) {
-        // required for interface, not used
-    }
-
-    public void onStatusChanged(String provider, int status,
-                                Bundle extras) {
-        // required for interface, not used
     }
 }
