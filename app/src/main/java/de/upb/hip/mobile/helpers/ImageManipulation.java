@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.helpers;
 
 import android.content.Context;
@@ -14,54 +30,69 @@ import android.graphics.Rect;
 import de.upb.hip.mobile.activities.R;
 
 /**
- * Created by Timo on 21.01.2016.
+ * Helper Class for manipulation of images.
  */
 public class ImageManipulation {
 
-    public static Bitmap getCroppedImage(Bitmap bmp, int radius) {
-        Bitmap sbmp;
-        if(bmp.getWidth() != radius || bmp.getHeight() != radius)
-            sbmp = Bitmap.createScaledBitmap(bmp, radius, radius, false);
-        else
-            sbmp = bmp;
-        Bitmap output = Bitmap.createBitmap(sbmp.getWidth(),
-                sbmp.getHeight(), Bitmap.Config.ARGB_8888);
+    /**
+     * Converts a square image into a round image.
+     *
+     * @param bitmap the rectangular image
+     * @param radius the radius of the output image
+     * @return bitmap of round image
+     */
+    public static Bitmap getCroppedImage(Bitmap bitmap, int radius) {
+        Bitmap scaledBitmap;
+        if (bitmap.getWidth() != radius || bitmap.getHeight() != radius) {
+            scaledBitmap = Bitmap.createScaledBitmap(bitmap, radius, radius, false);
+        } else {
+            scaledBitmap = bitmap;
+        }
+        Bitmap output = Bitmap.createBitmap(scaledBitmap.getWidth(),
+                scaledBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 
-        final int color = 0xffa19774;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, sbmp.getWidth(), sbmp.getHeight());
+        final Rect rect = new Rect(0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
 
         paint.setAntiAlias(true);
         paint.setFilterBitmap(true);
         paint.setDither(true);
         canvas.drawARGB(0, 0, 0, 0);
         paint.setColor(Color.parseColor("#BAB399"));
-        canvas.drawCircle(sbmp.getWidth() / 2 + 0.7f, sbmp.getHeight() / 2 + 0.7f,
-                sbmp.getWidth() / 2 + 0.1f, paint);
+        canvas.drawCircle(scaledBitmap.getWidth() / 2 + 0.7f, scaledBitmap.getHeight() / 2 + 0.7f,
+                scaledBitmap.getWidth() / 2 + 0.1f, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(sbmp, rect, rect, paint);
+        canvas.drawBitmap(scaledBitmap, rect, rect, paint);
 
         return output;
     }
 
-    public Bitmap getMarker (Bitmap bitmap2, Context ctx){
-        bitmap2 = this.getCroppedImage(bitmap2, 55);
+    /**
+     * Converts a square image into a round image with marker for maps.
+     *
+     * @param bitmap  the rectangular image
+     * @param context Android Context
+     * @return image of marker with imput image inside
+     */
+    public static Bitmap getMarker(Bitmap bitmap, Context context) {
+        bitmap = ImageManipulation.getCroppedImage(bitmap, 55);
 
-        Bitmap bitmap1 = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.marker_blue);
-        int bitmap1Width = bitmap1.getWidth();
-        int bitmap1Height = bitmap1.getHeight();
-        int bitmap2Width = bitmap2.getWidth();
-        int bitmap2Height = bitmap2.getHeight();
+        Bitmap markerBitmap = BitmapFactory.decodeResource(
+                context.getResources(), R.drawable.marker_blue);
+        int markerBitmapWidth = markerBitmap.getWidth();
+        int markerBitmapHeight = markerBitmap.getHeight();
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
 
-        float marginLeft = (float) (bitmap1Width * 0.5 - bitmap2Width * 0.5);
-        //float marginTop = (float) (bitmap1Height * 0.5 - bitmap2Height * 0.2);
+        float marginLeft = (float) (markerBitmapWidth * 0.5 - bitmapWidth * 0.5);
         float marginTop = (float) 13;
 
-        Bitmap overlayBitmap = Bitmap.createBitmap(bitmap1Width, bitmap1Height, bitmap1.getConfig());
+        Bitmap overlayBitmap = Bitmap.createBitmap(
+                markerBitmapWidth, markerBitmapHeight, markerBitmap.getConfig());
         Canvas canvas = new Canvas(overlayBitmap);
-        canvas.drawBitmap(bitmap1, new Matrix(), null);
-        canvas.drawBitmap(bitmap2, marginLeft, marginTop, null);
+        canvas.drawBitmap(markerBitmap, new Matrix(), null);
+        canvas.drawBitmap(bitmap, marginLeft, marginTop, null);
 
         return overlayBitmap;
     }

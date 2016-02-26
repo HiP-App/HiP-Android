@@ -173,10 +173,8 @@ public class ExhibitSet {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
             Bitmap bitmap2 = bitmapDrawable.getBitmap();
 
-            ImageManipulation IM = new ImageManipulation();
-
-
-            mMap.addMarker(new MarkerOptions().position(exhibit.latlng).title(exhibit.name).icon(BitmapDescriptorFactory.fromBitmap(IM.getMarker(bitmap2, ctx))));
+            mMap.addMarker(new MarkerOptions().position(exhibit.latlng).title(exhibit.name).icon(
+                    BitmapDescriptorFactory.fromBitmap(ImageManipulation.getMarker(bitmap2, ctx))));
         }
     }
 
