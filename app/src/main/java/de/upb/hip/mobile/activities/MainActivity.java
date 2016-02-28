@@ -135,7 +135,7 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new RecyclerAdapter(this.mExhibitSet, getApplicationContext());
+        mAdapter = new RecyclerAdapter(this.mExhibitSet);
         mRecyclerView.setAdapter(mAdapter);
 
         //getWindow().setExitTransition(new Explode());
@@ -264,7 +264,7 @@ public class MainActivity extends BaseActivity {
         mSwipeLayout.setRefreshing(false);
         this.mExhibitSet = new ExhibitSet(mDatabase.getView("exhibits"),
                 new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLatitude()));
-        mAdapter = new RecyclerAdapter(this.mExhibitSet, getApplicationContext());
+        mAdapter = new RecyclerAdapter(this.mExhibitSet);
         mRecyclerView.setAdapter(mAdapter);
         this.mAdapter.notifyDataSetChanged();
         this.mExhibitSet.addMarker(mMarker, getApplicationContext());
