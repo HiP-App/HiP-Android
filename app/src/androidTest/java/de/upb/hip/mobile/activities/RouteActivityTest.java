@@ -1,28 +1,29 @@
-package de.upb.hip.mobile;
+package de.upb.hip.mobile.activities;
 
 //import android.test.ActivityUnitTestCase;
+
 import android.support.test.InstrumentationRegistry;
 import android.test.ActivityInstrumentationTestCase2;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ArrayList;
+
 import de.upb.hip.mobile.activities.RouteActivity;
-import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.Route;
+import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.Waypoint;
-import com.google.android.gms.maps.model.LatLng;
 //import android.app.Activity;
 /**
  * Created by Lobner on 13.12.2015.
  */
-public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
+public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteActivity>
 {
     public static final int TEST_ID = 127;
     private RouteActivity activity;
 //    private Activity activity;
-    public RouteTest()
+    public RouteActivityTest()
     {
         super(RouteActivity.class);
 
@@ -59,9 +60,8 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
     {       //IDs for testing: 127
 
         RouteSet rs = activity.getRouteSet();
-        assertNotNull(rs);
-        ArrayList<Waypoint> wp = new ArrayList<Waypoint>();
-        List<RouteTag> rt = new LinkedList<RouteTag>();
+        ArrayList<Waypoint> wp = new ArrayList<>();
+        List<RouteTag> rt = new LinkedList<>();
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
         wp.add(new Waypoint(51.718953, 8.75583, 127));
         Route r = new Route(/*rs.getSize()*/127, "new route without description",
@@ -77,8 +77,8 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
     public void testMissingTitle()
     {
         RouteSet rs = activity.getRouteSet();
-        ArrayList<Waypoint> wp = new ArrayList<Waypoint>();
-        List<RouteTag> rt = new LinkedList<RouteTag>();
+        ArrayList<Waypoint> wp = new ArrayList<>();
+        List<RouteTag> rt = new LinkedList<>();
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
         wp.add(new Waypoint(51.718953, 8.75583, 127));
         Route r = new Route(127, "", "this is a route without title", wp, 1, rt, "route_stadt");
@@ -93,8 +93,8 @@ public class RouteTest extends ActivityInstrumentationTestCase2<RouteActivity>
     public void testMissingTag()
     {
         RouteSet rs = activity.getRouteSet();
-        ArrayList<Waypoint> wp = new ArrayList<Waypoint>();
-        List<RouteTag> rt = new LinkedList<RouteTag>();
+        ArrayList<Waypoint> wp = new ArrayList<>();
+        List<RouteTag> rt = new LinkedList<>();
         rt.add(new RouteTag("", "testname", "route_stadt"));
         rt.add(new RouteTag(null, "testname2", "route_stadt"));
         wp.add(new Waypoint(51.718953, 8.75583, 127));

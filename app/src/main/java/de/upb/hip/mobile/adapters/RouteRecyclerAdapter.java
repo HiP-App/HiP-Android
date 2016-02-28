@@ -71,16 +71,18 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         public TextView mTitle;
         public TextView mDescription;
         public TextView mDuration;
+        public TextView mDistance;
         public LinearLayout mTagsLayout;
 
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
             this.mImage = (ImageView) v.findViewById(R.id.image_route);
-            this.mTitle = (TextView) v.findViewById(R.id.text_title);
-            this.mDescription = (TextView) v.findViewById(R.id.text_description);
-            this.mDuration = (TextView) v.findViewById(R.id.text_duration);
-            this.mTagsLayout = (LinearLayout) v.findViewById(R.id.tags_layout);
+            this.mTitle = (TextView) v.findViewById(R.id.route_title);
+            this.mDescription = (TextView) v.findViewById(R.id.route_description);
+            this.mDuration = (TextView) v.findViewById(R.id.route_duration);
+            this.mDistance = (TextView) v.findViewById(R.id.route_distance);
+            this.mTagsLayout = (LinearLayout) v.findViewById(R.id.route_tags_layout);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -107,12 +109,12 @@ public class RouteRecyclerAdapter extends RecyclerView.Adapter<RouteRecyclerAdap
         Route route = getFilteredRoutes().getRouteByPosition(position);
         holder.mTitle.setText(route.title);
         String description;
-        if (route.description.length() > 32)
-            description = route.description.substring(0, 32).concat("...");
-        else description = route.description;
+        description = route.description;
         holder.mDescription.setText(description);
         int durationInMinutes = route.duration / 60;
         holder.mDuration.setText(context.getResources().getQuantityString(R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
+        holder.mDistance.setText(String.format(context.getResources().getString(R.string.route_activity_distance_kilometer), route.distance));
+
         //Check if there are actually tags for this route
         if (route.tags != null) {
             holder.mTagsLayout.removeAllViews();
