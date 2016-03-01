@@ -92,7 +92,7 @@ public class DBAdapter {
     public static final String DB_NAME = "hip"; // local database name
     private Manager manager = null; // local database manager
     private static Database database = null; // local database
-    public static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
+    public static final String COUCHBASE_SERVER_URL = "xxx"; // URL to Server with running Couchbase Sync Gateway
     private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
     private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
 
@@ -108,7 +108,7 @@ public class DBAdapter {
         staticcontext = ctx;
         if (database == null) {
             initDatabase(false);
-//            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
+            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
     }
 
@@ -120,7 +120,7 @@ public class DBAdapter {
         try {
             database.delete();
             database = null;
-            initDatabase(true);
+            initDatabase(false);
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error deleting local database", e);
             return;
@@ -192,6 +192,19 @@ public class DBAdapter {
         stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
+
+        waypoints = new LinkedList<>();
+        waypoints.add(new Waypoint(51.718529, 8.750662, -1)); // Paderquellen: Paderufer gegenüber des Galerie-Hotels
+        waypoints.add(new Waypoint(51.719527, 8.755736, 4)); // Kaiserpfalz
+        waypoints.add(new Waypoint(51.719128, 8.755457, 1)); // Dom
+        waypoints.add(new Waypoint(51.713877, 8.753032, -1)); // Karlsstraße/Turmplatz (Denkmal für Karl den Großen)
+        waypoints.add(new Waypoint(51.713587, 8.750617, -1)); // Karlsschule
+        waypoints.add(new Waypoint(51.711812, 8.749370, -1)); // Rundgang durch die Straßen – z. B. Widukindstraße
+
+        List<RouteTag> karlsrouteTags = new LinkedList<>();
+        karlsrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
+
+        insertRoute(103, "Karlsroute", "...", waypoints, 60 * 120, 3.5, karlsrouteTags, "route_stadt.jpg");
 
         List<SliderImage> sliderImages = new LinkedList<>();
         sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
