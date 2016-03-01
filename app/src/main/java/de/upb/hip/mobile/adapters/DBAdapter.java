@@ -1,25 +1,22 @@
 package de.upb.hip.mobile.adapters;
 
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.models.*;
-
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import android.util.Log;
 
 import com.couchbase.lite.Attachment;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Emitter;
 import com.couchbase.lite.Manager;
-import com.couchbase.lite.Database;
 import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
@@ -34,28 +31,31 @@ import com.couchbase.lite.replicator.Replication;
 import com.couchbase.lite.support.CouchbaseLiteHttpClientFactory;
 import com.couchbase.lite.support.PersistentCookieStore;
 
+import org.apache.http.conn.ssl.SSLSocketFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyPair;
-import java.security.cert.Certificate;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.http.conn.ssl.SSLSocketFactory;
+import de.upb.hip.mobile.activities.MainActivity;
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.RouteTag;
+import de.upb.hip.mobile.models.SliderImage;
+import de.upb.hip.mobile.models.Waypoint;
 
 
 /* Class for the connection between app and database */
@@ -90,16 +90,14 @@ public class DBAdapter {
 
 
     public static final String DB_NAME = "hip"; // local database name
-    private Manager manager = null; // local database manager
-    private static Database database = null; // local database
-    public static final String COUCHBASE_SERVER_URL = "xxx"; // URL to Server with running Couchbase Sync Gateway
-    private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
-    private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
-
-
+    public static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
     public static final String TAG = "DBAdapter"; // for logging
-    private final Context context; // Context of application who uses us.
+    private static final String COUCHBASE_USER = "android_user2"; // username to access the data bucket on Couchbase Sync Gateway
+    private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
+    private static Database database = null; // local database
     private static Context staticcontext; // static context for static getImage()-method
+    private final Context context; // Context of application who uses us.
+    private Manager manager = null; // local database manager
 
 
     /* Constructor */
@@ -112,6 +110,86 @@ public class DBAdapter {
         }
     }
 
+    public static Attachment getAttachment(int documentId, String filename) {
+        Document doc = database.getDocument(String.valueOf(documentId));
+        Revision rev = doc.getCurrentRevision();
+        Attachment attachment = rev.getAttachment(filename);
+        return attachment;
+    }
+
+    /* returns an image from the database */
+    public static Drawable getImage(int id, String imageName) {
+        Attachment att = getAttachment(id, imageName);
+        Drawable d = null;
+        if (att != null) {
+            try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                InputStream is = att.getContent();
+                Bitmap b = BitmapFactory.decodeStream(is);
+                int width = b.getWidth();
+                int height = b.getHeight();
+
+                WindowManager wm = (WindowManager) staticcontext.getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int screen_width = size.x;
+                int screen_height = size.y;
+
+                // check if greater than device's width / height
+                if (width >= screen_width && height >= screen_height) {
+                    final float scale = staticcontext.getResources().getDisplayMetrics().density;
+                    int new_width = (int) (width / scale + 0.5f);
+                    int new_height = (int) (height / scale + 0.5f);
+                    Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
+                    d = new BitmapDrawable(staticcontext.getResources(), b2);
+                } else {
+                    d = new BitmapDrawable(staticcontext.getResources(), b);
+                }
+
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
+
+    /* returns an image from the database */
+    public static Drawable getImage(int id, String imageName, int required_size) {
+        Attachment att = getAttachment(id, imageName);
+        Drawable d = null;
+        if (att != null) {
+            try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                InputStream is = att.getContent();
+                Bitmap b = BitmapFactory.decodeStream(is);
+
+                //Find the correct scale value. It should be the power of 2.
+                final int REQUIRED_SIZE = required_size;
+                int width_tmp = b.getWidth(), height_tmp = b.getHeight();
+                int scale = 1;
+                while (true) {
+                    if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                        break;
+                    width_tmp /= 2;
+                    height_tmp /= 2;
+                    scale *= 2;
+                }
+
+                BitmapFactory.Options o2 = new BitmapFactory.Options();
+                o2.inSampleSize = scale;
+                Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
+                d = new BitmapDrawable(staticcontext.getResources(), b2);
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
 
     /* Put some dummy data to the database
      * Call this function manual, if you need to reset the database. IMPORTANT: This data will replicated to the life database, so be sure what you are doing!
@@ -221,7 +299,6 @@ public class DBAdapter {
         addImage(R.drawable.phasev, 201, "Phase 5.jpg");
     }
 
-
     /* adds an image from R.drawable to the document defined by document_id in local database */
     private void addImage(int image_number, int document_id, String imageName) {
         InputStream image = context.getResources().openRawResource(+image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
@@ -239,7 +316,6 @@ public class DBAdapter {
         }
     }
 
-
     /* notify the UI Thread that the database has changed */
     private synchronized void notifyExhibitSetChanged() {
         if(!((Activity) context).getClass().getSimpleName().equals("MainActivity")) return;
@@ -251,7 +327,6 @@ public class DBAdapter {
             }
         });
     }
-
 
     /* gets the (local) database, ensures the Singleton pattern */
     public Database getDatabaseInstance() {
@@ -267,7 +342,6 @@ public class DBAdapter {
         return this.database;
     }
 
-
     /* gets the manager of the (local) database, ensures the Singleton pattern */
     public Manager getManagerInstance() throws IOException {
         if (this.manager == null) {
@@ -275,7 +349,6 @@ public class DBAdapter {
         }
         return this.manager;
     }
-
 
     /* initialize the database, the flag enablePush indicates if local changes should be pushed to the gateway */
     private void initDatabase(Boolean enablePush) {
@@ -340,7 +413,6 @@ public class DBAdapter {
         }
     }
 
-
     /* Gets the key store with the (self signed) trusted certificates to the gateway */
     private KeyStore getKeyStore() {
         KeyStore keystore = null;
@@ -374,7 +446,6 @@ public class DBAdapter {
         return keystore;
     }
 
-
     /* sets the Couchbase Lite Manager HTTP Factory with the keystore returned by getKeystore() */
     private void setHttpClientFactory() {
         PersistentCookieStore cookieStore = null;
@@ -398,7 +469,6 @@ public class DBAdapter {
         // set CouchbaseHttpClientFactory to Manager
         manager.setDefaultHttpClientFactory(cblHttpClientFactory);
     }
-
 
     /* insert a exhibit in the database */
     public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags, HashMap<String, String> pictureDescriptions, int sliderId) {
@@ -426,11 +496,11 @@ public class DBAdapter {
 
     }
 
-    public void insertSlider(int id, List<SliderImage> sliderImages){
+    public void insertSlider(int id, List<SliderImage> sliderImages) {
         Document document = database.getDocument(String.valueOf(id));
         Map<String, Object> properties = new HashMap<>();
 
-        if(sliderImages != null && !sliderImages.isEmpty()){
+        if (sliderImages != null && !sliderImages.isEmpty()) {
             properties.put(KEY_TYPE, "slider");
             properties.put(KEY_SLIDER_IMAGES, sliderImages);
             properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
@@ -467,9 +537,9 @@ public class DBAdapter {
         }
 
         //Add images for route tags as attachment
-        for(RouteTag tag: tags){
-            final int resId =  context.getResources().getIdentifier(tag.getImageFilename(), "drawable", context.getPackageName());
-            if(resId != 0){
+        for (RouteTag tag : tags) {
+            final int resId = context.getResources().getIdentifier(tag.getImageFilename(), "drawable", context.getPackageName());
+            if (resId != 0) {
                 InputStream ress = context.getResources().openRawResource(+resId);
                 addAttachment(id, tag.getImageFilename(), "image/jpeg", ress);
             } else {
@@ -480,94 +550,12 @@ public class DBAdapter {
         //Add route image as attachment
         //Use only the part before "." for the filename when accessing the Android resource
         final int resId = context.getResources().getIdentifier(imageName.split("\\.")[0], "drawable", context.getPackageName());
-        if(resId != 0){
+        if (resId != 0) {
             InputStream ress = context.getResources().openRawResource(+resId);
             addAttachment(id, imageName, "image/png", ress);
         } else {
             Log.e("routes", "Could not load image resource for route " + id);
         }
-    }
-
-    public static Attachment getAttachment(int documentId, String filename){
-        Document doc = database.getDocument(String.valueOf(documentId));
-        Revision rev = doc.getCurrentRevision();
-        Attachment attachment = rev.getAttachment(filename);
-        return attachment;
-    }
-
-
-    /* returns an image from the database */
-    public static Drawable getImage(int id, String imageName) {
-        Attachment att = getAttachment(id, imageName);
-        Drawable d = null;
-        if (att != null) {
-            try {
-                BitmapFactory.Options o = new BitmapFactory.Options();
-                o.inJustDecodeBounds = true;
-                InputStream is = att.getContent();
-                Bitmap b = BitmapFactory.decodeStream(is);
-                int width = b.getWidth();
-                int height = b.getHeight();
-
-                WindowManager wm = (WindowManager) staticcontext.getSystemService(Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                int screen_width = size.x;
-                int screen_height = size.y;
-
-                // check if greater than device's width / height
-                if(width >= screen_width && height >= screen_height) {
-                    final float scale = staticcontext.getResources().getDisplayMetrics().density;
-                    int new_width = (int) (width / scale + 0.5f);
-                    int new_height = (int) (height / scale + 0.5f);
-                    Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
-                    d = new BitmapDrawable(staticcontext.getResources(), b2);
-                } else {
-                    d = new BitmapDrawable(staticcontext.getResources(), b);
-                }
-
-                is.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading image", e);
-            }
-        }
-        return d;
-    }
-
-    /* returns an image from the database */
-    public static Drawable getImage(int id, String imageName, int required_size) {
-        Attachment att = getAttachment(id, imageName);
-        Drawable d = null;
-        if (att != null) {
-            try {
-                BitmapFactory.Options o = new BitmapFactory.Options();
-                o.inJustDecodeBounds = true;
-                InputStream is = att.getContent();
-                Bitmap b = BitmapFactory.decodeStream(is);
-
-                //Find the correct scale value. It should be the power of 2.
-                final int REQUIRED_SIZE=required_size;
-                int width_tmp=b.getWidth(), height_tmp=b.getHeight();
-                int scale=1;
-                while(true){
-                    if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
-                        break;
-                    width_tmp/=2;
-                    height_tmp/=2;
-                    scale*=2;
-                }
-
-                BitmapFactory.Options o2 = new BitmapFactory.Options();
-                o2.inSampleSize=scale;
-                Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
-                d = new BitmapDrawable(staticcontext.getResources(), b2);
-                is.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading image", e);
-            }
-        }
-        return d;
     }
 
     /* gets all rows from a view from the database */
