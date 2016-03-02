@@ -69,12 +69,23 @@
         <activity
             android:name=".RouteDetailsActivity"
             android:label="@string/title_activity_route_details"
+            android:launchMode="singleTask"
             android:parentActivityName=".RouteActivity"
-            android:theme="@style/AppTheme.WithActionBar"
-            android:launchMode="singleTask">
+            android:theme="@style/AppTheme.WithActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.upb.hip.mobile.activities.RouteActivity" />
+        </activity>
+        <activity
+            android:name=".RouteNavigationActivity"
+            android:configChanges="orientation"
+            android:label="@string/title_activity_route_details"
+            android:parentActivityName=".RouteActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.WithActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RouteDetailsActivity" />
         </activity>
     </application>
 

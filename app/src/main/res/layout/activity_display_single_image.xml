@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-android:focusable="true">
+    android:focusable="true"
+    android:orientation="vertical">
 
 <FrameLayout
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="0dp"
     android:layout_weight="3"
-    android:nestedScrollingEnabled="false">
+    android:nestedScrollingEnabled="false"
+    android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/DisplaySingleImageImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/ImageView01"
         android:cropToPadding="false"
         android:scaleType="centerCrop" />
 
@@ -30,16 +30,16 @@ android:focusable="true">
         android:layout_height="fill_parent"
         >
         <TextView
+            android:id="@+id/DisplaySingleImageTextView"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="New Text"
-            android:id="@+id/TextView01"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:paddingLeft="20dp"
-            android:paddingTop="10dp"
             android:paddingRight="20dp"
-            android:scrollbars="vertical"/>
+            android:paddingTop="10dp"
+            android:scrollbars="vertical"
+            android:text="New Text" />
 
     </ScrollView>
 </FrameLayout>

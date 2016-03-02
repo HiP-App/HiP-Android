@@ -57,6 +57,11 @@ public class DetailsActivity extends ActionBarActivity {
     //ActionBar
     private ActionBar mActionBar;
 
+    /**
+     * Set up the Details. Load the correct image and text.
+     * Add a transitionListener, if necessary
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +84,6 @@ public class DetailsActivity extends ActionBarActivity {
              */
             ViewCompat.setTransitionName(mImageView, VIEW_NAME_IMAGE);
             ViewCompat.setTransitionName(mTextView, VIEW_NAME_TITLE);
-
 
             addTransitionListener();
         }

@@ -1,201 +1,258 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.activities;
 
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.graphics.Color;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.couchbase.lite.Document;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
 import de.upb.hip.mobile.models.Exhibit;
-import de.upb.hip.mobile.models.SliderImage;
 
+/**
+ * Activity Class for the Image-Slider View, where a picture at the top can be changed with a fading
+ * effect through a slider at the bottom
+ */
 public class DisplayImageSliderActivity extends ActionBarActivity {
-    private DBAdapter database;
-    private Exhibit exhibit;
-    private int exhibitId;
+    private DBAdapter mDatabase;
+    private Exhibit mExhibit;
     private ImageView mImageViewTimeLine;
     private ImageView mImageViewTimeLine2;
-    private TextView mTextView;
-    private TextView txtMiddleSeekBar;
+    private TextView mTxtMiddleSeekBar;
     private CustomSeekBar mSeekBar;
-    private boolean fontFading = true;
+    private boolean mFontFading = true;
 
     private List<PictureData> mPicDataList = new ArrayList<>();
 
+    /**
+     * Called when the activity is created, get the exhibit information of the database and
+     * initializes the view with that data
+     *
+     * @param savedInstanceState savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_image_slider);
 
-        // TODO read and set data from Database
-        database = new DBAdapter(this);
-        exhibitId = getIntent().getIntExtra("exhibit-id", 0);
-        exhibit = new Exhibit(database.getDocument(exhibitId));
+        // read mExhibit with given exhibit-id from Database
+        mDatabase = new DBAdapter(this);
+        int exhibitId = getIntent().getIntExtra("exhibit-id", 0);
+        mExhibit = new Exhibit(mDatabase.getDocument(exhibitId));
 
         setData();
 
         init();
 
-        mTextView = (TextView) findViewById(R.id.TextView01);
-        mTextView.setText(exhibit.pictureDescriptions.get(getIntent().getStringExtra("imageName")));
+        // set picture description in view
+        TextView mTextView = (TextView) findViewById(R.id.TextView01);
+        mTextView.setText(mExhibit.pictureDescriptions.get(getIntent().
+                getStringExtra("imageName")));
 
-        // Set back button on actionbar
+        // modify action bar with back button and title
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(exhibit.name);
+        actionBar.setTitle(mExhibit.name);
     }
 
+    /**
+     * Implement the onSupportNavigateUp() method of the interface, closes the activity
+     *
+     * @return always true
+     */
     @Override
     public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
-    private void init(){
+    /**
+     * initializes the activity, calculates and sets the dots on the slider
+     */
+    private void init() {
         calcDotPositions(mPicDataList);
 
-        mSeekBar = (CustomSeekBar)findViewById(R.id.seekBar);
+        // set the dots
+        mSeekBar = (CustomSeekBar) findViewById(R.id.seekBar);
         mSeekBar.setDots(getListOfDotPositions(mPicDataList));
+        mSeekBar.setProgressDrawable(ContextCompat.getDrawable(this.getBaseContext(),
+                R.drawable.customseekbar));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mSeekBar.setProgressDrawable(getResources().getDrawable(R.drawable.customseekbar, getTheme()));
-        } else {
-            mSeekBar.setProgressDrawable(getResources().getDrawable(R.drawable.customseekbar));
-        }
-
+        // set the first picture
         mImageViewTimeLine = (ImageView) findViewById(R.id.imageViewTimeLine);
-        mImageViewTimeLine.setImageDrawable(mPicDataList.get(0).drawable);
+        mImageViewTimeLine.setImageDrawable(mPicDataList.get(0).mDrawable);
 
-        if (fontFading) {
+        // set the next picture
+        if (mFontFading) {
             mImageViewTimeLine2 = (ImageView) findViewById(R.id.imageViewTimeLine2);
-            mImageViewTimeLine2.setImageDrawable(mPicDataList.get(1).drawable);
+            mImageViewTimeLine2.setImageDrawable(mPicDataList.get(1).mDrawable);
             mImageViewTimeLine.bringToFront();
         }
 
+        // set start year on the slider
         TextView txtStartSeekBar = (TextView) findViewById(R.id.txtStartSeekBar);
-        txtStartSeekBar.setText(String.valueOf(mPicDataList.get(0).year));
+        txtStartSeekBar.setText(String.valueOf(mPicDataList.get(0).mYear));
 
+        // set end year on the slider
         TextView txtEndSeekBar = (TextView) findViewById(R.id.txtEndSeekBar);
-        txtEndSeekBar.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).year));
+        txtEndSeekBar.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).mYear));
 
-        txtMiddleSeekBar = (TextView) findViewById(R.id.txtMiddleSeekBar);
+        mTxtMiddleSeekBar = (TextView) findViewById(R.id.txtMiddleSeekBar);
 
         addSeekBarListener();
         openDatabase();
     }
 
-    private void calcDotPositions(List<PictureData> list){
+    /**
+     * Calculates the positions of the dots on the slider regarding the years of the pictures
+     *
+     * @param list List of PictureData Elements
+     */
+    private void calcDotPositions(List<PictureData> list) {
         // set progress for the first picture
-        list.get(0).dotPosition = 0;
+        list.get(0).mDotPosition = 0;
 
         // set progress for other pictures
         int lSize = list.size();
-        for (int i = 1; i < lSize; i++){
-            if (i + 1 < lSize){
-                int progress = 100 * (list.get(i).year - list.get(i - 1).year) /
-                        (list.get(lSize - 1).year - list.get(0).year);
-                list.get(i).dotPosition = (progress + list.get(i - 1).dotPosition);
-            }
-            else{
+        for (int i = 1; i < lSize; i++) {
+            if (i + 1 < lSize) {
+                int progress = 100 * (list.get(i).mYear - list.get(i - 1).mYear) /
+                        (list.get(lSize - 1).mYear - list.get(0).mYear);
+                list.get(i).mDotPosition = (progress + list.get(i - 1).mDotPosition);
+            } else {
                 // set progress for last picture
-                list.get(i).dotPosition = 100;
+                list.get(i).mDotPosition = 100;
             }
         }
     }
 
+    /**
+     * add a Listener to the Slider to react to changes
+     */
     private void addSeekBarListener() {
-
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progressStart = 0;
             boolean forward = true;
             int nearest = 0;
 
+            /**
+             * called when the slider is moved
+             *
+             * @param seekBar       slider bar
+             * @param progressValue new progress value
+             * @param fromUser      user, who changed it
+             */
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 int startNode, nextNode;
 
-                // deсide the direction (forward or backward)
-                if (progressStart > progresValue) {
-                    forward = false;
-                } else {
-                    forward = true;
-                }
+                // decide the direction (forward or backward)
+                forward = progressStart <= progressValue;
 
-                // find closest startNode and nextNode, according to the direction (forward or backward)
-                int[] result = getNodes(progresValue, forward);
+                // find closest startNode and nextNode, according to the direction
+                // (forward or backward)
+                int[] result = getNodes(progressValue, forward);
                 startNode = result[0];
                 nextNode = result[1];
 
-                if (fontFading) {
-                    int actProgressAccordingStartNextNode = Math.abs(progresValue - mPicDataList.get(startNode).dotPosition);
-                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).dotPosition - mPicDataList.get(startNode).dotPosition);
-                    float alpha = (float) actProgressAccordingStartNextNode / differenceStartNextNode;
+                if (mFontFading) {
+                    int actProgressAccordingStartNextNode = Math.abs(progressValue - mPicDataList.
+                            get(startNode).mDotPosition);
+                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).mDotPosition -
+                            mPicDataList.get(startNode).mDotPosition);
+                    float alpha =
+                            (float) actProgressAccordingStartNextNode / differenceStartNextNode;
 
-                    mImageViewTimeLine.setImageDrawable(mPicDataList.get(startNode).drawable);
+                    // set current image
+                    mImageViewTimeLine.setImageDrawable(mPicDataList.get(startNode).mDrawable);
                     mImageViewTimeLine.setAlpha(1 - alpha);
 
-                    mImageViewTimeLine2.setImageDrawable(mPicDataList.get(nextNode).drawable);
+                    // set next image
+                    mImageViewTimeLine2.setImageDrawable(mPicDataList.get(nextNode).mDrawable);
                     mImageViewTimeLine2.setAlpha(alpha);
 
                     mImageViewTimeLine.bringToFront();
                 }
 
                 // for showcase image: get the closest node to actual progress
-                nearest = findClosestNode(result, progresValue);
+                nearest = findClosestNode(result, progressValue);
 
                 // set year over the thumb except first and last picture
-                if (progresValue != 0 && progresValue != 100) {
-                    int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) * seekBar.getProgress();
-                    txtMiddleSeekBar.setPadding(xPos, 0, 0, 0);
-                    txtMiddleSeekBar.setText(String.valueOf(mPicDataList.get(nearest).year));
-
+                if (progressValue != 0 && progressValue != 100) {
+                    int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) *
+                            seekBar.getProgress();
+                    mTxtMiddleSeekBar.setPadding(xPos, 0, 0, 0);
+                    mTxtMiddleSeekBar.setText(String.valueOf(mPicDataList.get(nearest).mYear));
                 } else {
                     // set empty text for first and last position
-                    txtMiddleSeekBar.setText("");
+                    mTxtMiddleSeekBar.setText("");
                 }
             }
 
+            /**
+             * Sets the start point of the movement on the slider
+             * @param seekBar Slider bar
+             */
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 progressStart = seekBar.getProgress();
             }
 
+            /**
+             * Set the image if fading is disabled
+             * @param seekBar Slider bar
+             */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (!fontFading) {
-                    seekBar.setProgress(mPicDataList.get(nearest).dotPosition);
-                    mImageViewTimeLine.setImageDrawable(mPicDataList.get(nearest).drawable);
+                if (!mFontFading) {
+                    seekBar.setProgress(mPicDataList.get(nearest).mDotPosition);
+                    mImageViewTimeLine.setImageDrawable(mPicDataList.get(nearest).mDrawable);
                 }
             }
 
+            /**
+             * returns the two pictures left and right of the current position on the slider
+             * @param progressStop endpoint of the movement on the slider
+             * @param forward indicates the direction of the movement
+             * @return the two ids of the pictures left and right of the current position
+             */
             private int[] getNodes(int progressStop, boolean forward) {
                 for (int i = 0; i < mPicDataList.size(); i++) {
                     if (forward) {
-                        if ((progressStop >= mPicDataList.get(i).dotPosition) &&
-                                (progressStop <= mPicDataList.get(i + 1).dotPosition)) {
+                        if ((progressStop >= mPicDataList.get(i).mDotPosition) &&
+                                (progressStop <= mPicDataList.get(i + 1).mDotPosition)) {
                             return new int[]{i, i + 1};
                         }
                     } else {
                         if (i == 0) i = 1;
 
-                        if (progressStop <= mPicDataList.get(i).dotPosition &&
-                                (progressStop >= mPicDataList.get(i - 1).dotPosition)) {
+                        if (progressStop <= mPicDataList.get(i).mDotPosition &&
+                                (progressStop >= mPicDataList.get(i - 1).mDotPosition)) {
                             return new int[]{i, i - 1};
                         }
                     }
@@ -203,29 +260,39 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                 return new int[]{0, 0};
             }
 
+            /**
+             * find the closest node in the array to progress
+             * @param array array of points on the slider
+             * @param progress current progress on the slider
+             * @return id of the closest point on slider
+             */
             private int findClosestNode(int[] array, int progress) {
                 int min = 0, max = 0, closestNode;
 
-                for (int i = 0; i < array.length; i++) {
-                    if (mPicDataList.get(array[i]).dotPosition < progress) {
+                // calculate left node of progress (min) and right node of progress (max)
+                for (int anArray : array) {
+                    if (mPicDataList.get(anArray).mDotPosition < progress) {
                         if (min == 0) {
-                            min = array[i];
-                        } else if (mPicDataList.get(array[i]).dotPosition > mPicDataList.get(min).dotPosition) {
-                            min = array[i];
+                            min = anArray;
+                        } else if (mPicDataList.get(anArray).mDotPosition > mPicDataList.get(min).
+                                mDotPosition) {
+                            min = anArray;
                         }
-                    } else if (mPicDataList.get(array[i]).dotPosition > progress) {
+                    } else if (mPicDataList.get(anArray).mDotPosition > progress) {
                         if (max == 0) {
-                            max = array[i];
-                        } else if (mPicDataList.get(array[i]).dotPosition < mPicDataList.get(max).dotPosition) {
-                            max = array[i];
+                            max = anArray;
+                        } else if (mPicDataList.get(anArray).mDotPosition <
+                                mPicDataList.get(max).mDotPosition) {
+                            max = anArray;
                         }
                     } else {
-                        return array[i];
+                        return anArray;
                     }
                 }
 
-                if (Math.abs(progress - mPicDataList.get(min).dotPosition) <
-                        Math.abs(progress - mPicDataList.get(max).dotPosition)) {
+                // calculate which node is nearest to progress (min or max)
+                if (Math.abs(progress - mPicDataList.get(min).mDotPosition) <
+                        Math.abs(progress - mPicDataList.get(max).mDotPosition)) {
                     closestNode = min;
                 } else {
                     closestNode = max;
@@ -246,40 +313,64 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         super.onDestroy();
     }
 
+    /**
+     * open the database connection
+     */
     private void openDatabase() {
-        database = new DBAdapter(this);
+        mDatabase = new DBAdapter(this);
     }
 
-    private void setData(){
+    /**
+     * Set the mPicDataList Array with data of the database
+     */
+    private void setData() {
+        int sliderID = mExhibit.sliderID;
+        @SuppressWarnings("unchecked") // getProperty returns always Maps with String and Object
+                ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)
+                mDatabase.getDocument(sliderID).getProperty(DBAdapter.KEY_SLIDER_IMAGES);
 
-        int sliderID = exhibit.sliderID;
-        ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)database.getDocument(sliderID).getProperty(DBAdapter.KEY_SLIDER_IMAGES);
-
-        for(int i = 0; i < images.size(); i++){
+        // add all pictures to the mPicDataList
+        for (int i = 0; i < images.size(); i++) {
             Map<String, Object> properties = images.get(i);
-            mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID, (String)properties.get(DBAdapter.KEY_SLIDER_IMAGE_NAME)), (int)properties.get(DBAdapter.KEY_SLIDER_IMAGE_YEAR)));
+            mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID,
+                    (String) properties.get(DBAdapter.KEY_SLIDER_IMAGE_NAME)),
+                    (int) properties.get(DBAdapter.KEY_SLIDER_IMAGE_YEAR)));
         }
     }
 
-    // create list for setting dots on seekbar
-    private List<Integer> getListOfDotPositions(List<PictureData> list){
+    /**
+     * creates a list for setting dots on Slider bar
+     *
+     * @param list List of PictureData
+     * @return list of dot points
+     */
+    private List<Integer> getListOfDotPositions(List<PictureData> list) {
         List<Integer> mPicDataProgressList = new ArrayList<>();
 
-        for(int i = 0; i < list.size(); i++){
-            mPicDataProgressList.add(list.get(i).dotPosition);
+        for (int i = 0; i < list.size(); i++) {
+            mPicDataProgressList.add(list.get(i).mDotPosition);
         }
         return mPicDataProgressList;
     }
 
+    /**
+     * helper class for PictureData information
+     */
     private class PictureData {
-        private Drawable drawable;
-        private int year;
-        private int dotPosition;
+        private Drawable mDrawable;
+        private int mYear;
+        private int mDotPosition;
 
-        public PictureData(Drawable drawable, int iYear){
-            this.drawable = drawable;
-            year = iYear;
-            dotPosition = 0;
+        /**
+         * Constructor to store the PictureData information
+         *
+         * @param drawable drawable
+         * @param iYear    year
+         */
+        public PictureData(Drawable drawable, int iYear) {
+            this.mDrawable = drawable;
+            mYear = iYear;
+            mDotPosition = 0;
         }
     }
 }

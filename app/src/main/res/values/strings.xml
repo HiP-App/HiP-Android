@@ -20,6 +20,8 @@
     <string name="title_activity_route_details">Routendetails</string>
     <string name="route_activity_details_start">Tour beginnen</string>
     <string name="route_activity_duration">Dauer: </string>
+    <string name="route_activity_distance">Distanz: </string>
+    <string name="route_activity_distance_kilometer">%s km</string>
     <string name="route_activity_description">Beschreibung</string>
     <string name="route_activity_title">Titel</string>
 
@@ -30,8 +32,34 @@
     <string name="splash_screen_no_connection_error_message">Bitte stellen Sie sicher, dass Sie über eine aktive Internetverbindung verfügen.</string>
     <string name="splash_screen_check_connection">Prüfe Internetverbindung.</string>
 
+    <!-- string for route navigation -->
     <string name="drawer_open">Öffne Navigation</string>
     <string name="drawer_close">Schließ Navigation</string>
+    <string name="departure">Abfahrt</string>
+    <string name="viapoint">Wegpunkt</string>
+    <string name="destination">Ziel</string>
+    <string name="start_point">"Startpunkt in"</string>
+    <string name="step">Schritt</string>
+    <string name="itinerary_markers_title">Route Via-Punkte</string>
+    <string name="route">Route</string>
+    <string name="no_route">Kein mögliche Route hier</string>
+    <string name="empty_route">Route ist empty</string>
+    <string name="technical_issue">Technische Probleme eine Route zu bekommen</string>
+    <string name="downlod_road">Downloading the road…</string>
+    <string name="creating_map">Creating the map…</string>
+    <string name="osm_contributors">&#169; OpenStreetMap contributors</string>
+
+    <string name="mapquest_key">VvR4CnlGhrT4AwOXLFCQPzSuuDxbfYEg</string>
+
+    <!-- string for GPSTracker -->
+    <string name="gps_settings">GPS Einstellungen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="cancel">Cancel</string>
+    <string name="gps_not_enabled_message">GPS ist nicht aktiviert. Wollen Sie die Einstellungsmenü öffnen?</string>
+
+    <!-- string for network connection -->
+    <string name="network_connection">Netzwerkverbindung</string>
+    <string name="network_message">Internetverbindung erforderlich</string>
 
     <string-array name="nav_drawer_entries">
         <item>Übersicht</item>

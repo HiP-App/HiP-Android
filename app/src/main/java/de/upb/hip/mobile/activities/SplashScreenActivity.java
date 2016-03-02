@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.activities;
 
 import android.app.Activity;
@@ -7,7 +23,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -17,37 +32,41 @@ import android.widget.TextView;
 import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
- * Created by Timo on 10.01.2016.
+ * Activity Class for the splash screen, that is shown when the app it started, including the apps
+ * logo.
  */
 public class SplashScreenActivity extends Activity {
 
-    private final int startup_delay = 2000;
+    private final int mStartup_delay = 2000;
+    private TextView mTextAction;
+    private TextView mTextWaiting;
+    private ProgressBar mProgressBar;
+    private Button mButtonRetry;
+    private DBAdapter mDbAdapter;
 
-    private TextView txtAction;
-    private TextView txtWaiting;
-    private ProgressBar progBar;
-    private Button btnRetry;
-    DBAdapter dba;
-
+    /**
+     * Called when the activity is created.
+     * If the database can be reached and is not empty, the MainActivity will be started with a
+     * startup delay. Otherwise the a retry button and an error message is shown.
+     *
+     * @param savedInstanceState savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        txtAction = (TextView) findViewById(R.id.textView_action);
-        txtWaiting = (TextView) findViewById(R.id.textView_waiting);
-        progBar = (ProgressBar) findViewById(R.id.progressBar1);
-        btnRetry = (Button) findViewById(R.id.button_retry);
+        mTextAction = (TextView) findViewById(R.id.textView_action);
+        mTextWaiting = (TextView) findViewById(R.id.textView_waiting);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
+        mButtonRetry = (Button) findViewById(R.id.button_retry);
 
-        txtAction.setGravity(Gravity.CENTER);
-        txtWaiting.setGravity(Gravity.CENTER);
+        mTextAction.setGravity(Gravity.CENTER);
+        mTextWaiting.setGravity(Gravity.CENTER);
 
-        //Check If Internet Connection
-
-        dba = new DBAdapter(this);
-        int i = dba.getDocumentCount();
-        if(i == 0)
-        {
+        mDbAdapter = new DBAdapter(this);
+        int i = mDbAdapter.getDocumentCount();
+        if (i == 0) {
             onlineCheck();
         } else {
             Handler handler = new Handler();
@@ -55,27 +74,20 @@ public class SplashScreenActivity extends Activity {
                 public void run() {
                     startMainActivity();
                 }
-            }, startup_delay);
+            }, mStartup_delay);
 
         }
-
     }
 
+    /**
+     * If the database is reachable, check if there are entries in the database and start the
+     * MainActivity. Otherwise show no connection message.
+     */
     private void onlineCheck() {
-        if(isOnline())
-        {
-            // dba.COUCHBASE_SERVER_URL;
-
-
-            // DOMAIN CHECK
-
-                //DOMAIN NICHT DA
-
-                // Database not reachable
-
-            int i = dba.getDocumentCount();
+        if (isOnline()) {
+            int i = mDbAdapter.getDocumentCount();
             while (i == 0) {
-                i = dba.getDocumentCount();
+                i = mDbAdapter.getDocumentCount();
             }
 
             Handler handler = new Handler();
@@ -83,39 +95,48 @@ public class SplashScreenActivity extends Activity {
                 public void run() {
                     startMainActivity();
                 }
-            }, startup_delay);
+            }, mStartup_delay);
 
-        } else
-        {
-
-            txtAction.setText(getString(R.string.splash_screen_no_connection));
-            txtWaiting.setText(getString(R.string.splash_screen_no_connection_error_message));
-            txtAction.setGravity(Gravity.CENTER);
-            txtWaiting.setGravity(Gravity.CENTER);
-            progBar.setVisibility(View.GONE);
-            btnRetry.setVisibility(View.VISIBLE);
+        } else {
+            mTextAction.setText(getString(R.string.splash_screen_no_connection));
+            mTextWaiting.setText(getString(R.string.splash_screen_no_connection_error_message));
+            mTextAction.setGravity(Gravity.CENTER);
+            mTextWaiting.setGravity(Gravity.CENTER);
+            mProgressBar.setVisibility(View.GONE);
+            mButtonRetry.setVisibility(View.VISIBLE);
         }
     }
 
+    /**
+     * Check if device is connected to the internet.
+     *
+     * @return Returns true if device is connected to the internet.
+     */
     private boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnected();
     }
 
-    private void startMainActivity()
-    {
+    /**
+     * Starts the MainActivity.
+     */
+    private void startMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
-    public void onclick_retry(View v)
-    {
-        txtAction.setText(getString(R.string.splash_screen_check_connection));
-        txtWaiting.setText(getString(R.string.splash_screen_waiting));
-        progBar.setVisibility(View.VISIBLE);
-        btnRetry.setVisibility(View.GONE);
+    /**
+     * Method bound to the button. Starts the check for connection again.
+     *
+     * @param v View
+     */
+    public void onclick_retry(View v) {
+        mTextAction.setText(getString(R.string.splash_screen_check_connection));
+        mTextWaiting.setText(getString(R.string.splash_screen_waiting));
+        mProgressBar.setVisibility(View.VISIBLE);
+        mButtonRetry.setVisibility(View.GONE);
         onlineCheck();
     }
 }
