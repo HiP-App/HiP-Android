@@ -313,8 +313,10 @@ public class RouteDetailsActivity extends BaseActivity {
                 }
 
                 // set final point
-                updateMarker(geoPoint, drawable, R.drawable.marker_via, title,
-                        description, mViaPointData);
+                if (waypoint.exhibit_id != -1) {
+                    updateMarker(geoPoint, drawable, R.drawable.marker_via, title,
+                            description, mViaPointData);
+                }
             }
         }
     }

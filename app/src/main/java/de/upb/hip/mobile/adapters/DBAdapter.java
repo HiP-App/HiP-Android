@@ -212,35 +212,50 @@ public class DBAdapter {
         insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom", pictureDescriptions, -1);
         addImage(R.drawable.dom, 1, pictureName);
 
-        pictureDescriptions.clear();
-        pictureDescriptions.put(pictureName, "Gebäude O");
-        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
-        addImage(R.drawable.uni, 2, pictureName);
-
-        pictureDescriptions.clear();
-        pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
-        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
-        addImage(R.drawable.hnf, 3, pictureName);
+//        pictureDescriptions.clear();
+//        pictureDescriptions.put(pictureName, "Gebäude O");
+//        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
+//        addImage(R.drawable.uni, 2, pictureName);
+//
+//        pictureDescriptions.clear();
+//        pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
+//        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
+//        addImage(R.drawable.hnf, 3, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Museum in der Kaiserpfalz (aus Richtung Dom)");
         insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "", pictureDescriptions, 201);
         addImage(R.drawable.pfalz, 4, pictureName);
 
-        pictureDescriptions.clear();
-        pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
-        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", pictureDescriptions, -1);
-        addImage(R.drawable.abdinghof, 5, "image.jpg");
+        //pictureDescriptions.clear();
+        //pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
+        //insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", pictureDescriptions, -1);
+        //addImage(R.drawable.abdinghof, 5, "image.jpg");
+
+//        pictureDescriptions.clear();
+//        pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
+//        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", pictureDescriptions, -1);
+//        addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
+
+//        pictureDescriptions.clear();
+//        pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
+//        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
+//        addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
 
         pictureDescriptions.clear();
-        pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
-        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", pictureDescriptions, -1);
-        addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
+        pictureDescriptions.put(pictureName, "Paderquellen");
+        insertExhibit(8, "Paderquellen", "", 51.718529, 8.750662, "", "", pictureDescriptions, -1);
+        addImage(R.drawable.paderquellen, 8, "image.jpg");
 
         pictureDescriptions.clear();
-        pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
-        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
-        addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
+        pictureDescriptions.put(pictureName, "Denkmal für Karl den Großen");
+        insertExhibit(9, "Denkmal für Karl den Großen", "", 51.713877, 8.753032, "", "", pictureDescriptions, -1);
+        addImage(R.drawable.denkmalkdg, 9, "image.jpg");
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Karlsschule");
+        insertExhibit(10, "Karlsschule", "", 51.713587, 8.750617, "", "", pictureDescriptions, -1);
+        addImage(R.drawable.karlsschule, 10, "image.jpg");
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
@@ -249,7 +264,7 @@ public class DBAdapter {
         waypoints.add(new Waypoint(51.722710, 8.758365, -1));
         waypoints.add(new Waypoint(51.718789, 8.762699, -1));
         waypoints.add(new Waypoint(51.715745, 8.757796, -1));
-        waypoints.add(new Waypoint(51.715207, 8.752142, 7));
+//        waypoints.add(new Waypoint(51.715207, 8.752142, 7));
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
@@ -259,10 +274,10 @@ public class DBAdapter {
         insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(51.718590, 8.752206, 5));
+        //waypoints.add(new Waypoint(51.718590, 8.752206, 5));
         waypoints.add(new Waypoint(51.719128, 8.755457, 1));
         waypoints.add(new Waypoint(51.719527, 8.755736, 4));
-        waypoints.add(new Waypoint(51.718969, 8.758472, 6));
+//        waypoints.add(new Waypoint(51.718969, 8.758472, 6));
         waypoints.add(new Waypoint(51.720371, 8.761723, -1));
         waypoints.add(new Waypoint(51.719454, 8.767484, -1));
 
@@ -272,17 +287,34 @@ public class DBAdapter {
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
 
         waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(51.718529, 8.750662, -1)); // Paderquellen: Paderufer gegenüber des Galerie-Hotels
-        waypoints.add(new Waypoint(51.719527, 8.755736, 4)); // Kaiserpfalz
-        waypoints.add(new Waypoint(51.719128, 8.755457, 1)); // Dom
-        waypoints.add(new Waypoint(51.713877, 8.753032, -1)); // Karlsstraße/Turmplatz (Denkmal für Karl den Großen)
-        waypoints.add(new Waypoint(51.713587, 8.750617, -1)); // Karlsschule
-        waypoints.add(new Waypoint(51.711812, 8.749370, -1)); // Rundgang durch die Straßen – z. B. Widukindstraße
+        waypoints.add(new Waypoint(51.718529, 8.750662, 8)); // ***Paderquellen: Paderufer gegenüber des Galerie-Hotels
+        waypoints.add(new Waypoint(51.718806, 8.751074, -1)); // Jenny-Aloni-Weg
+        waypoints.add(new Waypoint(51.718610, 8.752168, -1)); // Abdinghof / Paderquellen
+        waypoints.add(new Waypoint(51.718936, 8.753150, -1)); // Abdinghof
+        waypoints.add(new Waypoint(51.718866, 8.754577, -1)); // Abdinghof / Ikenberg
+        waypoints.add(new Waypoint(51.719128, 8.755457, -1)); // Dom
+        waypoints.add(new Waypoint(51.719527, 8.755736, 4)); // ***Kaiserpfalz
+        waypoints.add(new Waypoint(51.719128, 8.755457, 1)); // ***Dom
+        waypoints.add(new Waypoint(51.718866, 8.754577, -1)); // Abdinghof / Ikenbergu
+        waypoints.add(new Waypoint(51.717992, 8.755167, -1)); // Markt
+        waypoints.add(new Waypoint(51.717543, 8.754539, -1)); // Schildern
+        waypoints.add(new Waypoint(51.717321, 8.753423, -1)); // Rathausplatz/Kamp
+        waypoints.add(new Waypoint(51.717281, 8.752490, -1)); // Marienplatz
+        waypoints.add(new Waypoint(51.716862, 8.751353, -1)); // Rosenstr / Westernstr
+        waypoints.add(new Waypoint(51.715187, 8.752109, -1)); // Bahnübergang Rosentor***
+        waypoints.add(new Waypoint(51.713781, 8.752490, -1)); // Kilian/Karlstr
+        waypoints.add(new Waypoint(51.713881, 8.753021, 9)); // ***Karlsstraße/Turmplatz (Denkmal für Karl den Großen)
+        waypoints.add(new Waypoint(51.713781, 8.752490, -1)); // Kilian/Karlstr
+        waypoints.add(new Waypoint(51.713442, 8.751331, -1)); // Vor Karlsschule
+        waypoints.add(new Waypoint(51.713442, 8.751331, 10)); // ***Karlsschule
+        waypoints.add(new Waypoint(51.713442, 8.751331, -1)); // Vor Karlsschule
+        waypoints.add(new Waypoint(51.713060, 8.750457, -1)); // Widukindstr/Geroldstr
+        waypoints.add(new Waypoint(51.711812, 8.749370, -1)); // ***Rundgang durch die Straßen – z. B. Widukindstraße
 
         List<RouteTag> karlsrouteTags = new LinkedList<>();
         karlsrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(103, "Karlsroute", "...", waypoints, 60 * 120, 3.5, karlsrouteTags, "route_stadt.jpg");
+        insertRoute(103, "Karlsroute", "Rundgang zu Karl dem Großen", waypoints, 60 * 120, 3.5, karlsrouteTags, "route_karl.jpg");
 
         List<SliderImage> sliderImages = new LinkedList<>();
         sliderImages.add(new SliderImage(776, "Phase 1.jpg"));

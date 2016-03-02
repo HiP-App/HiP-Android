@@ -30,7 +30,8 @@ public class RouteSet implements Serializable {
             ArrayList<Map<String, Object>> waypoints = (ArrayList<Map<String, Object>>) properties.get(DBAdapter.KEY_ROUTE_WAYPOINTS);
            // Map waypoints = (Map) properties.get(DBAdapter.KEY_ROUTE_WAYPOINTS);
             int duration = (Integer) properties.get(DBAdapter.KEY_ROUTE_DURATION);
-            double distance = (Double) properties.get(DBAdapter.KEY_ROUTE_DISTANCE);
+            double distance = 0;
+//            double distance = (Double) properties.get(DBAdapter.KEY_ROUTE_DISTANCE);
 
             //Need to deserialize tags manually since CouchDB doesn't seem to do it automatically
             List<Map> tagList = (List<Map>) properties.get(DBAdapter.KEY_ROUTE_TAGS);
