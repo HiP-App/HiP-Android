@@ -65,9 +65,9 @@ public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteAct
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
         wp.add(new Waypoint(51.718953, 8.75583, 127));
         Route r = new Route(/*rs.getSize()*/127, "new route without description",
-                "", wp, 1, rt, "route_stadt");
+                "", wp, 1, 1, rt, "route_stadt");
         Route r2 = new Route(/*rs.getSize()*/127, "new route with null description",
-                null, wp, 1, rt, "route_stadt");
+                null, wp, 1, 1, rt, "route_stadt");
         rs.addRoute(r);
         rs.addRoute(r2);
         assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
@@ -81,8 +81,8 @@ public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteAct
         List<RouteTag> rt = new LinkedList<>();
         rt.add(new RouteTag("testtag", "testname", "route_stadt"));
         wp.add(new Waypoint(51.718953, 8.75583, 127));
-        Route r = new Route(127, "", "this is a route without title", wp, 1, rt, "route_stadt");
-        Route r2 = new Route(127, null, "this is a route without title", wp, 1, rt, "route_stadt");
+        Route r = new Route(127, "", "this is a route without title", wp, 1, 1, rt, "route_stadt");
+        Route r2 = new Route(127, null, "this is a route without title", wp, 1, 1, rt, "route_stadt");
 
         rs.addRoute(r);
         rs.addRoute(r2);
@@ -98,7 +98,7 @@ public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteAct
         rt.add(new RouteTag("", "testname", "route_stadt"));
         rt.add(new RouteTag(null, "testname2", "route_stadt"));
         wp.add(new Waypoint(51.718953, 8.75583, 127));
-        Route r = new Route(127, "tagless route", "this is a route without tag", wp, 1, rt, "route_stadt");
+        Route r = new Route(127, "tagless route", "this is a route without tag", wp, 1, 1, rt, "route_stadt");
 
         rs.addRoute(r);
         assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
