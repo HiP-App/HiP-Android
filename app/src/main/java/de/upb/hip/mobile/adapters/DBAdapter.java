@@ -287,6 +287,9 @@ public class DBAdapter {
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
 
         waypoints = new LinkedList<>();
+        waypoints.add(new Waypoint(51.715506, 8.746364, -1)); // Bahnhofstr/Westerntor
+        waypoints.add(new Waypoint(51.718192, 8.747126, -1)); // Friedrichstr/Marienstraße
+        waypoints.add(new Waypoint(51.717876, 8.750280, -1)); // Marienstraße/Weberberg
         waypoints.add(new Waypoint(51.718529, 8.750662, 8)); // ***Paderquellen: Paderufer gegenüber des Galerie-Hotels
         waypoints.add(new Waypoint(51.718806, 8.751074, -1)); // Jenny-Aloni-Weg
         waypoints.add(new Waypoint(51.718610, 8.752168, -1)); // Abdinghof / Paderquellen
