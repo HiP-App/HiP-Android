@@ -122,7 +122,7 @@ public class RouteDetailsActivity extends BaseActivity {
             initItineraryMarkers();
 
             addStartPointOnMap();
-            addViaPoints();
+            addViaPointsOnMap();
             addFinalPointOnMap();
 
             drawPathOnMap();
@@ -282,7 +282,7 @@ public class RouteDetailsActivity extends BaseActivity {
      * (else there would be no route).
      * Adds a single marker if the current user location is unknown and only one way point exits.
      */
-    private void addViaPoints() {
+    private void addViaPointsOnMap() {
         int waypointIndex = -1;
 
         if (this.mCurrentUserLocation != null && mRoute.waypoints.size() > 1) {
@@ -313,13 +313,13 @@ public class RouteDetailsActivity extends BaseActivity {
                     exhibitId = exhibit.id;
 
                     drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+
+                    // add marker on map for waypoint
+                    addMarker(geoPoint, drawable, R.drawable.marker_via, title,
+                            description, exhibitId);
                 } else {
                     drawable = ContextCompat.getDrawable(this, R.drawable.marker_via);
                 }
-
-                // set final point
-                addMarker(geoPoint, drawable, R.drawable.marker_via, title,
-                        description, exhibitId);
             }
         }
     }
