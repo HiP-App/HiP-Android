@@ -73,18 +73,15 @@ public class RouteDetailsActivity extends BaseActivity {
     public static final int MAX_ZOOM_LEVEL = 16;
     public static final int ZOOM_LEVEL = 16;
 
-    private FolderOverlay mItineraryMarkers;
     private GeoPoint mCurrentUserLocation;
     private MapView mMap = null;
     private SetMarker mMarker;
     private Route mRoute;
-    private DrawerLayout mDrawerLayout;
 
     private ExtendedLocationListener mGpsTracker;
     private boolean mCanGetLocation = true;
 
     private DBAdapter db;
-    private ViaPointInfoWindow mViaPointInfoWindow;
 
     /**
      * Called when the activity is created, shows the details of the route
@@ -181,7 +178,7 @@ public class RouteDetailsActivity extends BaseActivity {
                 });
 
         //setUp navigation drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         super.setUpNavigationDrawer(this, mDrawerLayout);
     }
 
@@ -220,10 +217,10 @@ public class RouteDetailsActivity extends BaseActivity {
      */
     private void initItineraryMarkers() {
 
-        mViaPointInfoWindow = new ViaPointInfoWindow(
+        ViaPointInfoWindow mViaPointInfoWindow = new ViaPointInfoWindow(
                 R.layout.navigation_itinerary_bubble, mMap, this);
 
-        mItineraryMarkers = new FolderOverlay(this);
+        FolderOverlay mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
 
@@ -276,7 +273,7 @@ public class RouteDetailsActivity extends BaseActivity {
 
     /**
      * Adds the way points between start or end point to the map (excluding start and end point).
-     *
+     * <p/>
      * If the current user location is known start with the first way point.
      * Else start with the second way point, but only if there are two or more way points
      * (else there would be no route).
@@ -299,26 +296,16 @@ public class RouteDetailsActivity extends BaseActivity {
             //Add all waypoints to the map except the last one,
             // it would be marked as destination marker
             for (int index = waypointIndex; index < mRoute.waypoints.size() - 1; index++) {
-                String title = getResources().getString(R.string.viapoint);
-                String description = "";
-                int exhibitId = -1;
-                Drawable drawable;
                 Waypoint waypoint = mRoute.waypoints.get(index);
-                GeoPoint geoPoint = new GeoPoint(waypoint.latitude, waypoint.longitude);
-
                 if (waypoint.exhibit_id != -1) {
+                    GeoPoint geoPoint = new GeoPoint(waypoint.latitude, waypoint.longitude);
                     Exhibit exhibit = waypoint.getExhibit(db);
-                    title = exhibit.name;
-                    description = exhibit.description;
-                    exhibitId = exhibit.id;
 
-                    drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                    Drawable drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
 
                     // add marker on map for waypoint
-                    addMarker(geoPoint, drawable, R.drawable.marker_via, title,
-                            description, exhibitId);
-                } else {
-                    drawable = ContextCompat.getDrawable(this, R.drawable.marker_via);
+                    addMarker(geoPoint, drawable, R.drawable.marker_via, exhibit.name,
+                            exhibit.description, exhibit.id);
                 }
             }
         }
@@ -415,11 +402,11 @@ public class RouteDetailsActivity extends BaseActivity {
      * Adds the marker with the data of t and put on the map.
      *
      * @param geoLocation GeoPoint of the created  marker
-     * @param drawable Drawable, image of the exhibit
+     * @param drawable    Drawable, image of the exhibit
      * @param markerImage int, id from drawable
-     * @param title String, title of the exhibit
+     * @param title       String, title of the exhibit
      * @param description String, description of the exhibit
-     * @param exhibitId int, exhibit id
+     * @param exhibitId   int, exhibit id
      */
     private void addMarker(GeoPoint geoLocation, Drawable drawable, int markerImage, String title,
                            String description, int exhibitId) {
@@ -519,8 +506,8 @@ public class RouteDetailsActivity extends BaseActivity {
      * is reached via back button.
      *
      * @param requestCode int
-     * @param resultCode int
-     * @param data Intent
+     * @param resultCode  int
+     * @param data        Intent
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
