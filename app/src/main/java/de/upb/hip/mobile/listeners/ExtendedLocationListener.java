@@ -28,13 +28,15 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
 
+/**
+ * Listener Class for updating the location.
+ */
 public class ExtendedLocationListener extends Service implements LocationListener {
 
     // The minimum distance to change Updates in meters
@@ -46,68 +48,62 @@ public class ExtendedLocationListener extends Service implements LocationListene
     // Declaring a Location Manager
     protected LocationManager mLocationManager;
     // Flag for GPS status
-    private boolean mGpsEnabled = false;
-    // Flag for network status
-    private boolean mNetworkEnabled = false;
-    // Flag for GPS status
     private boolean mCanGetLocation = false;
     private Location mLocation; // Location
-    private double mLatitude; // Latitude
-    private double mLongitude; // Longitude
 
+    /**
+     * Constructor of ExtendedLocationListener
+     *
+     * @param context Android Context
+     */
     public ExtendedLocationListener(Context context) {
         this.mContext = context;
         getLocation();
     }
 
+    /**
+     * Returns the current location of the device, if GPS or internet connection is available,
+     * else it returns the last known location or null.
+     *
+     * @return Location
+     */
     public Location getLocation() {
         try {
-            mLocationManager = (LocationManager) mContext
-                    .getSystemService(LOCATION_SERVICE);
+            mLocationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
             // Getting GPS status
-            mGpsEnabled = mLocationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean gpsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             // Getting network status
-            mNetworkEnabled = mLocationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            boolean networkEnabled = mLocationManager.isProviderEnabled(
+                    LocationManager.NETWORK_PROVIDER);
 
-            if (!mGpsEnabled && !mNetworkEnabled) {
+            if (!gpsEnabled && !networkEnabled) {
                 // No network provider is enabled
                 mCanGetLocation = false;
             } else {
                 this.mCanGetLocation = true;
-                if (mNetworkEnabled) {
+                if (networkEnabled) {
                     mLocationManager.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
                     if (mLocationManager != null) {
-                        mLocation = mLocationManager
-                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (mLocation != null) {
-                            mLatitude = mLocation.getLatitude();
-                            mLongitude = mLocation.getLongitude();
-                        }
+                        mLocation = mLocationManager.getLastKnownLocation(
+                                LocationManager.NETWORK_PROVIDER);
                     }
                 }
+
                 // If GPS enabled, get mLatitude/mLongitude using GPS Services
-                if (mGpsEnabled) {
+                if (gpsEnabled) {
                     if (mLocation == null) {
                         mLocationManager.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
                         if (mLocationManager != null) {
-                            mLocation = mLocationManager
-                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (mLocation != null) {
-                                mLatitude = mLocation.getLatitude();
-                                mLongitude = mLocation.getLongitude();
-                            }
+                            mLocation = mLocationManager.getLastKnownLocation(
+                                    LocationManager.GPS_PROVIDER);
                         }
                     }
                 }
@@ -132,41 +128,45 @@ public class ExtendedLocationListener extends Service implements LocationListene
 
 
     /**
-     * Function to get mLatitude
+     * Return Latitude of last known location.
+     * Returns 0 if there is no last known location.
+     *
+     * @return Latitude
      */
     public double getLatitude() {
         if (mLocation != null) {
-            mLatitude = mLocation.getLatitude();
+            return mLocation.getLatitude();
         }
 
-        // return mLatitude
-        return mLatitude;
+        return 0;
     }
 
 
     /**
-     * Function to get mLongitude
+     * Return Longitude of last known location.
+     * Returns 0 if there is no last known location.
+     *
+     * @return Longitude
      */
     public double getLongitude() {
         if (mLocation != null) {
-            mLongitude = mLocation.getLongitude();
+            return mLocation.getLongitude();
         }
 
-        // return mLongitude
-        return mLongitude;
+        return 0;
     }
 
     /**
-     * Function to get mLongitude
+     * Getter for the used LocationManager.
+     *
+     * @return LocationManager
      */
     public LocationManager getLocationManager() {
-
-        // return mLocationManager
         return mLocationManager;
     }
 
     /**
-     * Function to check GPS/Wi-Fi enabled
+     * Returns true if location could be found via GPS or internet connection.
      *
      * @return boolean
      */
@@ -176,8 +176,8 @@ public class ExtendedLocationListener extends Service implements LocationListene
 
 
     /**
-     * Function to show settings alert dialog.
-     * On pressing the Settings button it will launch Settings Options.
+     * Shows a dialog window, with a message that GPS is disabled and provides a button that will
+     * starts the settings app for the GPS settings.
      */
     public void showSettingsAlert() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
@@ -208,6 +208,12 @@ public class ExtendedLocationListener extends Service implements LocationListene
     }
 
 
+    /**
+     * Sets the current location.
+     * Calls the MainActivity's updatePosition method.
+     *
+     * @param location Location
+     */
     @Override
     public void onLocationChanged(Location location) {
         this.mLocation = location;
@@ -219,22 +225,42 @@ public class ExtendedLocationListener extends Service implements LocationListene
         }
     }
 
-
+    /**
+     * Method that must be declared because of the LocationListener interface, but does nothing.
+     *
+     * @param provider String
+     */
     @Override
     public void onProviderDisabled(String provider) {
     }
 
-
+    /**
+     * Method that must be declared because of the LocationListener interface, but does nothing.
+     *
+     * @param provider String
+     */
     @Override
     public void onProviderEnabled(String provider) {
     }
 
-
+    /**
+     * Method that must be declared because of the LocationListener interface, but does nothing.
+     *
+     * @param provider String
+     * @param status   int
+     * @param extras   Bundle
+     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
-
+    /**
+     * Method that must be declared because of the inheritance of the Service class,
+     * but always returns null.
+     *
+     * @param arg0 Intent
+     * @return null
+     */
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
