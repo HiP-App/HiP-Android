@@ -206,8 +206,8 @@ public class RouteDetailsActivity extends BaseActivity {
             mapController.setCenter(mCurrentUserLocation);
         } else {
             // set center to first waypoint
-            GeoPoint geoFirstWaypoint = new GeoPoint(mRoute.getWayPoints().get(0).latitude,
-                    mRoute.getWayPoints().get(0).longitude);
+            GeoPoint geoFirstWaypoint = new GeoPoint(mRoute.getWayPoints().get(0).getLatitude(),
+                    mRoute.getWayPoints().get(0).getLongitude());
             mapController.setCenter(geoFirstWaypoint);
         }
     }
@@ -245,11 +245,11 @@ public class RouteDetailsActivity extends BaseActivity {
             geoLocation = this.mCurrentUserLocation;
         } else if (mRoute.getWayPoints().size() > 1) {
             // if no current location then use first waypoint as start point only if >=2 waypoints
-            geoLocation = new GeoPoint(mRoute.getWayPoints().get(0).latitude,
-                    mRoute.getWayPoints().get(0).longitude);
+            geoLocation = new GeoPoint(mRoute.getWayPoints().get(0).getLatitude(),
+                    mRoute.getWayPoints().get(0).getLongitude());
 
             // add related data to marker if start point is first waypoint
-            if (mRoute.getWayPoints().get(0).exhibit_id != -1) {
+            if (mRoute.getWayPoints().get(0).getExhibitId() != -1) {
                 Exhibit exhibit = mRoute.getWayPoints().get(0).getExhibit(db);
                 title = exhibit.name;
                 description = exhibit.description;
@@ -297,8 +297,9 @@ public class RouteDetailsActivity extends BaseActivity {
             // it would be marked as destination marker
             for (int index = waypointIndex; index < mRoute.getWayPoints().size() - 1; index++) {
                 Waypoint waypoint = mRoute.getWayPoints().get(index);
-                if (waypoint.exhibit_id != -1) {
-                    GeoPoint geoPoint = new GeoPoint(waypoint.latitude, waypoint.longitude);
+                if (waypoint.getExhibitId() != -1) {
+                    GeoPoint geoPoint =
+                            new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude());
                     Exhibit exhibit = waypoint.getExhibit(db);
 
                     Drawable drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
@@ -338,11 +339,11 @@ public class RouteDetailsActivity extends BaseActivity {
         }
 
         if (waypointIndex > -1) {
-            geoLocation = new GeoPoint(mRoute.getWayPoints().get(waypointIndex).latitude,
-                    mRoute.getWayPoints().get(waypointIndex).longitude);
+            geoLocation = new GeoPoint(mRoute.getWayPoints().get(waypointIndex).getLatitude(),
+                    mRoute.getWayPoints().get(waypointIndex).getLongitude());
 
             // add related data to marker
-            if (mRoute.getWayPoints().get(waypointIndex).exhibit_id != -1) {
+            if (mRoute.getWayPoints().get(waypointIndex).getExhibitId() != -1) {
                 Exhibit exhibit = mRoute.getWayPoints().get(waypointIndex).getExhibit(db);
                 title = exhibit.name;
                 description = exhibit.description;
@@ -382,7 +383,8 @@ public class RouteDetailsActivity extends BaseActivity {
             tagsLayout.removeAllViews();
             for (RouteTag tag : mRoute.getTags()) {
                 ImageView tagImageView = new ImageView(getApplicationContext());
-                tagImageView.setImageDrawable(tag.getImage(mRoute.getId(), getApplicationContext()));
+                tagImageView.setImageDrawable(
+                        tag.getImage(mRoute.getId(), getApplicationContext()));
                 tagsLayout.addView(tagImageView);
             }
         }
@@ -435,7 +437,7 @@ public class RouteDetailsActivity extends BaseActivity {
 
         if (mRoute != null && mRoute.getWayPoints() != null) {
             for (Waypoint waypoint : mRoute.getWayPoints()) {
-                myPath.addPoint(new GeoPoint(waypoint.latitude, waypoint.longitude));
+                myPath.addPoint(new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude()));
             }
         }
 
@@ -457,7 +459,7 @@ public class RouteDetailsActivity extends BaseActivity {
 
         if (mRoute != null && mRoute.getWayPoints() != null) {
             for (Waypoint waypoint : mRoute.getWayPoints()) {
-                points.add(new GeoPoint(waypoint.latitude, waypoint.longitude));
+                points.add(new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude()));
             }
         }
 
