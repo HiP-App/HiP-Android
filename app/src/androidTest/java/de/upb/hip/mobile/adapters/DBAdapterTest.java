@@ -52,15 +52,15 @@ public class DBAdapterTest extends AndroidTestCase {
         assertNotNull(routeSet);
 
         for (Route route : routeSet.routes) {
-            if (route.title == "Stadtroute") {
+            if (route.getTitle() == "Stadtroute") {
                 /* found Stadtroute, check attributes */
-                assertEquals(route.description, "Dies ist eine kurze Route in der Stadt.");
-                assertEquals(route.duration, 7200);
-                assertEquals(route.imageName, "route_stadt.jpg");
+                assertEquals(route.getDescription(), "Dies ist eine kurze Route in der Stadt.");
+                assertEquals(route.getDuration(), 7200);
+                assertEquals(route.getImageName(), "route_stadt.jpg");
 
                 /* check tags */
-                assertEquals(route.tags.size(), 1);
-                for (RouteTag tag : route.tags) {
+                assertEquals(route.getTags().size(), 1);
+                for (RouteTag tag : route.getTags()) {
                     assertEquals(tag.getImage(), null);
                     assertEquals(tag.getImageFilename(), "route_tag_restaurant");
                     assertEquals(tag.getName(), "Restaurant");
@@ -68,7 +68,7 @@ public class DBAdapterTest extends AndroidTestCase {
                 }
                 /* check waypoints */
                 LinkedList<Waypoint> waypoint_list = new LinkedList<>();
-                for (Waypoint waypoint : route.waypoints) {
+                for (Waypoint waypoint : route.getWayPoints()) {
                     waypoint_list.add(waypoint);
                 }
                 assertEquals(waypoint_list.size(), 6);
