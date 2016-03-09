@@ -77,7 +77,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                             // in the launched activity
                             new Pair<>(childView.findViewById(R.id.imageViewMain),
                                     DetailsActivity.VIEW_NAME_IMAGE),
-                            new Pair<>(childView.findViewById(R.id.txtName),
+                            new Pair<>(childView.findViewById(R.id.detailsName),
                                     DetailsActivity.VIEW_NAME_TITLE));
 
             intent.putExtra("exhibit-id", childView.getId());

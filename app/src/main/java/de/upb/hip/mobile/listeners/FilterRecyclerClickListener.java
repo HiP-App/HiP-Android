@@ -1,15 +1,8 @@
 package de.upb.hip.mobile.listeners;
 
 import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -25,7 +18,7 @@ public class FilterRecyclerClickListener implements RecyclerView.OnItemTouchList
     @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if(childView != null && e.getAction() == e.ACTION_DOWN) {
-            TextView txtName = (TextView) childView.findViewById(R.id.txtName);
+            TextView txtName = (TextView) childView.findViewById(R.id.detailsName);
             mMainActivity.updateCategories(txtName.getText().toString());
 
             CheckBox checkBox = (CheckBox) childView.findViewById(R.id.checkBox);

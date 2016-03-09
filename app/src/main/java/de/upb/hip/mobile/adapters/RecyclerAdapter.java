@@ -125,8 +125,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             super(v);
             this.mView = v;
             this.mImage = (ImageView) v.findViewById(R.id.imageViewMain);
-            this.mName = (TextView) v.findViewById(R.id.txtName);
-            this.mDescription = (TextView) v.findViewById(R.id.txtDescription);
+            this.mName = (TextView) v.findViewById(R.id.detailsName);
+            this.mDescription = (TextView) v.findViewById(R.id.detailsDescription);
             this.mDistance = (TextView) v.findViewById(R.id.txtDistance);
         }
     }
