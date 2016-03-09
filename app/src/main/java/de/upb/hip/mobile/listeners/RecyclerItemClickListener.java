@@ -36,6 +36,12 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
     private MainActivity mMainActivity;
     private GestureDetector mGestureDetector;
 
+
+    /**
+     * Constructor, starts the gesture listener
+     *
+     * @param mMainActivity MainActivity of the app
+     */
     public RecyclerItemClickListener(MainActivity mMainActivity) {
         this.mMainActivity = mMainActivity;
         mGestureDetector = new GestureDetector(mMainActivity,
@@ -47,13 +53,19 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                 });
     }
 
+
+    /**
+     * starts the DetailsActivity on touch on an element in Recycler view
+     * @param view RecyclerView in MainActivity
+     * @param e MotionEvent
+     * @return always false
+     */
     @Override
     public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if (childView != null && mGestureDetector.onTouchEvent(e)) {
 
             Intent intent = new Intent(this.mMainActivity, DetailsActivity.class);
-
 
             @SuppressWarnings("unchecked") // type of array is unimportant for runtime
                     ActivityOptionsCompat activityOptions =
@@ -69,11 +81,16 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
             intent.putExtra("exhibit-id", childView.getId());
             ActivityCompat.startActivity(this.mMainActivity, intent, activityOptions.toBundle());
-
         }
         return false;
     }
 
+    
+    /**
+     * empty stub for the onTouchEvent
+     * @param view RecyclerView in MainActivity
+     * @param motionEvent MotionEvent
+     */
     @Override
     public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
     }
