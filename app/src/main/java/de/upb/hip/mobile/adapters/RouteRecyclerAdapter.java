@@ -28,7 +28,9 @@ import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.RouteTag;
 
-
+/**
+ * Adapter for the Recycler View in the RouteActivity
+ */
 public class RouteRecyclerAdapter
         extends RecyclerView.Adapter<RouteRecyclerAdapter.ViewHolder> implements Filterable {
 
@@ -39,8 +41,9 @@ public class RouteRecyclerAdapter
 
     /**
      * Constructor for the adapter
-     * @param routeSet RouteSet
-     * @param context Context Activity
+     *
+     * @param routeSet   RouteSet
+     * @param context    Context Activity
      * @param activeTags activeTags
      */
     public RouteRecyclerAdapter(RouteSet routeSet, Context context, Set<String> activeTags) {
@@ -51,6 +54,7 @@ public class RouteRecyclerAdapter
 
     /**
      * Create a new Filter and return it
+     *
      * @return
      */
     @Override
@@ -70,7 +74,8 @@ public class RouteRecyclerAdapter
 
     /**
      * Create new views (invoked by the layout manager)
-     * @param parent ViewGroup
+     *
+     * @param parent   ViewGroup
      * @param viewType
      * @return
      */
@@ -84,7 +89,8 @@ public class RouteRecyclerAdapter
 
     /**
      * Replace the contents of a view (invoked by the layout manager)
-     * @param holder View which is replaced
+     *
+     * @param holder   View which is replaced
      * @param position Position in the dataset (routeSet)
      */
     @Override
@@ -131,6 +137,7 @@ public class RouteRecyclerAdapter
 
     /**
      * Return the size of the dataset (invoked by the layout manager)
+     *
      * @return size of the dataset
      */
     @Override
@@ -140,6 +147,7 @@ public class RouteRecyclerAdapter
 
     /**
      * Filters rouutes for activeTags
+     *
      * @return routes which contains activeTags
      */
     public RouteSet getFilteredRoutes() {
@@ -163,18 +171,20 @@ public class RouteRecyclerAdapter
 
     /**
      * Register the listener for routeSelection
+     *
      * @param listener
      */
-    public void registerRouteSelectedListener(RouteSelectedListener listener){
+    public void registerRouteSelectedListener(RouteSelectedListener listener) {
         mRouteSelectedListeners.add(listener);
     }
 
     /**
      * Notifys listeners when a route was selected
+     *
      * @param route
      */
-    private void notifyRouteSelectedListeners(Route route){
-        for(RouteSelectedListener listener: mRouteSelectedListeners){
+    private void notifyRouteSelectedListeners(Route route) {
+        for (RouteSelectedListener listener : mRouteSelectedListeners) {
             listener.onRouteSelected(route);
         }
     }
@@ -182,7 +192,7 @@ public class RouteRecyclerAdapter
     /**
      * Interface for the routeSelectedListener
      */
-    public interface RouteSelectedListener{
+    public interface RouteSelectedListener {
         void onRouteSelected(Route route);
     }
 
@@ -207,7 +217,7 @@ public class RouteRecyclerAdapter
             this.mDuration = (TextView) v.findViewById(R.id.route_duration);
             this.mDistance = (TextView) v.findViewById(R.id.route_distance);
             this.mTagsLayout = (LinearLayout) v.findViewById(R.id.route_tags_layout);
-            
+
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
