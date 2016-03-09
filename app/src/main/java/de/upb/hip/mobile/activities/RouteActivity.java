@@ -31,6 +31,10 @@ import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.RouteTag;
 
+/**
+ * Displays an overview of all available routes in the database
+ * Also provides functionalities to filter for specific tags
+ */
 public class RouteActivity
         extends BaseActivity implements RouteRecyclerAdapter.RouteSelectedListener {
 
