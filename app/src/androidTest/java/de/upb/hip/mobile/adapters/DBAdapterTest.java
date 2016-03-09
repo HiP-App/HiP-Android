@@ -52,15 +52,15 @@ public class DBAdapterTest extends AndroidTestCase {
         assertNotNull(routeSet);
 
         for (Route route : routeSet.routes) {
-            if (route.title == "Stadtroute") {
+            if (route.getTitle() == "Stadtroute") {
                 /* found Stadtroute, check attributes */
-                assertEquals(route.description, "Dies ist eine kurze Route in der Stadt.");
-                assertEquals(route.duration, 7200);
-                assertEquals(route.imageName, "route_stadt.jpg");
+                assertEquals(route.getDescription(), "Dies ist eine kurze Route in der Stadt.");
+                assertEquals(route.getDuration(), 7200);
+                assertEquals(route.getImageName(), "route_stadt.jpg");
 
                 /* check tags */
-                assertEquals(route.tags.size(), 1);
-                for (RouteTag tag : route.tags) {
+                assertEquals(route.getTags().size(), 1);
+                for (RouteTag tag : route.getTags()) {
                     assertEquals(tag.getImage(), null);
                     assertEquals(tag.getImageFilename(), "route_tag_restaurant");
                     assertEquals(tag.getName(), "Restaurant");
@@ -68,34 +68,34 @@ public class DBAdapterTest extends AndroidTestCase {
                 }
                 /* check waypoints */
                 LinkedList<Waypoint> waypoint_list = new LinkedList<>();
-                for (Waypoint waypoint : route.waypoints) {
+                for (Waypoint waypoint : route.getWayPoints()) {
                     waypoint_list.add(waypoint);
                 }
                 assertEquals(waypoint_list.size(), 6);
 
-                assertEquals(waypoint_list.get(0).exhibit_id, 5);
-                assertEquals(waypoint_list.get(0).latitude, 51.71859);
-                assertEquals(waypoint_list.get(0).longitude, 8.752206);
+                assertEquals(waypoint_list.get(0).getExhibitId(), 5);
+                assertEquals(waypoint_list.get(0).getLatitude(), 51.71859);
+                assertEquals(waypoint_list.get(0).getLongitude(), 8.752206);
 
-                assertEquals(waypoint_list.get(1).exhibit_id, 1);
-                assertEquals(waypoint_list.get(1).latitude, 51.719128);
-                assertEquals(waypoint_list.get(1).longitude, 8.755457);
+                assertEquals(waypoint_list.get(1).getExhibitId(), 1);
+                assertEquals(waypoint_list.get(1).getLatitude(), 51.719128);
+                assertEquals(waypoint_list.get(1).getLongitude(), 8.755457);
 
-                assertEquals(waypoint_list.get(2).exhibit_id, 4);
-                assertEquals(waypoint_list.get(2).latitude, 51.719527);
-                assertEquals(waypoint_list.get(2).longitude, 8.755736);
+                assertEquals(waypoint_list.get(2).getExhibitId(), 4);
+                assertEquals(waypoint_list.get(2).getLatitude(), 51.719527);
+                assertEquals(waypoint_list.get(2).getLongitude(), 8.755736);
 
-                assertEquals(waypoint_list.get(3).exhibit_id, 6);
-                assertEquals(waypoint_list.get(3).latitude, 51.718969);
-                assertEquals(waypoint_list.get(3).longitude, 8.758472);
+                assertEquals(waypoint_list.get(3).getExhibitId(), 6);
+                assertEquals(waypoint_list.get(3).getLatitude(), 51.718969);
+                assertEquals(waypoint_list.get(3).getLongitude(), 8.758472);
 
-                assertEquals(waypoint_list.get(4).exhibit_id, -1);
-                assertEquals(waypoint_list.get(4).latitude, 51.720371);
-                assertEquals(waypoint_list.get(4).longitude, 8.761723);
+                assertEquals(waypoint_list.get(4).getExhibitId(), -1);
+                assertEquals(waypoint_list.get(4).getLatitude(), 51.720371);
+                assertEquals(waypoint_list.get(4).getLongitude(), 8.761723);
 
-                assertEquals(waypoint_list.get(5).exhibit_id, -1);
-                assertEquals(waypoint_list.get(5).latitude, 51.719454);
-                assertEquals(waypoint_list.get(5).longitude, 8.767484);
+                assertEquals(waypoint_list.get(5).getExhibitId(), -1);
+                assertEquals(waypoint_list.get(5).getLatitude(), 51.719454);
+                assertEquals(waypoint_list.get(5).getLongitude(), 8.767484);
 
                 break; // the other routes are unimportant, skip
             }

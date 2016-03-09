@@ -1,35 +1,54 @@
 package de.upb.hip.mobile.activities;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.v7.widget.Toolbar;
 import android.test.ActivityInstrumentationTestCase2;
-import android.support.test.InstrumentationRegistry;
-import static android.support.test.espresso.Espresso.*;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static org.hamcrest.core.Is.is;
-import android.support.test.uiautomator.*;
-
-import android.support.test.espresso.contrib.*;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.core.Is.is;
 
-    private MainActivity activity;
+public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private static final String BUSDORFKIRCHE = "Busdorfkirche";
     private static final String UNIPADERNORN = "Universität Paderborn";
+    private MainActivity activity;
 
     public MainActivityTest(){
         super(MainActivity.class);
+    }
+
+    private static ViewInteraction matchToolbarTitle(CharSequence title) {
+        return onView(isAssignableFrom(Toolbar.class))
+                .check(matches(withToolbarTitle(is(title))));
+    }
+
+    private static Matcher<Object> withToolbarTitle(
+            final Matcher<CharSequence> textMatcher) {
+        return new BoundedMatcher<Object, Toolbar>(Toolbar.class) {
+            @Override
+            public boolean matchesSafely(Toolbar toolbar) {
+                return textMatcher.matches(toolbar.getTitle());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("with toolbar title: ");
+                textMatcher.describeTo(description);
+            }
+        };
     }
 
     @Override
@@ -55,34 +74,12 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         onView(withId(R.id.txtName)).check(matches(withText(UNIPADERNORN)));
     }
 
-    public void testGoogleMapsMarker() throws UiObjectNotFoundException, InterruptedException {
-        UiDevice device = UiDevice.getInstance(getInstrumentation());
-        UiObject marker1 = device.findObject(new UiSelector().descriptionContains(BUSDORFKIRCHE));
-//        marker1.click();
-        UiObject marker2 = device.findObject(new UiSelector().descriptionContains(UNIPADERNORN));
-        marker2.click();
+    public void testMapAvailable() {
+        onView(withId(R.id.map_main)).perform(click());
     }
 
-    public void testActionBarTitle(){
+    public void testActionBarTitle() {
         CharSequence title = InstrumentationRegistry.getTargetContext().getString(R.string.app_name);
         matchToolbarTitle(title);
-    }
-
-    private static ViewInteraction matchToolbarTitle(CharSequence title) {
-        return onView(isAssignableFrom(Toolbar.class))
-                .check(matches(withToolbarTitle(is(title))));
-    }
-
-    private static Matcher<Object> withToolbarTitle(
-            final Matcher<CharSequence> textMatcher) {
-        return new BoundedMatcher<Object, Toolbar>(Toolbar.class) {
-            @Override public boolean matchesSafely(Toolbar toolbar) {
-                return textMatcher.matches(toolbar.getTitle());
-            }
-            @Override public void describeTo(Description description) {
-                description.appendText("with toolbar title: ");
-                textMatcher.describeTo(description);
-            }
-        };
     }
 }

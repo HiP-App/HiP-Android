@@ -70,8 +70,8 @@ public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteAct
                 null, wp, 1, 1, rt, "route_stadt");
         rs.addRoute(r);
         rs.addRoute(r2);
-        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
-        assertEquals(rs.getRouteByPosition(rs.getSize() - 2).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).getId(), TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 2).getId(), TEST_ID);
     }
 
     public void testMissingTitle()
@@ -86,8 +86,8 @@ public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteAct
 
         rs.addRoute(r);
         rs.addRoute(r2);
-        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
-        assertEquals(rs.getRouteByPosition(rs.getSize() - 2).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).getId(), TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 2).getId(), TEST_ID);
     }
 
     public void testMissingTag()
@@ -101,6 +101,6 @@ public class RouteActivityTest extends ActivityInstrumentationTestCase2<RouteAct
         Route r = new Route(127, "tagless route", "this is a route without tag", wp, 1, 1, rt, "route_stadt");
 
         rs.addRoute(r);
-        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).id, TEST_ID);
+        assertEquals(rs.getRouteByPosition(rs.getSize() - 1).getId(), TEST_ID);
     }
 }

@@ -27,18 +27,15 @@ import java.util.Set;
 
 public class RouteActivity extends BaseActivity implements RouteRecyclerAdapter.RouteSelectedListener{
 
-    private DBAdapter database;
-    private RouteSet routeSet;
+    public static final int ACTIVITY_FILTER_RESULT = 0;
     //A set of the tags that should currently be displayed
     private final HashSet<String> activeTags = new HashSet<>();
-
+    private DBAdapter database;
+    private RouteSet routeSet;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
     private DrawerLayout mDrawerLayout;
-
-    public static final int ACTIVITY_FILTER_RESULT = 0;
 
     public RouteSet getRouteSet()
     {
@@ -57,7 +54,7 @@ public class RouteActivity extends BaseActivity implements RouteRecyclerAdapter.
 
         //We start with every tag allowed
         for (Route route : routeSet.routes) {
-            for (RouteTag tag : route.tags) {
+            for (RouteTag tag : route.getTags()) {
                 activeTags.add(tag.getTag());
             }
         }

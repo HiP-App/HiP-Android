@@ -178,19 +178,19 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
         // add viapoints
         mViaPoints = new ArrayList<>();
-        for (int i = 0; i < (route.waypoints.size()); i++) {
+        for (int i = 0; i < (route.getWayPoints().size()); i++) {
 
-            GeoPoint geoPoint = new GeoPoint(route.waypoints.get(i).latitude,
-                    route.waypoints.get(i).longitude);
+            GeoPoint geoPoint = new GeoPoint(route.getWayPoints().get(i).getLatitude(),
+                    route.getWayPoints().get(i).getLongitude());
 
             ViaPointData viaPointsData = new ViaPointData();
             // add related data to marker if start point is first waypoint
-            if (route.waypoints.get(i).exhibit_id != -1) {
-                Exhibit exhibit = route.waypoints.get(i).getExhibit(db);
+            if (route.getWayPoints().get(i).getExhibitId() != -1) {
+                Exhibit exhibit = route.getWayPoints().get(i).getExhibit(db);
 
                 viaPointsData.setViaPointData(geoPoint, exhibit.name, exhibit.description, exhibit.id);
             } else {
-                if (i == route.waypoints.size() - 1) {
+                if (i == route.getWayPoints().size() - 1) {
                     viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.destination),
                             "", -1);
                 } else {
