@@ -222,7 +222,7 @@ public class MainActivity extends BaseActivity {
 
         // to use blue point (or other) as location marker set it in CustomizedIconOverlay
         //Bitmap locationMarker = BitmapFactory.decodeResource(getResources(), R.drawable.ic_location);
-        CustomisedIconOverlay customisedIconOverlay = new CustomisedIconOverlay(this, null,
+        CustomisedIconOverlay customisedIconOverlay = new CustomisedIconOverlay(null,
                 mOverlayItemArray, null, defaultResourceProxyImpl);
         mMap.getOverlays().add(customisedIconOverlay);
         //--

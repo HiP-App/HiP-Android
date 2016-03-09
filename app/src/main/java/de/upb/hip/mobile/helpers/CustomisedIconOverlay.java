@@ -16,7 +16,6 @@
 
 package de.upb.hip.mobile.helpers;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
@@ -31,41 +30,56 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.List;
 
 /**
- * Used to customise location marker
+ * Class to customise location marker on map
  */
 public class CustomisedIconOverlay extends ItemizedIconOverlay<OverlayItem> {
 
     private List<OverlayItem> mOverlayItemArray;
-    private ResourceProxy pResourceProxy;
+    private ResourceProxy mProxyResource;
     private Bitmap mLocationMarker;
-    private Context mContext;
 
-    public CustomisedIconOverlay(Context contex, Bitmap locationMarker,
+    
+    /**
+     * Constructor, initializes local variables
+     *
+     * @param locationMarker         Bitmap of the marker
+     * @param pList                  List of overlay items
+     * @param pOnItemGestureListener gesture listener
+     * @param mProxyResource         ResourceProxy
+     */
+    public CustomisedIconOverlay(Bitmap locationMarker,
                                  List<OverlayItem> pList,
-                                 org.osmdroid.views.overlay.ItemizedIconOverlay.OnItemGestureListener<OverlayItem> pOnItemGestureListener,
-                                 ResourceProxy pResourceProxy) {
-        super(pList, pOnItemGestureListener, pResourceProxy);
+                                 OnItemGestureListener<OverlayItem> pOnItemGestureListener,
+                                 ResourceProxy mProxyResource) {
+        super(pList, pOnItemGestureListener, mProxyResource);
 
-        this.mContext = contex;
         this.mLocationMarker = locationMarker;
         this.mOverlayItemArray = pList;
-        this.pResourceProxy = pResourceProxy;
+        this.mProxyResource = mProxyResource;
     }
 
+
+    /**
+     * draws the marker on the map
+     *
+     * @param canvas  canvas to draw to
+     * @param mapview view of the map
+     * @param arg2    Boolean needed for the parent class
+     */
     @Override
     public void draw(Canvas canvas, MapView mapview, boolean arg2) {
         super.draw(canvas, mapview, arg2);
 
         if (!mOverlayItemArray.isEmpty()) {
 
-            //overlayItemArray have only ONE element only, so I hard code to get(0)
+            //overlayItemArray have only ONE element, so get(0) is possible
             GeoPoint in = (GeoPoint) mOverlayItemArray.get(0).getPoint();
 
             Point out = new Point();
             mapview.getProjection().toPixels(in, out);
 
             if (mLocationMarker == null) {
-                mLocationMarker = pResourceProxy.getBitmap(ResourceProxy.bitmap.person);
+                mLocationMarker = mProxyResource.getBitmap(ResourceProxy.bitmap.person);
             }
 
             canvas.drawBitmap(mLocationMarker,
@@ -75,9 +89,16 @@ public class CustomisedIconOverlay extends ItemizedIconOverlay<OverlayItem> {
         }
     }
 
+
+    /**
+     * Stub for tab up event on icon
+     *
+     * @param event   motion event on icon
+     * @param mapView view of the map
+     * @return always true
+     */
     @Override
     public boolean onSingleTapUp(MotionEvent event, MapView mapView) {
-        //return super.onSingleTapUp(event, mapView);
         return true;
     }
 }

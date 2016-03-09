@@ -39,14 +39,11 @@ import de.upb.hip.mobile.models.Exhibit;
  */
 public class DetailsActivity extends ActionBarActivity {
 
-    private DBAdapter mDatabase;
-
     // View name of the header image. Used for activity scene transitions
     public static final String VIEW_NAME_IMAGE = "detail:image";
-
     // View name of the header title. Used for activity scene transitions
     public static final String VIEW_NAME_TITLE = "detail:title";
-
+    private DBAdapter mDatabase;
     private ImageView mImageView;
     private TextView mTextView;
 
@@ -69,10 +66,10 @@ public class DetailsActivity extends ActionBarActivity {
 
         openDatabase();
 
-        mImageView = (ImageView) findViewById(R.id.imageViewDetail);
+        mImageView = (ImageView) findViewById(R.id.detailsImageView);
         mImageName = "image.jpg";
         mImageView.setImageDrawable(mDatabase.getImage(1, mImageName));
-        mTextView = (TextView) findViewById(R.id.txtName);
+        mTextView = (TextView) findViewById(R.id.detailsName);
 
         if (Build.VERSION.SDK_INT >= 21) {
             /**
@@ -102,7 +99,7 @@ public class DetailsActivity extends ActionBarActivity {
             mIsSlider = false;
         }
 
-        TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
+        TextView txtDescription = (TextView) findViewById(R.id.detailsDescription);
         txtDescription.setText(exhibit.description);
 
         //TODO: is this needed?
