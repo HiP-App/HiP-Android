@@ -56,8 +56,9 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
     /**
      * starts the DetailsActivity on touch on an element in Recycler view
+     *
      * @param view RecyclerView in MainActivity
-     * @param e MotionEvent
+     * @param e    MotionEvent
      * @return always false
      */
     @Override
@@ -85,10 +86,11 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         return false;
     }
 
-    
+
     /**
      * empty stub for the onTouchEvent
-     * @param view RecyclerView in MainActivity
+     *
+     * @param view        RecyclerView in MainActivity
      * @param motionEvent MotionEvent
      */
     @Override
