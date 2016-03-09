@@ -31,6 +31,10 @@ import android.widget.ListView;
 
 import de.upb.hip.mobile.adapters.NavigationDrawerAdapter;
 
+/**
+ * Extends the ActionBarActivity to set up the NavigationDrawer
+ * Adds click listeners
+ */
 public abstract class BaseActivity extends ActionBarActivity {
     private ListView mNavigationDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
