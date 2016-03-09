@@ -92,7 +92,7 @@ public class DBAdapter {
     public static final String DB_NAME = "hip"; // local database name
     public static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
     public static final String TAG = "DBAdapter"; // for logging
-    private static final String COUCHBASE_USER = "android_user2"; // username to access the data bucket on Couchbase Sync Gateway
+    private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
     private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
     private static Database database = null; // local database
     private static Context staticcontext; // static context for static getImage()-method
@@ -212,35 +212,35 @@ public class DBAdapter {
         insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom", pictureDescriptions, -1);
         addImage(R.drawable.dom, 1, pictureName);
 
-//        pictureDescriptions.clear();
-//        pictureDescriptions.put(pictureName, "Gebäude O");
-//        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
-//        addImage(R.drawable.uni, 2, pictureName);
-//
-//        pictureDescriptions.clear();
-//        pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
-//        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
-//        addImage(R.drawable.hnf, 3, pictureName);
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Gebäude O");
+        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
+        addImage(R.drawable.uni, 2, pictureName);
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
+        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
+        addImage(R.drawable.hnf, 3, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Museum in der Kaiserpfalz (aus Richtung Dom)");
         insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "", pictureDescriptions, 201);
         addImage(R.drawable.pfalz, 4, pictureName);
 
-        //pictureDescriptions.clear();
-        //pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
-        //insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", pictureDescriptions, -1);
-        //addImage(R.drawable.abdinghof, 5, "image.jpg");
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
+        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", pictureDescriptions, -1);
+        addImage(R.drawable.abdinghof, 5, "image.jpg");
 
-//        pictureDescriptions.clear();
-//        pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
-//        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", pictureDescriptions, -1);
-//        addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
+        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", pictureDescriptions, -1);
+        addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
 
-//        pictureDescriptions.clear();
-//        pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
-//        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
-//        addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
+        pictureDescriptions.clear();
+        pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
+        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
+        addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Paderquellen");
@@ -264,7 +264,7 @@ public class DBAdapter {
         waypoints.add(new Waypoint(51.722710, 8.758365, -1));
         waypoints.add(new Waypoint(51.718789, 8.762699, -1));
         waypoints.add(new Waypoint(51.715745, 8.757796, -1));
-//        waypoints.add(new Waypoint(51.715207, 8.752142, 7));
+        waypoints.add(new Waypoint(51.715207, 8.752142, 7));
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
@@ -274,10 +274,10 @@ public class DBAdapter {
         insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
-        //waypoints.add(new Waypoint(51.718590, 8.752206, 5));
+        waypoints.add(new Waypoint(51.718590, 8.752206, 5));
         waypoints.add(new Waypoint(51.719128, 8.755457, 1));
         waypoints.add(new Waypoint(51.719527, 8.755736, 4));
-//        waypoints.add(new Waypoint(51.718969, 8.758472, 6));
+        waypoints.add(new Waypoint(51.718969, 8.758472, 6));
         waypoints.add(new Waypoint(51.720371, 8.761723, -1));
         waypoints.add(new Waypoint(51.719454, 8.767484, -1));
 
