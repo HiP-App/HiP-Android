@@ -1,47 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:focusable="true"
     android:orientation="vertical">
 
-<FrameLayout
-    android:layout_width="fill_parent"
-    android:layout_height="0dp"
-    android:layout_weight="3"
-    android:nestedScrollingEnabled="false"
-    android:orientation="vertical">
-
-    <ImageView
-        android:id="@+id/DisplaySingleImageImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop" />
-
-</FrameLayout>
-
-<FrameLayout
-    android:layout_width="fill_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1">
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        >
-        <TextView
-            android:id="@+id/DisplaySingleImageTextView"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:scrollbars="vertical"
-            android:text="New Text" />
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
 
-    </ScrollView>
-</FrameLayout>
+        <ImageView
+            android:id="@+id/displaySingleImageImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/dom" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/displaySingleImageTextView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:scrollbars="vertical" />
+
+        </ScrollView>
+    </FrameLayout>
 
 </LinearLayout>
