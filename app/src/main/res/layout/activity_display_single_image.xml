@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/DisplaySingleImageImageView"
+            android:id="@+id/displaySingleImageImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
@@ -30,7 +30,7 @@
             android:layout_height="fill_parent">
 
             <TextView
-                android:id="@+id/DisplaySingleImageTextView"
+                android:id="@+id/displaySingleImageTextView"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
