@@ -68,7 +68,7 @@ public class RouteActivity
         }
 
         // Recyler View
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_route);
+        mRecyclerView = (RecyclerView) findViewById(R.id.routeRecyclerView);
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -83,7 +83,7 @@ public class RouteActivity
         adapter.registerRouteSelectedListener(this);
 
         // setUp navigation drawer
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.routeActivityDrawerLayout);
         super.setUpNavigationDrawer(this, mDrawerLayout);
     }
 
