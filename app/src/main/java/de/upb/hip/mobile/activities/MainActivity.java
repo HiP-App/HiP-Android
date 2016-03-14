@@ -128,7 +128,7 @@ public class MainActivity extends BaseActivity {
         this.mExhibitSet.addMarker(mMarker, this);
 
         // Recyler View
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.mainRecyclerView);
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -162,11 +162,11 @@ public class MainActivity extends BaseActivity {
                 });
 
         //setUp navigation drawer
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.mainActivityDrawerLayout);
         super.setUpNavigationDrawer(this, mDrawerLayout);
 
         //swipe_container
-        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainSwipeContainer);
         final MainActivity mMainActivity = this;
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             /**
@@ -187,7 +187,7 @@ public class MainActivity extends BaseActivity {
      */
     private void setupMap() {
         // getting the map
-        GenericMapView genericMap = (GenericMapView) findViewById(R.id.map_main);
+        GenericMapView genericMap = (GenericMapView) findViewById(R.id.mainMap);
         MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
         genericMap.setTileProvider(bitmapProvider);
         mMap = genericMap.getMapView();

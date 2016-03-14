@@ -58,7 +58,7 @@ public class DetailsActivityTest extends ActivityInstrumentationTestCase2<MainAc
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         mainactivity = getActivity();
-        onView(withId(R.id.my_recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(UNIPADERBORN)), click()));
+        onView(withId(R.id.mainRecyclerView)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(UNIPADERBORN)), click()));
     }
 
     /* test title name */

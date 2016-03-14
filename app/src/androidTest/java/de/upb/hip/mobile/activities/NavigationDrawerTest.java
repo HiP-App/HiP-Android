@@ -50,12 +50,12 @@ public class NavigationDrawerTest extends ActivityInstrumentationTestCase2<MainA
     }
 
     public void testOpenAndClose()    {
-        onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+        onView(withId(R.id.mainActivityDrawerLayout)).check(matches(isClosed()));
 
-        openDrawer(R.id.drawer_layout);
-        onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
+        openDrawer(R.id.mainActivityDrawerLayout);
+        onView(withId(R.id.mainActivityDrawerLayout)).check(matches(isOpen()));
 
-        closeDrawer(R.id.drawer_layout);
+        closeDrawer(R.id.mainActivityDrawerLayout);
     }
 
     public void testSwitchToOtherView() {
@@ -65,10 +65,10 @@ public class NavigationDrawerTest extends ActivityInstrumentationTestCase2<MainA
         assertNotNull(navDrawerDescriptions);
 
         for(int i = 0; i < navDrawerDescriptions.length; i++) {
-            onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
+            onView(withId(R.id.mainActivityDrawerLayout)).check(matches(isClosed()));
 
-            openDrawer(R.id.drawer_layout);
-            onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
+            openDrawer(R.id.mainActivityDrawerLayout);
+            onView(withId(R.id.mainActivityDrawerLayout)).check(matches(isOpen()));
 
             onView(allOf(withId(R.id.navigation_drawer_item_text), hasSibling(withText(navDrawerDescriptions[i])))).perform(click());
         }
