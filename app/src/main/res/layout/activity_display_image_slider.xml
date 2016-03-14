@@ -65,25 +65,20 @@
 
     </FrameLayout>
 
-    <FrameLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        <TextView
+            android:id="@+id/displayImageSliderDescriptionText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:scrollbars="vertical" />
 
-            <TextView
-                android:id="@+id/displayImageSliderDescriptionText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:scrollbars="vertical"/>
-
-        </ScrollView>
-    </FrameLayout>
+    </ScrollView>
 
 </LinearLayout>
