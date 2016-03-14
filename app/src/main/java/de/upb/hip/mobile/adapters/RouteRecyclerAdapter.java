@@ -82,7 +82,7 @@ public class RouteRecyclerAdapter
     @Override
     public RouteRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_route_row, parent, false);
+                .inflate(R.layout.activity_route_row_item, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -211,12 +211,12 @@ public class RouteRecyclerAdapter
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
-            this.mImage = (ImageView) v.findViewById(R.id.image_route);
-            this.mTitle = (TextView) v.findViewById(R.id.route_title);
-            this.mDescription = (TextView) v.findViewById(R.id.route_description);
-            this.mDuration = (TextView) v.findViewById(R.id.route_duration);
-            this.mDistance = (TextView) v.findViewById(R.id.route_distance);
-            this.mTagsLayout = (LinearLayout) v.findViewById(R.id.route_tags_layout);
+            this.mImage = (ImageView) v.findViewById(R.id.routeRowItemImage);
+            this.mTitle = (TextView) v.findViewById(R.id.routeRowItemTitle);
+            this.mDescription = (TextView) v.findViewById(R.id.routeRowItemDescription);
+            this.mDuration = (TextView) v.findViewById(R.id.routeRowItemDuration);
+            this.mDistance = (TextView) v.findViewById(R.id.routeRowItemDistance);
+            this.mTagsLayout = (LinearLayout) v.findViewById(R.id.routeRowItemTagsLayout);
 
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
