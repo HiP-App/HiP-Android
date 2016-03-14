@@ -47,7 +47,7 @@ public class FilterRecyclerAdapter extends RecyclerView.Adapter<FilterRecyclerAd
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
-            this.mName = (TextView) v.findViewById(R.id.detailsName);
+            this.mName = (TextView) v.findViewById(R.id.mainRowItemName);
             this.mCheckBox = (CheckBox) v.findViewById(R.id.checkBox);
         }
     }

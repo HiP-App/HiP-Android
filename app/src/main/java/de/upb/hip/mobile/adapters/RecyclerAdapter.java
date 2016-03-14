@@ -56,7 +56,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_main, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.activity_main_row_item, parent, false);
         return new ViewHolder(v);
     }
 
@@ -124,10 +125,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
-            this.mImage = (ImageView) v.findViewById(R.id.imageViewMain);
-            this.mName = (TextView) v.findViewById(R.id.detailsName);
+            this.mImage = (ImageView) v.findViewById(R.id.mainRowItemImage);
+            this.mName = (TextView) v.findViewById(R.id.mainRowItemName);
             this.mDescription = (TextView) v.findViewById(R.id.detailsDescription);
-            this.mDistance = (TextView) v.findViewById(R.id.txtDistance);
+            this.mDistance = (TextView) v.findViewById(R.id.mainRowItemDistance);
         }
     }
 }

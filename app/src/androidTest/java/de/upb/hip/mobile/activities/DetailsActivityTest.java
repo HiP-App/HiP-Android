@@ -68,7 +68,7 @@ public class DetailsActivityTest extends ActivityInstrumentationTestCase2<MainAc
 
     /* test name of the image */
     public void testImageNameText() {
-        onView(withId(R.id.detailsName)).check(matches(withText(UNIPADERBORN)));
+        onView(withId(R.id.mainRowItemName)).check(matches(withText(UNIPADERBORN)));
     }
 
     /* test the description */
