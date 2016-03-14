@@ -25,31 +25,25 @@
             android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="10dp"
             android:textColor="@color/textOverlayForImage"
-            android:textSize="20dp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:transitionName="changeBounds" />
 
     </FrameLayout>
 
-    <FrameLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_weight="1">
 
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        <TextView
+            android:id="@+id/detailsDescription"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/detailsDescription"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:scrollbars="vertical" />
-        </ScrollView>
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            android:scrollbars="vertical" />
+    </ScrollView>
 
 </LinearLayout>
