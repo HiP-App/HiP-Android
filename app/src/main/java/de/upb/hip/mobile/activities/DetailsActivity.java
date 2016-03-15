@@ -39,6 +39,8 @@ import de.upb.hip.mobile.models.Exhibit;
  */
 public class DetailsActivity extends ActionBarActivity {
 
+    public static final String INTENT_EXHIBIT_ID = "exhibit-id";
+
     // View name of the header image. Used for activity scene transitions
     public static final String VIEW_NAME_IMAGE = "detail:image";
     // View name of the header title. Used for activity scene transitions
@@ -51,8 +53,8 @@ public class DetailsActivity extends ActionBarActivity {
     private boolean mIsSlider;
     private String mImageName;
 
-    //ActionBar
     private ActionBar mActionBar;
+
 
     /**
      * Set up the Details. Load the correct image and text.
@@ -67,6 +69,7 @@ public class DetailsActivity extends ActionBarActivity {
         openDatabase();
 
         mImageView = (ImageView) findViewById(R.id.detailsImageView);
+        //TODO: Get rid of this hardcoded constant
         mImageName = "image.jpg";
         mImageView.setImageDrawable(mDatabase.getImage(1, mImageName));
         mTextView = (TextView) findViewById(R.id.detailsName);
@@ -85,8 +88,9 @@ public class DetailsActivity extends ActionBarActivity {
             addTransitionListener();
         }
 
-        mExhibitId = getIntent().getIntExtra("exhibit-id", 0);
+        mExhibitId = getIntent().getIntExtra(INTENT_EXHIBIT_ID, 0);
 
+        //TODO: Remove hardcoded string constant
         Drawable d = mDatabase.getImage(mExhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
@@ -191,16 +195,21 @@ public class DetailsActivity extends ActionBarActivity {
         this.finish();
     }
 
+    /**
+     * Opens a bigger version of the image when pressed
+     *
+     * @param view
+     */
     public void onClick_imageViewDetail(View view) {
         if (mIsSlider) {
             Intent intent = new Intent(this, DisplayImageSliderActivity.class);
-            intent.putExtra("exhibit-id", mExhibitId);
-            intent.putExtra("imageName", mImageName);
+            intent.putExtra(DisplayImageSliderActivity.INTENT_EXHIBIT_ID, mExhibitId);
+            intent.putExtra(DisplayImageSliderActivity.INTENT_IMAGE_NAME, mImageName);
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, DisplaySingleImageActivity.class);
-            intent.putExtra("exhibit-id", mExhibitId);
-            intent.putExtra("imageName", mImageName);
+            intent.putExtra(DisplaySingleImageActivity.INTENT_EXHIBIT_ID, mExhibitId);
+            intent.putExtra(DisplaySingleImageActivity.INTENT_IMAGE_NAME, mImageName);
             startActivity(intent);
         }
     }

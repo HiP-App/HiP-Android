@@ -80,7 +80,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                             new Pair<>(childView.findViewById(R.id.mainRowItemName),
                                     DetailsActivity.VIEW_NAME_TITLE));
 
-            intent.putExtra("exhibit-id", childView.getId());
+            intent.putExtra(DetailsActivity.INTENT_EXHIBIT_ID, childView.getId());
             ActivityCompat.startActivity(this.mMainActivity, intent, activityOptions.toBundle());
         }
         return false;

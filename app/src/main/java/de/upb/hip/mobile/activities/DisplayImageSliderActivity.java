@@ -38,6 +38,9 @@ import de.upb.hip.mobile.models.Exhibit;
  * effect through a slider at the bottom
  */
 public class DisplayImageSliderActivity extends ActionBarActivity {
+    public static final String INTENT_EXHIBIT_ID = "exhibit-id";
+    public static final String INTENT_IMAGE_NAME = "imageName";
+
     private DBAdapter mDatabase;
     private Exhibit mExhibit;
     private ImageView mFirstImageView;
@@ -47,6 +50,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
     private boolean mFontFading = true;
 
     private List<PictureData> mPicDataList = new ArrayList<>();
+
 
     /**
      * Called when the activity is created, get the exhibit information of the database and
