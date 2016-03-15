@@ -59,8 +59,8 @@
 
         <Button
             android:id="@+id/buttonTrackingMode"
-            android:layout_width="@dimen/fab_size"
-            android:layout_height="@dimen/fab_size"
+            android:layout_width="@dimen/trackingmode_button_size"
+            android:layout_height="@dimen/trackingmode_button_size"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:background="@drawable/btn_tracking_off" />
