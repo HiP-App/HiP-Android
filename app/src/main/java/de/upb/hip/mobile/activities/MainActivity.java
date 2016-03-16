@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
-import de.upb.hip.mobile.adapters.RecyclerAdapter;
+import de.upb.hip.mobile.adapters.MainRecyclerAdapter;
 import de.upb.hip.mobile.helpers.CustomisedIconOverlay;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ImageLoader;
@@ -136,7 +136,7 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new RecyclerAdapter(this.mExhibitSet);
+        mAdapter = new MainRecyclerAdapter(this.mExhibitSet);
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this));
@@ -264,7 +264,7 @@ public class MainActivity extends BaseActivity {
         mSwipeLayout.setRefreshing(false);
         mExhibitSet = new ExhibitSet(mDatabase.getView("exhibits"),
                 new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLatitude()));
-        mAdapter = new RecyclerAdapter(mExhibitSet);
+        mAdapter = new MainRecyclerAdapter(mExhibitSet);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         mExhibitSet.addMarker(mMarker, getApplicationContext());

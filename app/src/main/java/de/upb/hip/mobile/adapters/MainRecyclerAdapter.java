@@ -34,15 +34,15 @@ import de.upb.hip.mobile.models.ExhibitSet;
 /**
  * Adapter for the RecyclerView
  */
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder> {
     private ExhibitSet mExhibitSet;
 
     /**
-     * Constructor for the RecyclerAdapter
+     * Constructor for the MainRecyclerAdapter
      *
      * @param exhibitSet set of Exhibits to be shown
      */
-    public RecyclerAdapter(ExhibitSet exhibitSet) {
+    public MainRecyclerAdapter(ExhibitSet exhibitSet) {
         this.mExhibitSet = exhibitSet;
     }
 
@@ -54,7 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
      * @return the ViewHolder
      */
     @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MainRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.activity_main_row_item, parent, false);
@@ -116,18 +116,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public View mView;
-        public ImageView mImage;
-        public TextView mName;
-        public TextView mDescription;
-        public TextView mDistance;
+        private View mView;
+        private ImageView mImage;
+        private TextView mName;
+        private TextView mDistance;
 
         public ViewHolder(View v) {
             super(v);
             this.mView = v;
             this.mImage = (ImageView) v.findViewById(R.id.mainRowItemImage);
             this.mName = (TextView) v.findViewById(R.id.mainRowItemName);
-            this.mDescription = (TextView) v.findViewById(R.id.detailsDescription);
             this.mDistance = (TextView) v.findViewById(R.id.mainRowItemDistance);
         }
     }
