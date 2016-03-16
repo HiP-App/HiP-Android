@@ -55,7 +55,7 @@ public class RouteFilterActivity extends ActionBarActivity {
         Intent intent = getIntent();
 
         // Get routes
-        RouteSet routeSet = (RouteSet) intent.getSerializableExtra("routeSet");
+        RouteSet routeSet = (RouteSet) intent.getSerializableExtra("RouteSet");
         @SuppressWarnings("unchecked") // activeTags will be always a HashSet
                 HashSet<String> activeTags = (HashSet<String>) intent.getSerializableExtra("activeTags");
 
