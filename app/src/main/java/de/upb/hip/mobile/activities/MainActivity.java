@@ -46,7 +46,6 @@ import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.adapters.MainRecyclerAdapter;
 import de.upb.hip.mobile.helpers.CustomisedIconOverlay;
 import de.upb.hip.mobile.helpers.GenericMapView;
-import de.upb.hip.mobile.helpers.ImageLoader;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
@@ -167,17 +166,6 @@ public class MainActivity extends BaseActivity {
 
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainSwipeContainer);
-        final MainActivity mMainActivity = this;
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            /**
-             * refreshes the images on swiping
-             */
-            @Override
-            public void onRefresh() {
-                ImageLoader imgLoader = new ImageLoader(mMainActivity);
-                imgLoader.clearCache();
-            }
-        });
         mSwipeLayout.setEnabled(false);
     }
 
