@@ -15,7 +15,7 @@
             android:id="@+id/detailsImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:onClick="onClick_imageViewDetail"
+            android:onClick="onClick_detailsImageView"
             android:scaleType="centerCrop" />
 
         <TextView

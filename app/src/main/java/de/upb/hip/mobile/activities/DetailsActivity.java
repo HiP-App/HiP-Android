@@ -200,7 +200,7 @@ public class DetailsActivity extends ActionBarActivity {
      *
      * @param view
      */
-    public void onClick_imageViewDetail(View view) {
+    public void onClick_detailsImageView(View view) {
         if (mIsSlider) {
             Intent intent = new Intent(this, DisplayImageSliderActivity.class);
             intent.putExtra(DisplayImageSliderActivity.INTENT_EXHIBIT_ID, mExhibitId);
