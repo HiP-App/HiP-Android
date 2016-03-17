@@ -130,7 +130,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
             Toast.makeText(mMap.getContext(), R.string.empty_route, Toast.LENGTH_SHORT).show();
         }
 
-        Button button = (Button) this.findViewById(R.id.activityRouteDetailsRouteStartButton);
+        Button button = (Button) this.findViewById(R.id.routeDetailsStartNavigationButton);
         button.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -204,7 +204,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
      */
     private void initMap() {
         // getting the map
-        GenericMapView genericMap = (GenericMapView) findViewById(R.id.map_route_details);
+        GenericMapView genericMap = (GenericMapView) findViewById(R.id.routeDetailsMap);
         MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
         genericMap.setTileProvider(bitmapProvider);
         mMap = genericMap.getMapView();
@@ -382,15 +382,18 @@ public class RouteDetailsActivity extends ActionBarActivity {
      */
     private void initRouteInfo() {
         TextView descriptionView = (TextView) findViewById(
-                R.id.activityRouteDetailsRouteDescription);
-        TextView durationView = (TextView) findViewById(R.id.activityRouteDetailsRouteDuration);
+                R.id.routeDetailsDescription);
+        TextView durationView = (TextView) findViewById(R.id.routeDetailsDuration);
+        TextView distanceView = (TextView) findViewById(R.id.routeDetailsDistance);
         LinearLayout tagsLayout = (LinearLayout) findViewById(
-                R.id.activityRouteDetailsRouteTagsLayout);
+                R.id.routeDetailsTagsLayout);
 
         descriptionView.setText(mRoute.getDescription());
         int durationInMinutes = mRoute.getDuration() / 60;
         durationView.setText(getResources().getQuantityString(
                 R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
+        distanceView.setText(String.format(getResources().getString(
+                R.string.route_activity_distance_kilometer), mRoute.getDistance()));
 
         //Add tags
         if (mRoute.getTags() != null) {
