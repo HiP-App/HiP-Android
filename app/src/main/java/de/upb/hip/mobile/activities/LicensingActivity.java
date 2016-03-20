@@ -42,7 +42,8 @@ public class LicensingActivity extends ActionBarActivity {
 
     private void makeLinksClickable() {
         ((TextView) findViewById(R.id.licensingGoogleMaterialBody)).setMovementMethod(LinkMovementMethod.getInstance());
-
+        ((TextView) findViewById(R.id.licensingOSMDroidBody)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.licensingOSMBonusPackBody)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 
