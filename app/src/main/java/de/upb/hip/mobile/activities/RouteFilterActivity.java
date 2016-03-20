@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -194,7 +195,7 @@ public class RouteFilterActivity extends ActionBarActivity {
          * @param tags    list of tags as RouteTagHolder
          */
         public RouteTagArrayAdapter(Context context, List<RouteTagHolder> tags) {
-            super(context, R.layout.activity_route_filter_row, tags);
+            super(context, R.layout.activity_route_filter_row_item, tags);
             mInflater = LayoutInflater.from(context);
         }
 
@@ -209,11 +210,11 @@ public class RouteFilterActivity extends ActionBarActivity {
             ImageView imageView;
 
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.activity_route_filter_row, null);
+                convertView = mInflater.inflate(R.layout.activity_route_filter_row_item, null);
 
-                checkBox = (CheckBox) convertView.findViewById(R.id.activityRouteFilterRowCheckBox);
+                checkBox = (CheckBox) convertView.findViewById(R.id.routeFilterRowItemCheckBox);
                 imageView = (ImageView) convertView.findViewById(
-                        R.id.activityRouteFilterRowImageView);
+                        R.id.routeFilterRowItemImage);
 
                 convertView.setTag(new RouteTagViewHolder(checkBox, imageView));
 
