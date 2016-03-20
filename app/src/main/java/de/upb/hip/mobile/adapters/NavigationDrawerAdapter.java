@@ -101,10 +101,10 @@ public class NavigationDrawerAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = mInflater.inflate(R.layout.navigation_drawer_list_item, null);
-        TextView textView = (TextView) convertView.findViewById(R.id.navigation_drawer_item_text);
+        convertView = mInflater.inflate(R.layout.navigation_drawer_row_item, null);
+        TextView textView = (TextView) convertView.findViewById(R.id.navigationDrawerRowItemText);
         textView.setText(mDescriptions[position]);
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.navigation_drawer_item_icon);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.navigationDrawerRowItemIcon);
         imageView.setImageResource(mIcones[position]);
 
         convertView.setId(position);
