@@ -61,9 +61,15 @@
     <string name="network_connection">Netzwerkverbindung</string>
     <string name="network_message">Internetverbindung erforderlich</string>
 
+    <!-- Strings for licensing -->
+    <string name="licensing_title">Lizenzen</string>
+    <string name="licensing_googleMaterial_headline_text">Material Icons</string>
+    <string name="licensing_googleMaterial_body_text">Von Google, lizensiert unter <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>. Es wurden keine Änderungen vorgenommen.</string>
+
     <string-array name="nav_drawer_entries">
         <item>Übersicht</item>
         <item>Routen</item>
+        <item>@string/licensing_title</item>
     </string-array>
 
 </resources>

@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import de.upb.hip.mobile.activities.LicensingActivity;
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.activities.RouteActivity;
@@ -41,13 +42,15 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     private Integer[] mIcones =
             {
                     R.drawable.ic_home_black_48dp,
-                    R.drawable.ic_directions_black_48dp
+                    R.drawable.ic_directions_black_48dp,
+                    R.drawable.ic_gavel_black_48dp
             };
 
     private Class[] mActivities =
             {
                     MainActivity.class,
-                    RouteActivity.class
+                    RouteActivity.class,
+                    LicensingActivity.class
             };
 
     private String[] mDescriptions;
