@@ -15,10 +15,10 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/licensingGoogleMaterialHeadline"
+            android:id="@+id/licensingGoogleMaterialTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/licensing_googleMaterial_headline_text"
+            android:text="@string/licensing_googleMaterial_title_text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -43,7 +43,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/licensingOSMBonusPackHeadline"
+            android:id="@+id/licensingOSMBonusPackTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/licensing_osmbonuspack_title_text"
@@ -54,6 +54,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/licensing_osmbonuspack_body_text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/licensingCouchbaseTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licensing_couchbase_title_text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/licensingCouchbaseBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licensing_couchbase_body_text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 </RelativeLayout>

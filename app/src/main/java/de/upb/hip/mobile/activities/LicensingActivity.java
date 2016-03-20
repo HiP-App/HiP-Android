@@ -44,6 +44,7 @@ public class LicensingActivity extends ActionBarActivity {
         ((TextView) findViewById(R.id.licensingGoogleMaterialBody)).setMovementMethod(LinkMovementMethod.getInstance());
         ((TextView) findViewById(R.id.licensingOSMDroidBody)).setMovementMethod(LinkMovementMethod.getInstance());
         ((TextView) findViewById(R.id.licensingOSMBonusPackBody)).setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.licensingCouchbaseBody)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 
