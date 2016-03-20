@@ -73,15 +73,15 @@ public class RouteFilterActivity extends ActionBarActivity {
         }
 
         // Add tags
-        ListView listView = (ListView) findViewById(R.id.routeTagList);
+        ListView listView = (ListView) findViewById(R.id.routeFilterTagList);
         final ArrayAdapter<RouteTagHolder> adapter =
                 new RouteTagArrayAdapter(getApplicationContext(),
                         new ArrayList<>(uniqueTags.values()));
         listView.setAdapter(adapter);
 
         // Add buttons
-        Button closeWithoutSave = (Button) findViewById(R.id.routeTagCloseWithoutSave);
-        Button closeWithSave = (Button) findViewById(R.id.routeTagCloseWithSave);
+        Button closeWithoutSave = (Button) findViewById(R.id.routeFilterCloseWithoutSaveButton);
+        Button closeWithSave = (Button) findViewById(R.id.routeFilterCloseWithSaveButton);
 
         closeWithoutSave.setOnClickListener(new View.OnClickListener() {
             @Override
