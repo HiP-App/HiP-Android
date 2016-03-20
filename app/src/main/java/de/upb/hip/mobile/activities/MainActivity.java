@@ -196,7 +196,7 @@ public class MainActivity extends BaseActivity {
 
         // init info window for the markers
         mViaPointInfoWindow = new ViaPointInfoWindow(
-                R.layout.navigation_itinerary_bubble, mMap, this);
+                R.layout.navigation_info_window, mMap, this);
 
         // Create location Overlay
         mOverlayItemArray = new ArrayList<>();

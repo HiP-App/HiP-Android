@@ -235,7 +235,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
     private void initItineraryMarkers() {
 
         ViaPointInfoWindow mViaPointInfoWindow = new ViaPointInfoWindow(
-                R.layout.navigation_itinerary_bubble, mMap, this);
+                R.layout.navigation_info_window, mMap, this);
 
         FolderOverlay mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
