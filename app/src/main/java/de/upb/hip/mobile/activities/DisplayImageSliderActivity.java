@@ -70,14 +70,14 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
 
         // set picture description in view
         TextView mTextView = (TextView) findViewById(R.id.TextView01);
-        mTextView.setText(mExhibit.pictureDescriptions.get(getIntent().
+        mTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().
                 getStringExtra("imageName")));
 
         // modify action bar with back button and title
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(mExhibit.name);
+        actionBar.setTitle(mExhibit.getName());
     }
 
     /**
@@ -324,7 +324,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
      * Set the mPicDataList Array with data of the database
      */
     private void setData() {
-        int sliderID = mExhibit.sliderID;
+        int sliderID = mExhibit.getSliderId();
         @SuppressWarnings("unchecked") // getProperty returns always Maps with String and Object
                 ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)
                 mDatabase.getDocument(sliderID).getProperty(DBAdapter.KEY_SLIDER_IMAGES);

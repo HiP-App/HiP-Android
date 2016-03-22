@@ -188,7 +188,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             if (route.waypoints.get(i).exhibit_id != -1) {
                 Exhibit exhibit = route.waypoints.get(i).getExhibit(db);
 
-                viaPointsData.setViaPointData(geoPoint, exhibit.name, exhibit.description, exhibit.id);
+                viaPointsData.setViaPointData
+                        (geoPoint, exhibit.getName(), exhibit.getDescription(), exhibit.getId());
             } else {
                 if (i == route.waypoints.size() - 1) {
                     viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.destination),

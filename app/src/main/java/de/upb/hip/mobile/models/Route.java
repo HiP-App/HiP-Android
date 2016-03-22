@@ -24,7 +24,8 @@ public class Route implements Serializable{
 
     }
 
-    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints, int duration, double distance, List<RouteTag> tags, String imageName)
+    public Route (int id, String title, String description, ArrayList<Waypoint> waypoints,
+                  int duration, double distance, List<RouteTag> tags, String imageName)
     {
         this.id = id;
         this.title = title;

@@ -95,15 +95,15 @@ public class DetailsActivity extends ActionBarActivity {
 
         Document document = mDatabase.getDocument(mExhibitId);
         Exhibit exhibit = new Exhibit(document);
-        mTextView.setText(exhibit.name);
-        if (exhibit.sliderID != -1) {
+        mTextView.setText(exhibit.getName());
+        if (exhibit.getSliderId() != -1) {
             mIsSlider = true;
         } else {
             mIsSlider = false;
         }
 
         TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
-        txtDescription.setText(exhibit.description);
+        txtDescription.setText(exhibit.getDescription());
 
         //TODO: is this needed?
 //        // Set ActionBar
@@ -117,7 +117,7 @@ public class DetailsActivity extends ActionBarActivity {
         mActionBar = getSupportActionBar();
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
-            mActionBar.setTitle(exhibit.name);
+            mActionBar.setTitle(exhibit.getName());
         }
 
         //TODO: is this needed?

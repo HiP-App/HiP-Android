@@ -243,11 +243,11 @@ public class RouteDetailsActivity extends BaseActivity {
             // add related data to marker if start point is first waypoint
             if (mRoute.waypoints.get(0).exhibit_id != -1) {
                 Exhibit exhibit = mRoute.waypoints.get(0).getExhibit(db);
-                title = exhibit.name;
-                description = exhibit.description;
-                mViaPointData.put(title, exhibit.id);
+                title = exhibit.getName();
+                description = exhibit.getDescription();
+                mViaPointData.put(title, exhibit.getId());
 
-                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
             }
         }
 
@@ -302,11 +302,11 @@ public class RouteDetailsActivity extends BaseActivity {
 
                 if (waypoint.exhibit_id != -1) {
                     Exhibit exhibit = waypoint.getExhibit(db);
-                    title = exhibit.name;
-                    description = exhibit.description;
-                    mViaPointData.put(title, exhibit.id);
+                    title = exhibit.getName();
+                    description = exhibit.getDescription();
+                    mViaPointData.put(title, exhibit.getId());
 
-                    drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                    drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
                 } else {
                     drawable = ContextCompat.getDrawable(this, R.drawable.marker_via);
                     mViaPointData.put(title, -1);
@@ -362,11 +362,11 @@ public class RouteDetailsActivity extends BaseActivity {
             // add related data to marker
             if (mRoute.waypoints.get(waypointIndex).exhibit_id != -1) {
                 Exhibit exhibit = mRoute.waypoints.get(waypointIndex).getExhibit(db);
-                title = exhibit.name;
-                description = exhibit.description;
-                mViaPointData.put(title, exhibit.id);
+                title = exhibit.getName();
+                description = exhibit.getDescription();
+                mViaPointData.put(title, exhibit.getId());
 
-                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
             } else {
                 drawable = ContextCompat.getDrawable(this, R.drawable.marker_destination);
                 mViaPointData.put(title, -1);

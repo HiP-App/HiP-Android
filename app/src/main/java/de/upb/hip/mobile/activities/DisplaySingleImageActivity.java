@@ -42,7 +42,7 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
         Drawable d = DBAdapter.getImage(mExhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
-        mTextView.setText(mExhibit.pictureDescriptions.get(getIntent().getStringExtra(INTENT_IMAGE_NAME)));
+        mTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().getStringExtra(INTENT_IMAGE_NAME)));
 
         setUpActionBar();
 
@@ -55,7 +55,7 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(mExhibit.name);
+            actionBar.setTitle(mExhibit.getName());
         }
     }
 
