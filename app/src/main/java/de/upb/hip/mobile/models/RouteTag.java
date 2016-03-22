@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.upb.hip.mobile.models;
 
 import android.content.Context;
@@ -16,62 +32,90 @@ import java.io.Serializable;
 import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
- * Represents a tag for a route
+ * Model class for the route tag.
  */
 public class RouteTag implements Serializable {
 
-    private String tag;
-    private String name;
+    private String mTag;
+    private String mName;
+    private String mImageFilename;
+
     //Do not try to serialize the image
     @JsonIgnore
-    transient private Drawable image;
-    private String imageFilename;
+    transient private Drawable mImage;
 
+    /**
+     * Constructor for the RouteTag model.
+     *
+     * @param tag           Internal name of the tag.
+     * @param name          Displayed name of the tag in the app.
+     * @param imageFilename Name of the image of the tag.
+     */
     public RouteTag(String tag, String name, String imageFilename) {
-        this.tag = tag;
-        this.name = name;
-        this.imageFilename = imageFilename;
+        this.mTag = tag;
+        this.mName = name;
+        this.mImageFilename = imageFilename;
     }
 
+    /**
+     * Getter for the internal tag name.
+     *
+     * @return Internal tag name.
+     */
     public String getTag() {
-        return tag;
+        return mTag;
     }
 
+    /**
+     * Getter for the displayed tag name.
+     *
+     * @return Displayed tag name.
+     */
     public String getName() {
-        return name;
+        return mName;
     }
 
-    /*public void setImage(Drawable image){
-        this.image = image;
-    }*/
-
-    public Drawable getImage(int documentId, Context ctx) {
-        if (image != null) {
-            return image;
+    /**
+     * Getter for the tag image. Gets the image from the database on the first call of this method.
+     *
+     * @param routeId ID of the route.
+     * @param context The android application context
+     * @return Image Drawable
+     */
+    public Drawable getImage(int routeId, Context context) {
+        if (mImage != null) {
+            return mImage;
         }
-        Attachment att = DBAdapter.getAttachment(documentId, imageFilename);
+
+        Attachment attachment = DBAdapter.getAttachment(routeId, mImageFilename);
+
         try {
-            Bitmap b = BitmapFactory.decodeStream(att.getContent());
-            image = new BitmapDrawable(ctx.getResources(), b);
+            Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
+            mImage = new BitmapDrawable(context.getResources(), bitmap);
         } catch (CouchbaseLiteException e) {
             Log.e("routes", e.toString());
         }
 
-
-        return image;
+        return mImage;
     }
-
 
     /**
-     * Can only be called if getImage(documentId, imageFilename) was called previously
-     * @return
+     * Getter for the name of the image belonging to the tag.
+     * IMPORTANT: Can only be called if getImage(routeId, imageFilename) was called at least once.
+     * Else returns null.
+     *
+     * @return image Drawable
      */
-    public Drawable getImage(){
-        return image;
+    public Drawable getImage() {
+        return mImage;
     }
 
+    /**
+     * Getter for the name of the image of the tag.
+     *
+     * @return Name of the image of the tag.
+     */
     public String getImageFilename() {
-        return imageFilename;
+        return mImageFilename;
     }
-
 }

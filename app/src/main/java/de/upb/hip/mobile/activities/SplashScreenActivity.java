@@ -23,7 +23,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -56,13 +55,13 @@ public class SplashScreenActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        mTextAction = (TextView) findViewById(R.id.textView_action);
-        mTextWaiting = (TextView) findViewById(R.id.textView_waiting);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
-        mButtonRetry = (Button) findViewById(R.id.button_retry);
+        mTextAction = (TextView) findViewById(R.id.splashScreenActionText);
+        mTextWaiting = (TextView) findViewById(R.id.splashScreenWaitingText);
+        mProgressBar = (ProgressBar) findViewById(R.id.splashScreenProgressBar);
+        mButtonRetry = (Button) findViewById(R.id.splashScreenRetryButton);
 
-        mTextAction.setGravity(Gravity.CENTER);
-        mTextWaiting.setGravity(Gravity.CENTER);
+        mTextAction.setText(getString(R.string.splash_screen_loading));
+        mTextWaiting.setText(getString(R.string.splash_screen_waiting));
 
         mDbAdapter = new DBAdapter(this);
         int i = mDbAdapter.getDocumentCount();
@@ -100,8 +99,6 @@ public class SplashScreenActivity extends Activity {
         } else {
             mTextAction.setText(getString(R.string.splash_screen_no_connection));
             mTextWaiting.setText(getString(R.string.splash_screen_no_connection_error_message));
-            mTextAction.setGravity(Gravity.CENTER);
-            mTextWaiting.setGravity(Gravity.CENTER);
             mProgressBar.setVisibility(View.GONE);
             mButtonRetry.setVisibility(View.VISIBLE);
         }
@@ -132,7 +129,7 @@ public class SplashScreenActivity extends Activity {
      *
      * @param v View
      */
-    public void onclick_retry(View v) {
+    public void onClick_splashScreenRetryButton(View v) {
         mTextAction.setText(getString(R.string.splash_screen_check_connection));
         mTextWaiting.setText(getString(R.string.splash_screen_waiting));
         mProgressBar.setVisibility(View.VISIBLE);

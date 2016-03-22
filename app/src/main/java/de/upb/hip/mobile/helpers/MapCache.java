@@ -23,8 +23,7 @@ import org.osmdroid.bonuspack.cachemanager.CacheManager;
 import org.osmdroid.views.MapView;
 
 /**
- * explicit download and clear view area of the map
- * check the cache usage
+ * A class for managing the cache of the map
  */
 public class MapCache {
 
@@ -36,6 +35,9 @@ public class MapCache {
         this.mMap = map;
     }
 
+    /**
+     * Downloads the current view area plus 4 zoom levels to the cache
+     */
     public void downloadViewArea() {
         CacheManager cacheManager = new CacheManager(mMap);
         int zoomMin = mMap.getZoomLevel();
@@ -43,6 +45,9 @@ public class MapCache {
         cacheManager.downloadAreaAsync(mContext, mMap.getBoundingBox(), zoomMin, zoomMax);
     }
 
+    /**
+     * Purges the current view area plus 7 zoom levels from the cache
+     */
     public void clearViewArea() {
         CacheManager cacheManager = new CacheManager(mMap);
         int zoomMin = mMap.getZoomLevel();
@@ -50,6 +55,9 @@ public class MapCache {
         cacheManager.cleanAreaAsync(mContext, mMap.getBoundingBox(), zoomMin, zoomMax);
     }
 
+    /**
+     * Calculates the cache usage and prints it to a Toast
+     */
     public void cacheUsage() {
         CacheManager cacheManager = new CacheManager(mMap);
         long cacheUsage = cacheManager.currentCacheUsage() / (1024 * 1024);

@@ -15,18 +15,6 @@ public class FilterRecyclerAdapter extends RecyclerView.Adapter<FilterRecyclerAd
     private List<String> categories;
     private List<String> activeCategories;
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public View mView;
-        public TextView mName;
-        public CheckBox mCheckBox;
-        public ViewHolder(View v) {
-            super(v);
-            this.mView = v;
-            this.mName = (TextView) v.findViewById(R.id.txtName);
-            this.mCheckBox = (CheckBox) v.findViewById(R.id.checkBox);
-        }
-    }
-
     public FilterRecyclerAdapter(List<String> categories, List<String> activeCategories) {
         this.categories = categories;
         this.activeCategories = activeCategories;
@@ -49,5 +37,18 @@ public class FilterRecyclerAdapter extends RecyclerView.Adapter<FilterRecyclerAd
     @Override
     public int getItemCount() {
         return this.categories.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public View mView;
+        public TextView mName;
+        public CheckBox mCheckBox;
+
+        public ViewHolder(View v) {
+            super(v);
+            this.mView = v;
+            this.mName = (TextView) v.findViewById(R.id.mainRowItemName);
+            this.mCheckBox = (CheckBox) v.findViewById(R.id.checkBox);
+        }
     }
 }

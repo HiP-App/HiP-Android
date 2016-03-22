@@ -72,7 +72,7 @@ public class RouteSet implements Serializable {
 
     public Route getRouteById(int id) {
         for (Route route : routes) {
-            if (route.id == id) {
+            if (route.getId() == id) {
                 return route;
             }
         }

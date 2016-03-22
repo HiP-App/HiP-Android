@@ -31,8 +31,8 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_single_image);
 
-        mImageView = (ImageView) findViewById(R.id.DisplaySingleImageImageView);
-        mTextView = (TextView) findViewById(R.id.DisplaySingleImageTextView);
+        mImageView = (ImageView) findViewById(R.id.displaySingleImageImageView);
+        mTextView = (TextView) findViewById(R.id.displaySingleImageTextView);
 
         mDatabase = new DBAdapter(this);
         mExhibitId = getIntent().getIntExtra(INTENT_EXHIBIT_ID, 0);

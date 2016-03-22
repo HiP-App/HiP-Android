@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:weightSum="10">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,56 +10,54 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/imageView_maneuverIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_empty" />
+            android:id="@+id/routeNavigationManeuverIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="3">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/imageView_routeInstruction"
+            <TextView
+                android:id="@+id/routeNavigationInstruction"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_empty"/>
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/textColorPrimaryInverse" />
 
-            <ImageView
-                android:id="@+id/imageView_routeDistance"
+            <TextView
+                android:id="@+id/routeNavigationDistance"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:src="@drawable/ic_empty"/>
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/textColorPrimaryInverse" />
         </LinearLayout>
 
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <de.upb.hip.mobile.helpers.GenericMapView
-            android:id="@+id/map"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:id="@+id/routeNavigationMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <TextView
-            android:id="@+id/osm_contributors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="@string/osm_contributors"
-            android:textAppearance="?android:attr/textAppearanceSmall"/>
+            android:padding="5dp"
+            android:text="@string/osm_contributors" />
 
         <Button
-            android:id="@+id/buttonTrackingMode"
-            android:layout_width="@dimen/fab_size"
-            android:layout_height="@dimen/fab_size"
+            android:id="@+id/routeNavigationTrackingModeButton"
+            android:layout_width="@dimen/trackingmode_button_size"
+            android:layout_height="@dimen/trackingmode_button_size"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:background="@drawable/btn_tracking_off" />

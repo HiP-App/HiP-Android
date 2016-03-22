@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/routeActivityDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <!-- The main content view -->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        tools:context="de.upb.hip.mobile.RouteActivity">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_route"
-            android:scrollbars="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:id="@+id/routeRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
 
     </LinearLayout>
+
     <!-- The navigation drawer -->
-    <include layout="@layout/navigation_drawer"/>
+    <include layout="@layout/navigation_drawer" />
 </android.support.v4.widget.DrawerLayout>
