@@ -8,7 +8,11 @@
     <string name="title_activity_route">Routen</string>
     <string name="title_activity_route_filter">Routenfilter</string>
 
-    <string name="activity_route_filter">Filter</string>
+    <!-- Strings for menues-->
+    <string name="menu_activity_route_filter">Filter</string>
+    <string name="menu_main_title">Test</string> <!-- this is the string that was used in menu_main.xml
+                            There may be a more suitable string-->
+
     <string name="route_tag_label">Tags</string>
     <string name="route_tag_close_without_save_label">Ohne Speichern Schließen</string>
     <string name="route_tag_close_with_save_label">Speichern und Schließen</string>
