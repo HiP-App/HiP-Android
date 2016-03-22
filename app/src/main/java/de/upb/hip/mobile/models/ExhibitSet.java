@@ -66,7 +66,7 @@ public class ExhibitSet {
             Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
             exhibit.setDistance(this.mPosition);
 
-            for (String categorie : exhibit.categories) {
+            for (String categorie : exhibit.getCategories()) {
                 if (!this.mCategories.contains(categorie)) this.mCategories.add(categorie);
             }
 
@@ -91,7 +91,7 @@ public class ExhibitSet {
         for (int i = 0; i < strArray.size(); i++) {
 
             for (Exhibit exhibit : mInitSet) {
-                if (Arrays.asList(exhibit.categories).contains(strArray.get(i))) {
+                if (Arrays.asList(exhibit.getCategories()).contains(strArray.get(i))) {
                     this.mActiveSet.add(exhibit);
                 }
             }
@@ -128,7 +128,7 @@ public class ExhibitSet {
         int i = 0;
 
         while (this.mActiveSet.size() > 0) {
-            currentDistance = this.mActiveSet.get(i).distance;
+            currentDistance = this.mActiveSet.get(i).getDistance();
             if (minDistance == 0) {
                 minDistance = currentDistance;
                 minPosition = i;
@@ -159,15 +159,15 @@ public class ExhibitSet {
         mMarker.mFolderOverlay.getItems().clear();
 
         for (Exhibit exhibit : mActiveSet) {
-            Drawable d = DBAdapter.getImage(exhibit.id, "image.jpg", 32);
+            Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 32);
 
             Map<String, Integer> data = new HashMap<>();
-            data.put(exhibit.name, exhibit.id);
+            data.put(exhibit.getName(), exhibit.getId());
 
             Drawable icon = ContextCompat.getDrawable(ctx, R.drawable.marker_via);
 
-            mMarker.addMarker(null, exhibit.name, exhibit.description,
-                    new GeoPoint(exhibit.latlng.latitude, exhibit.latlng.longitude), d, icon, data);
+            mMarker.addMarker(null, exhibit.getName(), exhibit.getDescription(),
+                    new GeoPoint(exhibit.getLatlng().latitude, exhibit.getLatlng().longitude), d, icon, data);
         }
     }
 
