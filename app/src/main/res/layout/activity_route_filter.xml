@@ -30,14 +30,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/routeTagCloseWithoutSaveLabel" />
+            android:text="@string/route_tag_close_without_save_label" />
 
         <Button
             android:id="@+id/routeFilterCloseWithSaveButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/routeTagCloseWithSaveLabel" />
+            android:text="@string/route_tag_close_with_save_label" />
     </LinearLayout>
 
 </LinearLayout>
