@@ -105,7 +105,7 @@ public class DBAdapter {
         this.context = ctx;
         staticcontext = ctx;
         if (database == null) {
-            initDatabase(true);
+            initDatabase(false);
             //insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
         }
     }
@@ -198,7 +198,7 @@ public class DBAdapter {
         try {
             database.delete();
             database = null;
-            initDatabase(false);
+            initDatabase(true);
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error deleting local database", e);
             return;
