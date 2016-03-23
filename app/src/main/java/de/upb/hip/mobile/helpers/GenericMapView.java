@@ -20,15 +20,23 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
-import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.MapTileProviderBase;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
 
 import java.util.List;
 
+/**
+ * A pseudo MapView allowing to set (and change) its TitleProvider. Two key features:
+ * - it supports the MapsForgeTileProvider
+ * and it can be defined in a layout.
+ * (See also:
+ alexey
+ 10:26 AM https://github.com/MKergall/osmbonuspack/blob/master/MapsForgeForOsmdroid/src/main/java/org/osmdroid/bonuspack/mapsforge/GenericMapView.java )
+ */
 public class GenericMapView extends FrameLayout {
 
     protected MapView mMapView;
@@ -37,10 +45,16 @@ public class GenericMapView extends FrameLayout {
         super(context, attrs);
     }
 
+    /**
+     * The TileProvider is set here.
+     * The Context is set externally by the NavigationDrawer / MainActivity
+     * @param aTileProvider
+     */
     public void setTileProvider(MapTileProviderBase aTileProvider) {
         if (mMapView != null) {
             this.removeView(mMapView);
         }
+
         ResourceProxy resourceProxy = new DefaultResourceProxyImpl(this.getContext());
         MapView newMapView = new MapView(this.getContext(), resourceProxy, aTileProvider);
 
@@ -55,8 +69,9 @@ public class GenericMapView extends FrameLayout {
             newMapView.setMapOrientation(mMapView.getMapOrientation());
             newMapView.setScrollableAreaLimit(mMapView.getScrollableAreaLimit());
             List<Overlay> overlays = mMapView.getOverlays();
-            for (Overlay o : overlays)
+            for (Overlay o : overlays) {
                 newMapView.getOverlays().add(o);
+            }
         }
 
         mMapView = newMapView;
