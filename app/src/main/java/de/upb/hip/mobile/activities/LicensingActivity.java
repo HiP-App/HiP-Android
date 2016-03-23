@@ -17,14 +17,15 @@
 package de.upb.hip.mobile.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.widget.DrawerLayout;
 import android.text.method.LinkMovementMethod;
 import android.widget.TextView;
 
-public class LicensingActivity extends ActionBarActivity {
+/**
+ * This activity shows information about the used 3rd party resources and their licenses
+ */
+public class LicensingActivity extends BaseActivity {
 
-    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,27 +34,23 @@ public class LicensingActivity extends ActionBarActivity {
 
         makeLinksClickable();
 
-        mActionBar = getSupportActionBar();
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true);
-            mActionBar.setTitle(R.string.licensing_title);
-        }
+        //set up navigation drawer
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        super.setUpNavigationDrawer(this, mDrawerLayout);
     }
-
-    private void makeLinksClickable() {
-        ((TextView) findViewById(R.id.licensingGoogleMaterialBody)).setMovementMethod(LinkMovementMethod.getInstance());
-        ((TextView) findViewById(R.id.licensingOSMDroidBody)).setMovementMethod(LinkMovementMethod.getInstance());
-        ((TextView) findViewById(R.id.licensingOSMBonusPackBody)).setMovementMethod(LinkMovementMethod.getInstance());
-        ((TextView) findViewById(R.id.licensingCouchbaseBody)).setMovementMethod(LinkMovementMethod.getInstance());
-    }
-
 
     /**
-     * Ensures tat the back button on the action bar works properly
+     * Makes the URL links in the body of licensing information clickable so that they'll open
+     * in Chrome when the user touches them
      */
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    private void makeLinksClickable() {
+        ((TextView) findViewById(R.id.licensingGoogleMaterialBody))
+                .setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.licensingOSMDroidBody))
+                .setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.licensingOSMBonusPackBody))
+                .setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.licensingCouchbaseBody))
+                .setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
