@@ -25,11 +25,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
@@ -45,6 +42,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -132,7 +130,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mProgressDialog.setCancelable(true);
 
         // getting the map
-        GenericMapView genericMap = (GenericMapView) findViewById(R.id.map);
+        GenericMapView genericMap = (GenericMapView) findViewById(R.id.routeNavigationMap);
         MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
         genericMap.setTileProvider(bitmapProvider);
         mMap = genericMap.getMapView();
@@ -165,7 +163,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
         mMap.getOverlays().add(mItineraryMarkers);
-        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_itinerary_bubble, mMap, this);
+        mViaPointInfoWindow = new ViaPointInfoWindow(R.layout.navigation_info_window, mMap, this);
         mMarker = new SetMarker(mMap, mItineraryMarkers, mViaPointInfoWindow);
         mLocationOverlay = new DirectedLocationOverlay(this);
         mMap.getOverlays().add(mLocationOverlay);
@@ -188,13 +186,14 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             if (route.getWayPoints().get(i).getExhibitId() != -1) {
                 Exhibit exhibit = route.getWayPoints().get(i).getExhibit(db);
 
-                viaPointsData.setViaPointData(geoPoint, exhibit.name, exhibit.description, exhibit.id);
+                viaPointsData.setViaPointData
+                        (geoPoint, exhibit.getName(), exhibit.getDescription(), exhibit.getId());
             } else {
                 if (i == route.getWayPoints().size() - 1) {
                     viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.destination),
                             "", -1);
                 } else {
-                    viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.viapoint),
+                    viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.via_point),
                             "", -1);
                 }
             }
@@ -224,7 +223,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.getOverlays().add(scaleBarOverlay);
 
         //Tracking system:
-        mTrackingModeButton = (Button) findViewById(R.id.buttonTrackingMode);
+        mTrackingModeButton = (Button) findViewById(R.id.routeNavigationTrackingModeButton);
         mTrackingModeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 mTrackingMode = !mTrackingMode;
@@ -480,19 +479,23 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      */
     private void updateManeuverIcon(Drawable drawable) {
 
-        // set maneuver icon
-        ImageView ivManeuverIcon = (ImageView) findViewById(R.id.imageView_maneuverIcon);
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-        Bitmap newImage = Bitmap.createBitmap(ivManeuverIcon.getWidth(), ivManeuverIcon.getHeight(),
-                Bitmap.Config.ARGB_8888);
+//        // set maneuver icon
+//        ImageView ivManeuverIcon = (ImageView) findViewById(R.id.routeNavigationManeuverIcon);
+//        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+//        Bitmap newImage = Bitmap.createBitmap(ivManeuverIcon.getWidth(), ivManeuverIcon.getHeight(),
+//                Bitmap.Config.ARGB_8888);
+//
+//        int maneuverIconCenterX = (ivManeuverIcon.getWidth() - bitmap.getWidth()) / 2;
+//        int maneuverIconCenterY = (ivManeuverIcon.getHeight() - bitmap.getHeight()) / 2;
+//
+//        Canvas cManeuverIcon = new Canvas(newImage);
+//        cManeuverIcon.drawBitmap(bitmap, maneuverIconCenterX, maneuverIconCenterY, null);
+//
+//        ivManeuverIcon.setImageBitmap(newImage);
 
-        int maneuverIconCenterX = (ivManeuverIcon.getWidth() - bitmap.getWidth()) / 2;
-        int maneuverIconCenterY = (ivManeuverIcon.getHeight() - bitmap.getHeight()) / 2;
 
-        Canvas cManeuverIcon = new Canvas(newImage);
-        cManeuverIcon.drawBitmap(bitmap, maneuverIconCenterX, maneuverIconCenterY, null);
-
-        ivManeuverIcon.setImageBitmap(newImage);
+        ImageView ivManeuverIcon = (ImageView) findViewById(R.id.routeNavigationManeuverIcon);
+        ivManeuverIcon.setImageBitmap(((BitmapDrawable) drawable).getBitmap());
     }
 
     /**
@@ -501,23 +504,30 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     //TODO calculate position for instruction if instruction too long for one line
     private void updateInstructionInfo(String instructions) {
 
-        Paint paint = getPaintForTextInstructions();
+        // I replaced this ImageView version with TextView version, but I don't know if this is OK
+        // christian
 
-        // set maneuver instruction
-        ImageView ivManeuverInstruction = (ImageView) findViewById(R.id.imageView_routeInstruction);
-        Bitmap newImage = Bitmap.createBitmap(ivManeuverInstruction.getWidth(),
-                ivManeuverInstruction.getHeight(), Bitmap.Config.ARGB_8888);
 
-        Canvas cManeuverInfo = new Canvas(newImage);
+//        // set maneuver instruction
+//        ImageView ivManeuverInstruction = (ImageView) findViewById(R.id.routeNavigationInstruction);
+//
+//        Paint paint = getPaintForTextInstructions();
+//        Bitmap newImage = Bitmap.createBitmap(ivManeuverInstruction.getWidth(),
+//                ivManeuverInstruction.getHeight(), Bitmap.Config.ARGB_8888);
+//
+//        Canvas cManeuverInfo = new Canvas(newImage);
+//
+//        Rect bounds = new Rect();
+//        paint.getTextBounds(instructions, 0, instructions.length(), bounds);
+//
+//        int textY = cManeuverInfo.getHeight() / 2 - bounds.height() / 2;
+//        int textX = cManeuverInfo.getWidth() / 2;
+//
+//        cManeuverInfo.drawText(instructions, textX, textY, paint);
+//        ivManeuverInstruction.setImageBitmap(newImage);
 
-        Rect bounds = new Rect();
-        paint.getTextBounds(instructions, 0, instructions.length(), bounds);
-
-        int textY = cManeuverInfo.getHeight() / 2 - bounds.height() / 2;
-        int textX = cManeuverInfo.getWidth() / 2;
-
-        cManeuverInfo.drawText(instructions, textX, textY, paint);
-        ivManeuverInstruction.setImageBitmap(newImage);
+        TextView ivManeuverInstruction = (TextView) findViewById(R.id.routeNavigationInstruction);
+        ivManeuverInstruction.setText(instructions);
     }
 
     /**
@@ -525,22 +535,28 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      */
     private void updateDistanceInfo(String length) {
 
-        Paint paint = getPaintForTextInstructions();
+        // I replaced this ImageView version with TextView version, but I don't know if this is OK
+        // christian
 
-        ImageView ivManeuverDistance = (ImageView) findViewById(R.id.imageView_routeDistance);
-        Bitmap newImage = Bitmap.createBitmap(ivManeuverDistance.getWidth(),
-                ivManeuverDistance.getHeight(), Bitmap.Config.ARGB_8888);
+//        Paint paint = getPaintForTextInstructions();
+//
+//        ImageView ivManeuverDistance = (ImageView) findViewById(R.id.routeNavigationDistance);
+//        Bitmap newImage = Bitmap.createBitmap(ivManeuverDistance.getWidth(),
+//                ivManeuverDistance.getHeight(), Bitmap.Config.ARGB_8888);
+//
+//        Canvas cManeuverDistance = new Canvas(newImage);
+//
+//        Rect bounds = new Rect();
+//        paint.getTextBounds(length, 0, length.length(), bounds);
+//
+//        int textY = cManeuverDistance.getHeight() / 2;
+//        int textX = cManeuverDistance.getWidth() / 2;
+//
+//        cManeuverDistance.drawText(length, textX, textY, paint);
+//        ivManeuverDistance.setImageBitmap(newImage);
 
-        Canvas cManeuverDistance = new Canvas(newImage);
-
-        Rect bounds = new Rect();
-        paint.getTextBounds(length, 0, length.length(), bounds);
-
-        int textY = cManeuverDistance.getHeight() / 2;
-        int textX = cManeuverDistance.getWidth() / 2;
-
-        cManeuverDistance.drawText(length, textX, textY, paint);
-        ivManeuverDistance.setImageBitmap(newImage);
+        TextView ivManeuverDistance = (TextView) findViewById(R.id.routeNavigationDistance);
+        ivManeuverDistance.setText(length);
     }
 
     /**
@@ -927,7 +943,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         protected Road[] doInBackground(Object... params) {
             @SuppressWarnings("unchecked")
             ArrayList<GeoPoint> waypoints = (ArrayList<GeoPoint>) params[0];
-            RoadManager roadManager = new MapQuestRoadManager(getString(R.string.mapquest_key));
+            RoadManager roadManager = new MapQuestRoadManager(getString(R.string.map_quest_key));
             roadManager.addRequestOption("routeType=pedestrian");
             roadManager.addRequestOption("locale=de_DE");
 

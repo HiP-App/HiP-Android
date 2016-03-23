@@ -38,16 +38,23 @@ import de.upb.hip.mobile.activities.R;
 public class ViaPointInfoWindow extends MarkerInfoWindow {
 
     private Map<String, Integer> mViaPointData = new HashMap<>();
-    private String title;
+    private String mTitle;
 
+    /**
+     * Constructor
+     * @param layoutResId
+     * @param mapView
+     * @param context
+     */
     public ViaPointInfoWindow(int layoutResId, MapView mapView, final Context context) {
         super(layoutResId, mapView);
+        
         Button btnInfo = (Button) (mView.findViewById(R.id.bubble_info));
         btnInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (mViaPointData.containsKey(title) && mViaPointData.get(title) != -1) {
+                if (mViaPointData.containsKey(mTitle) && mViaPointData.get(mTitle) != -1) {
                     Intent intent = new Intent(context, DetailsActivity.class);
-                    intent.putExtra("exhibit-id", mViaPointData.get(title));
+                    intent.putExtra("exhibit-id", mViaPointData.get(mTitle));
                     context.startActivity(intent);
                 }
                 close();
@@ -55,10 +62,14 @@ public class ViaPointInfoWindow extends MarkerInfoWindow {
         });
     }
 
+    /**
+     * Set variables on marker open
+     * @param item
+     */
     @Override
     public void onOpen(Object item) {
         Marker marker = (Marker) item;
-        title = marker.getTitle();
+        mTitle = marker.getTitle();
         try {
             mViaPointData = (Map<String, Integer>) marker.getRelatedObject();
         } catch (ClassCastException e) {

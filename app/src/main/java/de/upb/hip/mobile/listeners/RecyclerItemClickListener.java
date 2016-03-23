@@ -75,12 +75,12 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                             // Now we provide a list of Pair items which contain the view we can
                             // transitioning from, and the name of the view it is transitioning to,
                             // in the launched activity
-                            new Pair<>(childView.findViewById(R.id.imageViewMain),
+                            new Pair<>(childView.findViewById(R.id.mainRowItemImage),
                                     DetailsActivity.VIEW_NAME_IMAGE),
-                            new Pair<>(childView.findViewById(R.id.txtName),
+                            new Pair<>(childView.findViewById(R.id.mainRowItemName),
                                     DetailsActivity.VIEW_NAME_TITLE));
 
-            intent.putExtra("exhibit-id", childView.getId());
+            intent.putExtra(DetailsActivity.INTENT_EXHIBIT_ID, childView.getId());
             ActivityCompat.startActivity(this.mMainActivity, intent, activityOptions.toBundle());
         }
         return false;

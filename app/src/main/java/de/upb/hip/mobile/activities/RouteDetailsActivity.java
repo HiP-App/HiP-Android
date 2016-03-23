@@ -27,7 +27,8 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -68,7 +69,7 @@ import de.upb.hip.mobile.models.Waypoint;
  * Activity Class for the route details view, where the details of a route are show, including a
  * map and the possibility to start the navigation.
  */
-public class RouteDetailsActivity extends BaseActivity {
+public class RouteDetailsActivity extends ActionBarActivity {
 
     public static final int MAX_ZOOM_LEVEL = 16;
     public static final int ZOOM_LEVEL = 16;
@@ -81,7 +82,9 @@ public class RouteDetailsActivity extends BaseActivity {
     private ExtendedLocationListener mGpsTracker;
     private boolean mCanGetLocation = true;
 
-    private DBAdapter db;
+    private DBAdapter mDatabase;
+
+    private ActionBar mActionBar;
 
     /**
      * Called when the activity is created, shows the details of the route
@@ -112,7 +115,7 @@ public class RouteDetailsActivity extends BaseActivity {
                         ExtendedLocationListener.PADERBORN_HBF.longitude);
             }
 
-            db = new DBAdapter(this);
+            mDatabase = new DBAdapter(this);
 
             initRouteInfo();
             initMap();
@@ -127,7 +130,7 @@ public class RouteDetailsActivity extends BaseActivity {
             Toast.makeText(mMap.getContext(), R.string.empty_route, Toast.LENGTH_SHORT).show();
         }
 
-        Button button = (Button) this.findViewById(R.id.activityRouteDetailsRouteStartButton);
+        Button button = (Button) this.findViewById(R.id.routeDetailsStartNavigationButton);
         button.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -177,9 +180,23 @@ public class RouteDetailsActivity extends BaseActivity {
                     }
                 });
 
-        //setUp navigation drawer
-        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        super.setUpNavigationDrawer(this, mDrawerLayout);
+        // Set back button on actionbar
+        mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setTitle(mRoute.getTitle());
+        }
+    }
+
+    /**
+     * Implement the onSupportNavigateUp() method of the interface, closes the activity
+     *
+     * @return always true
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     /**
@@ -187,7 +204,7 @@ public class RouteDetailsActivity extends BaseActivity {
      */
     private void initMap() {
         // getting the map
-        GenericMapView genericMap = (GenericMapView) findViewById(R.id.map_route_details);
+        GenericMapView genericMap = (GenericMapView) findViewById(R.id.routeDetailsMap);
         MapTileProviderBasic bitmapProvider = new MapTileProviderBasic(this);
         genericMap.setTileProvider(bitmapProvider);
         mMap = genericMap.getMapView();
@@ -218,7 +235,7 @@ public class RouteDetailsActivity extends BaseActivity {
     private void initItineraryMarkers() {
 
         ViaPointInfoWindow mViaPointInfoWindow = new ViaPointInfoWindow(
-                R.layout.navigation_itinerary_bubble, mMap, this);
+                R.layout.navigation_info_window, mMap, this);
 
         FolderOverlay mItineraryMarkers = new FolderOverlay(this);
         mItineraryMarkers.setName(getString(R.string.itinerary_markers_title));
@@ -250,12 +267,12 @@ public class RouteDetailsActivity extends BaseActivity {
 
             // add related data to marker if start point is first waypoint
             if (mRoute.getWayPoints().get(0).getExhibitId() != -1) {
-                Exhibit exhibit = mRoute.getWayPoints().get(0).getExhibit(db);
-                title = exhibit.name;
-                description = exhibit.description;
-                exhibitId = exhibit.id;
+                Exhibit exhibit = mRoute.getWayPoints().get(0).getExhibit(mDatabase);
+                title = exhibit.getName();
+                description = exhibit.getDescription();
+                exhibitId = exhibit.getId();
 
-                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
             }
         }
 
@@ -300,13 +317,13 @@ public class RouteDetailsActivity extends BaseActivity {
                 if (waypoint.getExhibitId() != -1) {
                     GeoPoint geoPoint =
                             new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude());
-                    Exhibit exhibit = waypoint.getExhibit(db);
+                    Exhibit exhibit = waypoint.getExhibit(mDatabase);
 
-                    Drawable drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                    Drawable drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
 
                     // add marker on map for waypoint
-                    addMarker(geoPoint, drawable, R.drawable.marker_via, exhibit.name,
-                            exhibit.description, exhibit.id);
+                    addMarker(geoPoint, drawable, R.drawable.marker_via, exhibit.getName(),
+                            exhibit.getDescription(), exhibit.getId());
                 }
             }
         }
@@ -344,12 +361,12 @@ public class RouteDetailsActivity extends BaseActivity {
 
             // add related data to marker
             if (mRoute.getWayPoints().get(waypointIndex).getExhibitId() != -1) {
-                Exhibit exhibit = mRoute.getWayPoints().get(waypointIndex).getExhibit(db);
-                title = exhibit.name;
-                description = exhibit.description;
-                exhibitId = exhibit.id;
+                Exhibit exhibit = mRoute.getWayPoints().get(waypointIndex).getExhibit(mDatabase);
+                title = exhibit.getName();
+                description = exhibit.getDescription();
+                exhibitId = exhibit.getId();
 
-                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
             } else {
                 drawable = ContextCompat.getDrawable(this, R.drawable.marker_destination);
             }
@@ -365,18 +382,18 @@ public class RouteDetailsActivity extends BaseActivity {
      */
     private void initRouteInfo() {
         TextView descriptionView = (TextView) findViewById(
-                R.id.activityRouteDetailsRouteDescription);
-        TextView titleView = (TextView) findViewById(R.id.activityRouteDetailsRouteTitle);
-        TextView durationView = (TextView) findViewById(R.id.activityRouteDetailsRouteDuration);
+                R.id.routeDetailsDescription);
+        TextView durationView = (TextView) findViewById(R.id.routeDetailsDuration);
+        TextView distanceView = (TextView) findViewById(R.id.routeDetailsDistance);
         LinearLayout tagsLayout = (LinearLayout) findViewById(
-                R.id.activityRouteDetailsRouteTagsLayout);
-        ImageView imageView = (ImageView) findViewById(R.id.activityRouteDetailsRouteImageView);
+                R.id.routeDetailsTagsLayout);
 
         descriptionView.setText(mRoute.getDescription());
-        titleView.setText(mRoute.getTitle());
         int durationInMinutes = mRoute.getDuration() / 60;
         durationView.setText(getResources().getQuantityString(
                 R.plurals.route_activity_duration_minutes, durationInMinutes, durationInMinutes));
+        distanceView.setText(String.format(getResources().getString(
+                R.string.route_activity_distance_kilometer), mRoute.getDistance()));
 
         //Add tags
         if (mRoute.getTags() != null) {
@@ -394,7 +411,6 @@ public class RouteDetailsActivity extends BaseActivity {
         try {
             Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
             Drawable image = new BitmapDrawable(getResources(), bitmap);
-            imageView.setImageDrawable(image);
         } catch (CouchbaseLiteException e) {
             Log.e("routes", e.toString());
         }

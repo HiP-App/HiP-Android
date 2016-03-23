@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,13 +56,13 @@ public class RouteFilterActivity extends ActionBarActivity {
         Intent intent = getIntent();
 
         // Get routes
-        RouteSet routeSet = (RouteSet) intent.getSerializableExtra("routeSet");
+        RouteSet routeSet = (RouteSet) intent.getSerializableExtra("RouteSet");
         @SuppressWarnings("unchecked") // activeTags will be always a HashSet
                 HashSet<String> activeTags = (HashSet<String>) intent.getSerializableExtra("activeTags");
 
         //There will be duplicates in the route set so we have to remove them
         HashMap<String, RouteTagHolder> uniqueTags = new HashMap<>();
-        for (Route route : routeSet.routes) {
+        for (Route route : routeSet.getRoutes()) {
             for (RouteTag tag : route.getTags()) {
                 if (!uniqueTags.containsKey(tag.getTag())) {
                     //Call getImage so that the route tag caches its image
@@ -73,15 +74,15 @@ public class RouteFilterActivity extends ActionBarActivity {
         }
 
         // Add tags
-        ListView listView = (ListView) findViewById(R.id.routeTagList);
+        ListView listView = (ListView) findViewById(R.id.routeFilterTagList);
         final ArrayAdapter<RouteTagHolder> adapter =
                 new RouteTagArrayAdapter(getApplicationContext(),
                         new ArrayList<>(uniqueTags.values()));
         listView.setAdapter(adapter);
 
         // Add buttons
-        Button closeWithoutSave = (Button) findViewById(R.id.routeTagCloseWithoutSave);
-        Button closeWithSave = (Button) findViewById(R.id.routeTagCloseWithSave);
+        Button closeWithoutSave = (Button) findViewById(R.id.routeFilterCloseWithoutSaveButton);
+        Button closeWithSave = (Button) findViewById(R.id.routeFilterCloseWithSaveButton);
 
         closeWithoutSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +195,7 @@ public class RouteFilterActivity extends ActionBarActivity {
          * @param tags    list of tags as RouteTagHolder
          */
         public RouteTagArrayAdapter(Context context, List<RouteTagHolder> tags) {
-            super(context, R.layout.activity_route_filter_row, tags);
+            super(context, R.layout.activity_route_filter_row_item, tags);
             mInflater = LayoutInflater.from(context);
         }
 
@@ -209,11 +210,11 @@ public class RouteFilterActivity extends ActionBarActivity {
             ImageView imageView;
 
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.activity_route_filter_row, null);
+                convertView = mInflater.inflate(R.layout.activity_route_filter_row_item, null);
 
-                checkBox = (CheckBox) convertView.findViewById(R.id.activityRouteFilterRowCheckBox);
+                checkBox = (CheckBox) convertView.findViewById(R.id.routeFilterRowItemCheckBox);
                 imageView = (ImageView) convertView.findViewById(
-                        R.id.activityRouteFilterRowImageView);
+                        R.id.routeFilterRowItemImage);
 
                 convertView.setTag(new RouteTagViewHolder(checkBox, imageView));
 

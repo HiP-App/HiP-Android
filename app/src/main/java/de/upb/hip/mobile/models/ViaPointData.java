@@ -18,27 +18,32 @@ package de.upb.hip.mobile.models;
 
 import org.osmdroid.util.GeoPoint;
 
+/**
+ * Holds data for a specific point the route should pass through
+ * Note that this may but does not have to be connected to an exhibit
+ */
 public class ViaPointData {
     private GeoPoint mGeo = new GeoPoint(51.7276064, 8.7684325); // Paderborn
     private String mTitle = "";
     private String mDescription = "";
-    private int mExhibits_id = -1;
+    private int mExhibitId = -1;
 
-    public ViaPointData(GeoPoint geo, String title, String description, int exhibits_id) {
-        this.mGeo = geo;
-        this.mTitle = title;
-        this.mDescription = description;
-        this.mExhibits_id = exhibits_id;
-    }
-
+    /**
+     * Default constructor initializes class with dummy data
+     */
     public ViaPointData() {
+
     }
 
-    public void setViaPointData(GeoPoint geo, String title, String description, int exhibits_id) {
+    public ViaPointData(GeoPoint geo, String title, String description, int exhibitId) {
+        setViaPointData(geo, title, description, exhibitId);
+    }
+
+    public void setViaPointData(GeoPoint geo, String title, String description, int exhibitId) {
         this.mGeo = geo;
         this.mTitle = title;
         this.mDescription = description;
-        this.mExhibits_id = exhibits_id;
+        this.mExhibitId = exhibitId;
     }
 
     public GeoPoint getGeoPoint() {
@@ -54,6 +59,6 @@ public class ViaPointData {
     }
 
     public Integer getExhibitsId() {
-        return mExhibits_id;
+        return mExhibitId;
     }
 }

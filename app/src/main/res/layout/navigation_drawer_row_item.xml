@@ -16,24 +16,24 @@
  * limitations under the License.
  */
 -->
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/routeActivityDrawerLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:background="@drawable/navdrawer_selector">
 
-    <!-- The main content view -->
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ImageView
+        android:id="@+id/navigationDrawerRowItemIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/navigationDrawerRowItemText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:textColor="@color/textColorPrimaryInverse" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/routeRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-
-    </LinearLayout>
-
-    <!-- The navigation drawer -->
-    <include layout="@layout/navigation_drawer" />
-</android.support.v4.widget.DrawerLayout>
+</LinearLayout>

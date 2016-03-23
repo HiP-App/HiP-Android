@@ -1,7 +1,6 @@
 package de.upb.hip.mobile.activities;
 
 import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.ViewAssertion;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.matcher.BoundedMatcher;
@@ -11,15 +10,12 @@ import android.test.ActivityInstrumentationTestCase2;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import de.upb.hip.mobile.adapters.DBAdapter;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.core.Is.is;
@@ -27,25 +23,11 @@ import static org.hamcrest.core.Is.is;
 
 public class DetailsActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-    private MainActivity mainactivity;
-
     private static final String UNIPADERBORN = "Universität Paderborn";
+    private MainActivity mainactivity;
 
     public DetailsActivityTest() {
         super(MainActivity.class);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-        mainactivity = getActivity();
-        onView(withId(R.id.my_recycler_view)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(UNIPADERBORN)), click()));
-    }
-
-    /* test title name */
-    public void testActionBarTitle() {
-        matchToolbarTitle(UNIPADERBORN);
     }
 
     /* help function for toolbar name matching */
@@ -71,24 +53,37 @@ public class DetailsActivityTest extends ActivityInstrumentationTestCase2<MainAc
         };
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+        mainactivity = getActivity();
+        onView(withId(R.id.mainRecyclerView)).perform(RecyclerViewActions.actionOnItem(hasDescendant(withText(UNIPADERBORN)), click()));
+    }
+
+    /* test title name */
+    public void testActionBarTitle() {
+        matchToolbarTitle(UNIPADERBORN);
+    }
+
     /* test name of the image */
     public void testImageNameText() {
-        onView(withId(R.id.txtName)).check(matches(withText(UNIPADERBORN)));
+        onView(withId(R.id.mainRowItemName)).check(matches(withText(UNIPADERBORN)));
     }
 
     /* test the description */
     public void testDescriptionText() {
-        onView(withId(R.id.txtDescription)).check(matches(withText("Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.")));
+        onView(withId(R.id.detailsDescription)).check(matches(withText("Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.")));
     }
 
     /* test if the image is disployed */
     public void testImage() {
-        onView(withId(R.id.imageViewDetail)).check(matches(isDisplayed()));
+        onView(withId(R.id.detailsImageView)).check(matches(isDisplayed()));
     }
 
     /* test if the ImageViewDetail can be opened by clicking on the image */
     public void testOpenImageView() {
-        onView(withId(R.id.imageViewDetail)).perform(click());
+        onView(withId(R.id.detailsImageView)).perform(click());
         matchToolbarTitle(UNIPADERBORN);
     }
 }

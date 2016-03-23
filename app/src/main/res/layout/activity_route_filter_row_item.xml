@@ -16,12 +16,20 @@
  * limitations under the License.
  */
 -->
-<android.widget.ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/navigation_drawer"
-    android:layout_width="240dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="start"
-    android:background="@android:color/background_light"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/holo_blue_light"
-    android:dividerHeight="0dp" />
+    android:orientation="horizontal">
+
+    <CheckBox
+        android:id="@+id/routeFilterRowItemCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColorPrimaryInverse" />
+
+    <ImageView
+        android:id="@+id/routeFilterRowItemImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
