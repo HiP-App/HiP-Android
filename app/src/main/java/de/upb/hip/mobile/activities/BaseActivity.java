@@ -42,7 +42,8 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     /**
      * Sets up the navigation drawer and creates the click listeners for it.
-     * @param activity Activity
+     *
+     * @param activity     Activity
      * @param drawerLayout DrawerLayout
      */
     public void setUpNavigationDrawer(final Activity activity, DrawerLayout drawerLayout) {
@@ -88,18 +89,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     /**
-     * The click listner for ListView in the navigation drawer
-     */
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mNavigationDrawerList.setItemChecked(position, true);
-            mDrawerLayout.closeDrawer(mNavigationDrawerList);
-        }
-    }
-
-    /**
      * Sync the toggle state after onRestoreInstanceState has occurred.
+     *
      * @param savedInstanceState savedInstanceState
      */
     @Override
@@ -111,6 +102,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 
     /**
      * Pass any configuration change to the drawer toggles
+     *
      * @param newConfig Configuration
      */
     @Override
@@ -122,8 +114,10 @@ public abstract class BaseActivity extends ActionBarActivity {
     /**
      * The action bar home/up action should open or close the drawer.
      * ActionBarDrawerToggle will take care of this.
+     *
      * @param item Menu item
-     * @return
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -131,5 +125,16 @@ public abstract class BaseActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * The click listner for ListView in the navigation drawer
+     */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mNavigationDrawerList.setItemChecked(position, true);
+            mDrawerLayout.closeDrawer(mNavigationDrawerList);
+        }
     }
 }
