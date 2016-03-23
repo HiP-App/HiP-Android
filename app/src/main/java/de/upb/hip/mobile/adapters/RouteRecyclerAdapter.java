@@ -154,7 +154,7 @@ public class RouteRecyclerAdapter
         List<Route> result = new LinkedList<>();
 
         routeLoop:
-        for (Route route : this.mRouteSet.routes) {
+        for (Route route : this.mRouteSet.getRoutes()) {
             for (RouteTag tag : route.getTags()) {
                 if (mActiveTags.contains(tag.getTag())) {
                     result.add(route);
