@@ -186,13 +186,14 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             if (route.getWayPoints().get(i).getExhibitId() != -1) {
                 Exhibit exhibit = route.getWayPoints().get(i).getExhibit(db);
 
-                viaPointsData.setViaPointData(geoPoint, exhibit.name, exhibit.description, exhibit.id);
+                viaPointsData.setViaPointData
+                        (geoPoint, exhibit.getName(), exhibit.getDescription(), exhibit.getId());
             } else {
                 if (i == route.getWayPoints().size() - 1) {
                     viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.destination),
                             "", -1);
                 } else {
-                    viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.viapoint),
+                    viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.via_point),
                             "", -1);
                 }
             }
@@ -942,7 +943,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         protected Road[] doInBackground(Object... params) {
             @SuppressWarnings("unchecked")
             ArrayList<GeoPoint> waypoints = (ArrayList<GeoPoint>) params[0];
-            RoadManager roadManager = new MapQuestRoadManager(getString(R.string.mapquest_key));
+            RoadManager roadManager = new MapQuestRoadManager(getString(R.string.map_quest_key));
             roadManager.addRequestOption("routeType=pedestrian");
             roadManager.addRequestOption("locale=de_DE");
 

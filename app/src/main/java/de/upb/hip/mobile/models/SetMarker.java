@@ -18,12 +18,14 @@ package de.upb.hip.mobile.models;
 
 import android.graphics.drawable.Drawable;
 
+import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
 import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+
 
 /**
  * Create marker on the overlay and add it to the map
@@ -33,7 +35,8 @@ public class SetMarker {
     private MapView mMap;
     private ViaPointInfoWindow mViaPointInfoWindow;
 
-    public SetMarker(MapView map, FolderOverlay folderOverlay, ViaPointInfoWindow viaPointInfoWindow) {
+    public SetMarker
+            (MapView map, FolderOverlay folderOverlay, ViaPointInfoWindow viaPointInfoWindow) {
         this.mMap = map;
         this.mFolderOverlay = folderOverlay;
         this.mViaPointInfoWindow = viaPointInfoWindow;

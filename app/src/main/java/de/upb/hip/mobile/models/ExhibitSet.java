@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.upb.hip.mobile.models;
 
 import android.content.Context;
@@ -5,14 +20,12 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -20,81 +33,92 @@ import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
 
 
+/**
+ * Model for an Set of Exhibits
+ */
 public class ExhibitSet {
 
-    private List<Exhibit> initSet = new ArrayList<>();
-    private List<Exhibit> activeSet = new ArrayList<>();
-    private List<String> categories = new ArrayList<>();
-    private List<String> activeFilter;
-    private LatLng position;
+    private List<Exhibit> mInitSet = new ArrayList<>();
+    private List<Exhibit> mActiveSet = new ArrayList<>();
+    private List<String> mCategories = new ArrayList<>();
+    private LatLng mPosition;
 
-    public ExhibitSet (List<Map<String, Object>> list, LatLng position){
-        this.position = position;
+    /**
+     * Constructor for an set of exhibits
+     *
+     * @param list     list of exhibits as Map<String, Object>
+     * @param position a LatLng Object with current position
+     */
+    public ExhibitSet(List<Map<String, Object>> list, LatLng position) {
+        this.mPosition = position;
 
-        for (int i=0; i<list.size(); i++) {
+        // add all exhibits
+        for (int i = 0; i < list.size(); i++) {
             Map<String, Object> properties = list.get(i);
-            int id = Integer.valueOf((String)properties.get(DBAdapter.KEY_ID));
-            String name = (String)properties.get(DBAdapter.KEY_EXHIBIT_NAME);
-            String description = (String)properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
-            double lat = (double)properties.get(DBAdapter.KEY_EXHIBIT_LAT);
-            double lng = (double)properties.get(DBAdapter.KEY_EXHIBIT_LNG);
-            String categories = (String)properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
-            String tags = (String)properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
+            int id = Integer.valueOf((String) properties.get(DBAdapter.KEY_ID));
+            String name = (String) properties.get(DBAdapter.KEY_EXHIBIT_NAME);
+            String description = (String) properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
+            double lat = (double) properties.get(DBAdapter.KEY_EXHIBIT_LAT);
+            double lng = (double) properties.get(DBAdapter.KEY_EXHIBIT_LNG);
+            String categories = (String) properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
+            String tags = (String) properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
 
             Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
-            exhibit.setDistance(this.position);
+            exhibit.setDistance(this.mPosition);
 
-            for(String categorie: exhibit.categories) {
-                if(!this.categories.contains(categorie)) this.categories.add(categorie);
+            for (String categorie : exhibit.getCategories()) {
+                if (!this.mCategories.contains(categorie)) this.mCategories.add(categorie);
             }
 
-            this.initSet.add(exhibit);
+            this.mInitSet.add(exhibit);
         }
 
-        for(Exhibit item: initSet) activeSet.add(item);
+        for (Exhibit item : mInitSet) mActiveSet.add(item);
 
         this.orderByDistance();
     }
 
-    public List<String> getCategories() {
-        return categories;
-    }
 
+    /**
+     * update the categories
+     *
+     * @param strArray array with categories as string
+     */
     public void updateCategories(List<String> strArray) {
 
-        this.activeFilter = strArray;
-        this.activeSet = new ArrayList<>();
+        this.mActiveSet = new ArrayList<>();
 
-        for(int i=0; i < strArray.size(); i++ ){
-            Iterator<Exhibit> iterator = initSet.iterator();
+        for (int i = 0; i < strArray.size(); i++) {
 
-            while(iterator.hasNext()) {
-                Exhibit exhibit = iterator.next();
-
-                if(Arrays.asList(exhibit.categories).contains(strArray.get(i))) {
-                    this.activeSet.add(exhibit);
+            for (Exhibit exhibit : mInitSet) {
+                if (Arrays.asList(exhibit.getCategories()).contains(strArray.get(i))) {
+                    this.mActiveSet.add(exhibit);
                 }
             }
         }
 
         this.orderByDistance();
-
     }
 
-    public void updatePosition (LatLng position) {
-        this.position = position;
+    /**
+     * update the current position
+     *
+     * @param position current position as LatLng
+     */
+    public void updatePosition(LatLng position) {
+        this.mPosition = position;
 
-        Iterator<Exhibit> iterator = initSet.iterator();
-
-        while(iterator.hasNext()) {
-            Exhibit exhibit = iterator.next();
-            exhibit.setDistance(this.position);
+        for (Exhibit exhibit : mInitSet) {
+            exhibit.setDistance(this.mPosition);
         }
 
         this.orderByDistance();
     }
 
-//   TODO: Refactor ListSort! BAD Performance
+
+    /**
+     * orders the exhibits by distance to the current position
+     */
     private void orderByDistance() {
         List<Exhibit> tmpList = new ArrayList<>();
 
@@ -103,90 +127,66 @@ public class ExhibitSet {
         double currentDistance;
         int i = 0;
 
-        while(this.activeSet.size() > 0) {
-            currentDistance = this.activeSet.get(i).distance;
-            if(minDistance == 0) {
+        while (this.mActiveSet.size() > 0) {
+            currentDistance = this.mActiveSet.get(i).getDistance();
+            if (minDistance == 0) {
                 minDistance = currentDistance;
                 minPosition = i;
             }
-            if(currentDistance < minDistance) {
+            if (currentDistance < minDistance) {
                 minDistance = currentDistance;
                 minPosition = i;
             }
-            if(i == this.activeSet.size()-1) {
-                tmpList.add(this.activeSet.remove(minPosition));
+            if (i == this.mActiveSet.size() - 1) {
+                tmpList.add(this.mActiveSet.remove(minPosition));
                 minDistance = 0;
                 i = 0;
             } else i++;
         }
 
-        this.activeSet = tmpList;
-
-        //this.exhibits = this.mergeSort(this.exhibits);
+        this.mActiveSet = tmpList;
     }
 
-    private List<Exhibit> mergeSort(List<Exhibit> list) {
-        if (list.size() < 2) {
-            return list;
-        }
-        else {
-            List<Exhibit> left = list.subList(0, list.size()/2);
-            List<Exhibit> right = list.subList(list.size()/2, list.size());
-            left = this.mergeSort(left);
-            right = this.mergeSort(right);
-            return this.merge(left, right);
-        }
-    }
 
-    private List<Exhibit> merge(List<Exhibit> left, List<Exhibit> right) {
-        double leftDistance, rightDistance;
-        List<Exhibit> list = new ArrayList<>();
-        while(left.size() > 0 && right.size() > 0){
-            leftDistance = SphericalUtil.computeDistanceBetween(this.position, left.get(0).latlng);
-            rightDistance = SphericalUtil.computeDistanceBetween(this.position, right.get(0).latlng);
-            if(leftDistance < rightDistance) {
-                list.add(left.remove(0));
-            } else {
-                list.add(right.remove(0));
-            }
-        }
-        while(left.size() > 0) {
-            list.add(left.get(0));
-            left.remove(0);
-        }
-        while(right.size() > 0) {
-            list.add(right.get(0));
-            right.remove(0);
-        }
-        return list;
-    }
-
+    /**
+     * adds a marker to the map
+     *
+     * @param mMarker the marker
+     * @param ctx     actual context
+     */
     public void addMarker(SetMarker mMarker, Context ctx) {
         mMarker.mFolderOverlay.closeAllInfoWindows();
         mMarker.mFolderOverlay.getItems().clear();
 
-        Iterator<Exhibit> iterator = activeSet.iterator();
-
-        while(iterator.hasNext()) {
-            Exhibit exhibit = iterator.next();
-            Drawable d = DBAdapter.getImage(exhibit.id, "image.jpg", 32);
+        for (Exhibit exhibit : mActiveSet) {
+            Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 32);
 
             Map<String, Integer> data = new HashMap<>();
-            data.put(exhibit.name, exhibit.id);
+            data.put(exhibit.getName(), exhibit.getId());
 
             Drawable icon = ContextCompat.getDrawable(ctx, R.drawable.marker_via);
 
-            mMarker.addMarker(null, exhibit.name, exhibit.description,
-                    new GeoPoint(exhibit.latlng.latitude, exhibit.latlng.longitude), d, icon, data);
-
+            mMarker.addMarker(null, exhibit.getName(), exhibit.getDescription(),
+                    new GeoPoint(exhibit.getLatlng().latitude, exhibit.getLatlng().longitude), d, icon, data);
         }
     }
 
+    /**
+     * getter for an exhibit
+     *
+     * @param position position of the exhibit in the ExhibitSet
+     * @return Exhibit
+     */
     public Exhibit getExhibit(int position) {
-        return activeSet.get(position);
+        return mActiveSet.get(position);
     }
 
+    /**
+     * gets the size of the exhibitSet
+     *
+     * @return size
+     */
     public int getSize() {
-        return activeSet.size();
+        return mActiveSet.size();
     }
 }

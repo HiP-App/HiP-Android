@@ -21,9 +21,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/google_maps_key" />
 
         <activity android:name=".SplashScreenActivity">
             <intent-filter>
@@ -42,10 +39,6 @@
             android:label="@string/title_activity_main"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.WithActionBar" />
-        <activity
-            android:name=".FilterActivity"
-            android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme" />
         <activity
             android:name=".DisplaySingleImageActivity"
             android:label="@string/title_activity_display_single_image"

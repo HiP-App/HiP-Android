@@ -16,29 +16,27 @@
 
 package de.upb.hip.mobile.models;
 
-import de.upb.hip.mobile.adapters.DBAdapter;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import java.util.ArrayList;
+import de.upb.hip.mobile.adapters.DBAdapter;
+import com.couchbase.lite.Document;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.couchbase.lite.Document;
-
 public class Exhibit {
 
-    public int id;
-    public String name;
-    public String description;
-    public LatLng latlng;
-    public String[] categories;
-    public String[] tags;
-    public double distance;
-    public int sliderID;
-    public HashMap<String, String> pictureDescriptions;
+    private int mId;
+    private String mName;
+    private String mDescription;
+    private LatLng mLatlng;
+    private String[] mCategories;
+    private String[] mTags;
+    private double mDistance;
+    private int mSliderId;
+    private HashMap<String, String> mPictureDescriptions;
 
     public Exhibit (Document document) {
 
@@ -50,29 +48,68 @@ public class Exhibit {
         double lng = (double)properties.get(DBAdapter.KEY_EXHIBIT_LNG);
         String categories = (String)properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
         String tags = (String)properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
-        int sliderID = (int)properties.get(DBAdapter.KEY_EXHIBIT_SLIDER_ID);
+        int sliderId = (int)properties.get(DBAdapter.KEY_EXHIBIT_SLIDER_ID);
 
-        this.pictureDescriptions = (LinkedHashMap<String, String>)document.getProperty(DBAdapter.KEY_EXHIBIT_PICTURE_DESCRIPTIONS);
+        mPictureDescriptions = (LinkedHashMap<String, String>)document.getProperty
+                (DBAdapter.KEY_EXHIBIT_PICTURE_DESCRIPTIONS);
 
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.latlng = new LatLng(lat, lng);
-        this.categories = categories.split(",");
-        this.tags = tags.split(",");
-        this.sliderID = sliderID;
+        mId = id;
+        mName = name;
+        mDescription = description;
+        mLatlng = new LatLng(lat, lng);
+        mCategories = categories.split(",");
+        mTags = tags.split(",");
+        mSliderId = sliderId;
     }
 
-    public Exhibit (int id, String name, String description, double lat, double lng, String categories, String tags) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.latlng = new LatLng(lat, lng);
-        this.categories = categories.split(",");
-        this.tags = tags.split(",");
+    public Exhibit (int id, String name, String description, double lat,
+                    double lng, String categories, String tags) {
+        mId = id;
+        mName = name;
+        mDescription = description;
+        mLatlng = new LatLng(lat, lng);
+        mCategories = categories.split(",");
+        mTags = tags.split(",");
     }
 
     public void setDistance (LatLng position) {
-        this.distance = SphericalUtil.computeDistanceBetween(position, this.latlng);
+        mDistance = SphericalUtil.computeDistanceBetween(position, mLatlng);
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public String getName(){
+        return mName;
+    }
+
+    public String getDescription(){
+        return mDescription;
+    }
+
+    public LatLng getLatlng() {
+        return mLatlng;
+    }
+
+    public String[] getCategories() {
+        return mCategories.clone();
+    }
+
+    public String[] getTags(){
+        return mTags.clone();
+    }
+
+    public int getSliderId() {
+        return mSliderId;
+    }
+
+    public HashMap<String, String> getPictureDescriptions(){
+        return new HashMap<String, String>(mPictureDescriptions);   //return a new object
+                // so as to leave this one intact, when the return object is changed
+    }
+
+    public double getDistance(){
+        return mDistance;
     }
 }

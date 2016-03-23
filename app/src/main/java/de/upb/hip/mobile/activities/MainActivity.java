@@ -236,7 +236,7 @@ public class MainActivity extends BaseActivity {
 
         for (int i = 0; i < this.mExhibitSet.getSize(); i++) {
             Exhibit exhibit = this.mExhibitSet.getExhibit(i);
-            GeoPoint geo = new GeoPoint(exhibit.latlng.latitude, exhibit.latlng.longitude);
+            GeoPoint geo = new GeoPoint(exhibit.getLatlng().latitude, exhibit.getLatlng().longitude);
 
             points.add(geo);
         }

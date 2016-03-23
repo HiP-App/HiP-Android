@@ -55,7 +55,7 @@ public class RouteRecyclerAdapter
     /**
      * Create a new Filter and return it
      *
-     * @return
+     * @return new created filter
      */
     @Override
     public Filter getFilter() {
@@ -76,15 +76,14 @@ public class RouteRecyclerAdapter
      * Create new views (invoked by the layout manager)
      *
      * @param parent   ViewGroup
-     * @param viewType
-     * @return
+     * @param viewType integer of the view type
+     * @return new ViewHolder
      */
     @Override
     public RouteRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.activity_route_row_item, parent, false);
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     /**
@@ -146,7 +145,7 @@ public class RouteRecyclerAdapter
     }
 
     /**
-     * Filters rouutes for activeTags
+     * Filters routes for activeTags
      *
      * @return routes which contains activeTags
      */
@@ -154,7 +153,7 @@ public class RouteRecyclerAdapter
         List<Route> result = new LinkedList<>();
 
         routeLoop:
-        for (Route route : this.mRouteSet.routes) {
+        for (Route route : this.mRouteSet.getRoutes()) {
             for (RouteTag tag : route.getTags()) {
                 if (mActiveTags.contains(tag.getTag())) {
                     result.add(route);
@@ -172,16 +171,16 @@ public class RouteRecyclerAdapter
     /**
      * Register the listener for routeSelection
      *
-     * @param listener
+     * @param listener RouteSelectedListener that should be added
      */
     public void registerRouteSelectedListener(RouteSelectedListener listener) {
         mRouteSelectedListeners.add(listener);
     }
 
     /**
-     * Notifys listeners when a route was selected
+     * Notifies listeners when a route was selected
      *
-     * @param route
+     * @param route Route for which the listeners should be notified
      */
     private void notifyRouteSelectedListeners(Route route) {
         for (RouteSelectedListener listener : mRouteSelectedListeners) {
