@@ -268,11 +268,11 @@ public class RouteDetailsActivity extends ActionBarActivity {
             // add related data to marker if start point is first waypoint
             if (mRoute.getWayPoints().get(0).getExhibitId() != -1) {
                 Exhibit exhibit = mRoute.getWayPoints().get(0).getExhibit(mDatabase);
-                title = exhibit.name;
-                description = exhibit.description;
-                exhibitId = exhibit.id;
+                title = exhibit.getName();
+                description = exhibit.getDescription();
+                exhibitId = exhibit.getId();
 
-                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
             }
         }
 
@@ -319,11 +319,11 @@ public class RouteDetailsActivity extends ActionBarActivity {
                             new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude());
                     Exhibit exhibit = waypoint.getExhibit(mDatabase);
 
-                    Drawable drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                    Drawable drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
 
                     // add marker on map for waypoint
-                    addMarker(geoPoint, drawable, R.drawable.marker_via, exhibit.name,
-                            exhibit.description, exhibit.id);
+                    addMarker(geoPoint, drawable, R.drawable.marker_via, exhibit.getName(),
+                            exhibit.getDescription(), exhibit.getId());
                 }
             }
         }
@@ -362,11 +362,11 @@ public class RouteDetailsActivity extends ActionBarActivity {
             // add related data to marker
             if (mRoute.getWayPoints().get(waypointIndex).getExhibitId() != -1) {
                 Exhibit exhibit = mRoute.getWayPoints().get(waypointIndex).getExhibit(mDatabase);
-                title = exhibit.name;
-                description = exhibit.description;
-                exhibitId = exhibit.id;
+                title = exhibit.getName();
+                description = exhibit.getDescription();
+                exhibitId = exhibit.getId();
 
-                drawable = DBAdapter.getImage(exhibit.id, "image.jpg", 65);
+                drawable = DBAdapter.getImage(exhibit.getId(), "image.jpg", 65);
             } else {
                 drawable = ContextCompat.getDrawable(this, R.drawable.marker_destination);
             }

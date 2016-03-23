@@ -61,7 +61,7 @@ public class RouteActivity
         mRouteSet = new RouteSet(mDatabase.getView("routes"));
 
         // start with every tag allowed
-        for (Route route : mRouteSet.routes) {
+        for (Route route : mRouteSet.getRoutes()) {
             for (RouteTag tag : route.getTags()) {
                 activeTags.add(tag.getTag());
             }

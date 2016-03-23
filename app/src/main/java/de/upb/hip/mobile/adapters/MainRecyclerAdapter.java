@@ -73,8 +73,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         Exhibit exhibit = this.mExhibitSet.getExhibit(position);
 
         // update the holder with new data
-        holder.mName.setText(exhibit.name);
-        double doubleDistance = exhibit.distance;
+        holder.mName.setText(exhibit.getName());
+        double doubleDistance = exhibit.getDistance();
 
         int intDistance;
         String distance;
@@ -89,11 +89,11 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             distance = (int) doubleDistance + "m";
         }
 
-        holder.mView.setId(exhibit.id);
+        holder.mView.setId(exhibit.getId());
 
         holder.mDistance.setText(distance);
 
-        Drawable d = DBAdapter.getImage(exhibit.id, "image.jpg", 64);
+        Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 64);
         BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
         Bitmap bmp = bitmapDrawable.getBitmap();
         holder.mImage.setImageBitmap(ImageManipulation.getCroppedImage(bmp, 100));

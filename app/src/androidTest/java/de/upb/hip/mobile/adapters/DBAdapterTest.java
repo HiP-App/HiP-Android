@@ -51,7 +51,7 @@ public class DBAdapterTest extends AndroidTestCase {
         RouteSet routeSet = new RouteSet(testobject.getView("routes"));
         assertNotNull(routeSet);
 
-        for (Route route : routeSet.routes) {
+        for (Route route : routeSet.getRoutes()) {
             if (route.getTitle() == "Stadtroute") {
                 /* found Stadtroute, check attributes */
                 assertEquals(route.getDescription(), "Dies ist eine kurze Route in der Stadt.");

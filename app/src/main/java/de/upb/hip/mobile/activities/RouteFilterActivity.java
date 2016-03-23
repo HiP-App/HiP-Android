@@ -62,7 +62,7 @@ public class RouteFilterActivity extends ActionBarActivity {
 
         //There will be duplicates in the route set so we have to remove them
         HashMap<String, RouteTagHolder> uniqueTags = new HashMap<>();
-        for (Route route : routeSet.routes) {
+        for (Route route : routeSet.getRoutes()) {
             for (RouteTag tag : route.getTags()) {
                 if (!uniqueTags.containsKey(tag.getTag())) {
                     //Call getImage so that the route tag caches its image
