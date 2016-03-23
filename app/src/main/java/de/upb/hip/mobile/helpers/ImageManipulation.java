@@ -83,8 +83,7 @@ public class ImageManipulation {
         int markerBitmapWidth = markerBitmap.getWidth();
         int markerBitmapHeight = markerBitmap.getHeight();
         int bitmapWidth = bitmap.getWidth();
-        int bitmapHeight = bitmap.getHeight();
-
+        
         float marginLeft = (float) (markerBitmapWidth * 0.5 - bitmapWidth * 0.5);
         float marginTop = (float) 13;
 
