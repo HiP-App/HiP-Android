@@ -83,14 +83,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         onView(withId(R.id.mainRecyclerView)).perform(RecyclerViewActions.actionOnItem(
                 hasDescendant(withText(BUSDORFKIRCHE)), click()));
         matchToolbarTitle(BUSDORFKIRCHE);
-        onView(withId(R.id.mainRowItemName)).check(matches(withText(BUSDORFKIRCHE)));
+        onView(withId(R.id.detailsName)).check(matches(withText(BUSDORFKIRCHE)));
 
         onView(withContentDescription("Navigate up")).perform(click());
 
         onView(withId(R.id.mainRecyclerView)).perform(RecyclerViewActions.actionOnItem(
                 hasDescendant(withText(UNI_PADERBORN)), click()));
         matchToolbarTitle(UNI_PADERBORN);
-        onView(withId(R.id.mainRowItemName)).check(matches(withText(UNI_PADERBORN)));
+        onView(withId(R.id.detailsName)).check(matches(withText(UNI_PADERBORN)));
     }
 
     public void testMapAvailable() {
