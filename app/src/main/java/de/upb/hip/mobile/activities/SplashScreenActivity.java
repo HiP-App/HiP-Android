@@ -46,7 +46,7 @@ public class SplashScreenActivity extends Activity {
     /**
      * Called when the activity is created.
      * If the database can be reached and is not empty, the MainActivity will be started with a
-     * startup delay. Otherwise the a retry button and an error message is shown.
+     * startup delay. Otherwise a retry button and an error message is shown.
      *
      * @param savedInstanceState savedInstanceState
      */

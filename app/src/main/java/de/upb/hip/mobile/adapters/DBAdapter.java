@@ -52,27 +52,31 @@ import com.couchbase.lite.View;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
+import org.apache.http.conn.ssl.SSLSocketFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyPair;
-import java.security.cert.Certificate;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import de.upb.hip.mobile.activities.MainActivity;
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.RouteTag;
+import de.upb.hip.mobile.models.SliderImage;
+import de.upb.hip.mobile.models.Waypoint;
 
 
 
@@ -124,7 +128,6 @@ public class DBAdapter {
     private final Context mContext; // Context of application who uses us.
     private static Context staticContext; // static context for static getImage()-method
 
-
     /* Constructor */
     public DBAdapter(Context ctx) {
         mContext = ctx;
@@ -136,6 +139,88 @@ public class DBAdapter {
         }
     }
 
+    public static Attachment getAttachment(int documentId, String filename) {
+        Document doc = mDatabase.getDocument(String.valueOf(documentId));
+        Revision rev = doc.getCurrentRevision();
+        Attachment attachment = rev.getAttachment(filename);
+        return attachment;
+    }
+
+    /**
+     *  returns an image from the database
+     */
+    public static Drawable getImage(int id, String imageName) {
+        Attachment att = getAttachment(id, imageName);
+        Drawable d = null;
+        if (att != null) {
+            try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                InputStream is = att.getContent();
+                Bitmap b = BitmapFactory.decodeStream(is);
+                int width = b.getWidth();
+                int height = b.getHeight();
+
+                WindowManager wm = (WindowManager) staticContext.getSystemService(Context.WINDOW_SERVICE);
+                Display display = wm.getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                int screen_width = size.x;
+                int screen_height = size.y;
+
+                // check if greater than device's width / height
+                if (width >= screen_width && height >= screen_height) {
+                    final float scale = staticContext.getResources().getDisplayMetrics().density;
+                    int new_width = (int) (width / scale + 0.5f);
+                    int new_height = (int) (height / scale + 0.5f);
+                    Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
+                    d = new BitmapDrawable(staticContext.getResources(), b2);
+                } else {
+                    d = new BitmapDrawable(staticContext.getResources(), b);
+                }
+
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
+
+    /* returns an image from the database */
+    public static Drawable getImage(int id, String imageName, int required_size) {
+        Attachment att = getAttachment(id, imageName);
+        Drawable d = null;
+        if (att != null) {
+            try {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+                InputStream is = att.getContent();
+                Bitmap b = BitmapFactory.decodeStream(is);
+
+                //Find the correct scale value. It should be the power of 2.
+                final int REQUIRED_SIZE = required_size;
+                int width_tmp = b.getWidth(), height_tmp = b.getHeight();
+                int scale = 1;
+                while (true) {
+                    if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE)
+                        break;
+                    width_tmp /= 2;
+                    height_tmp /= 2;
+                    scale *= 2;
+                }
+
+                BitmapFactory.Options o2 = new BitmapFactory.Options();
+                o2.inSampleSize = scale;
+                Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
+                d = new BitmapDrawable(staticContext.getResources(), b2);
+                is.close();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+            }
+        }
+        return d;
+    }
 
     /** Put some dummy data to the database
      * Call this function manual, if you need to reset the database.
@@ -196,24 +281,24 @@ public class DBAdapter {
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
         insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist" +
-                " eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner" +
-                " Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der" +
-                " Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung" +
-                " erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz," +
-                " seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze." +
-                " Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die" +
-                " Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist" +
-                " heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889,
+                        " eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner" +
+                        " Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der" +
+                        " Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung" +
+                        " erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz," +
+                        " seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze." +
+                        " Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die" +
+                        " Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist" +
+                        " heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889,
                 "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.abdinghof, 5, "image.jpg");
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
         insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die" +
-                " nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war" +
-                " ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen" +
-                " ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge" +
-                " der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606,
+                        " nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war" +
+                        " ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen" +
+                        " ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge" +
+                        " der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606,
                 "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
 
@@ -230,6 +315,22 @@ public class DBAdapter {
                         " diente als Station auf der alljährlichen Libori-Prozession rund um" +
                         "die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Paderquellen");
+        insertExhibit(8, "Paderquellen", "", 51.718529, 8.750662, "", "", pictureDescriptions, -1);
+        addImage(R.drawable.paderquellen, 8, "image.jpg");
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Denkmal für Karl den Großen");
+        insertExhibit(9, "Denkmal für Karl den Großen", "", 51.713877, 8.753032, "", "",
+                pictureDescriptions, -1);
+        addImage(R.drawable.denkmalkdg, 9, "image.jpg");
+
+        pictureDescriptions.clear();
+        pictureDescriptions.put(pictureName, "Karlsschule");
+        insertExhibit(10, "Karlsschule", "", 51.713587, 8.750617, "", "", pictureDescriptions, -1);
+        addImage(R.drawable.karlsschule, 10, "image.jpg");
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
@@ -262,6 +363,44 @@ public class DBAdapter {
         insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.",
                 waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
 
+        //Waypoints marked with *** are also markes displayed on the map
+        waypoints = new LinkedList<>();
+        waypoints.add(new Waypoint(51.715506, 8.746364, -1)); // Bahnhofstr/Westerntor
+        waypoints.add(new Waypoint(51.718192, 8.747126, -1)); // Friedrichstr/Marienstraße
+        waypoints.add(new Waypoint(51.717876, 8.750280, -1)); // Marienstraße/Weberberg
+        //***Paderquellen: Paderufer gegenüber des Galerie-Hotels
+        waypoints.add(new Waypoint(51.718529, 8.750662, 8));
+        waypoints.add(new Waypoint(51.718806, 8.751074, -1)); // Jenny-Aloni-Weg
+        waypoints.add(new Waypoint(51.718610, 8.752168, -1)); // Abdinghof / Paderquellen
+        waypoints.add(new Waypoint(51.718936, 8.753150, -1)); // Abdinghof
+        waypoints.add(new Waypoint(51.718866, 8.754577, -1)); // Abdinghof / Ikenberg
+        waypoints.add(new Waypoint(51.719128, 8.755457, -1)); // Dom
+        waypoints.add(new Waypoint(51.719527, 8.755736, 4)); // ***Kaiserpfalz
+        waypoints.add(new Waypoint(51.719128, 8.755457, 1)); // ***Dom
+        waypoints.add(new Waypoint(51.718866, 8.754577, -1)); // Abdinghof / Ikenbergu
+        waypoints.add(new Waypoint(51.717992, 8.755167, -1)); // Markt
+        waypoints.add(new Waypoint(51.717543, 8.754539, -1)); // Schildern
+        waypoints.add(new Waypoint(51.717321, 8.753423, -1)); // Rathausplatz/Kamp
+        waypoints.add(new Waypoint(51.717281, 8.752490, -1)); // Marienplatz
+        waypoints.add(new Waypoint(51.716862, 8.751353, -1)); // Rosenstr / Westernstr
+        waypoints.add(new Waypoint(51.715187, 8.752109, -1)); // Bahnübergang Rosentor***
+        waypoints.add(new Waypoint(51.713781, 8.752490, -1)); // Kilian/Karlstr
+        //***Karlsstraße/Turmplatz (Denkmal für Karl den Großen)
+        waypoints.add(new Waypoint(51.713881, 8.753021, 9));
+        waypoints.add(new Waypoint(51.713781, 8.752490, -1)); // Kilian/Karlstr
+        waypoints.add(new Waypoint(51.713442, 8.751331, -1)); // Vor Karlsschule
+        waypoints.add(new Waypoint(51.713442, 8.751331, 10)); // ***Karlsschule
+        waypoints.add(new Waypoint(51.713442, 8.751331, -1)); // Vor Karlsschule
+        waypoints.add(new Waypoint(51.713060, 8.750457, -1)); // Widukindstr/Geroldstr
+        //***Rundgang durch die Straßen - z.B: Widukindstraße
+        waypoints.add(new Waypoint(51.711812, 8.749370, -1));
+
+        List<RouteTag> karlsrouteTags = new LinkedList<>();
+        karlsrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
+
+        insertRoute(103, "Karlsroute", "Rundgang zu Karl dem Großen", waypoints, 60 * 120, 3.5,
+                karlsrouteTags, "route_karl.jpg");
+
         List<SliderImage> sliderImages = new LinkedList<>();
         sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
         sliderImages.add(new SliderImage(799, "Phase 2.jpg"));
@@ -276,7 +415,6 @@ public class DBAdapter {
         addImage(R.drawable.phaseiv, 201, "Phase 4.jpg");
         addImage(R.drawable.phasev, 201, "Phase 5.jpg");
     }
-
 
     /**
      *  adds an image from R.drawable to the document defined by document_id in local database
@@ -299,7 +437,6 @@ public class DBAdapter {
         }
     }
 
-
     /**
      *  notify the UI Thread that the database has changed
      */
@@ -316,7 +453,6 @@ public class DBAdapter {
         });
     }
 
-
     /**
      *  gets the (local) database, ensures the Singleton pattern
      */
@@ -332,8 +468,6 @@ public class DBAdapter {
         }
         return this.mDatabase;
     }
-
-
     /**
      *  gets the manager of the (local) database, ensures the Singleton pattern
      */
@@ -343,7 +477,6 @@ public class DBAdapter {
         }
         return this.mManager;
     }
-
 
     /**
      *  initialize the database, the flag enablePush indicates
@@ -412,7 +545,6 @@ public class DBAdapter {
         }
     }
 
-
     /**
      *  Gets the key store with the (self signed) trusted certificates to the gateway
      */
@@ -449,7 +581,6 @@ public class DBAdapter {
         return keystore;
     }
 
-
     /**
      *  sets the Couchbase Lite Manager HTTP Factory with the keystore returned by getKeystore()
      */
@@ -477,7 +608,6 @@ public class DBAdapter {
         // set CouchbaseHttpClientFactory to Manager
         mManager.setDefaultHttpClientFactory(cblHttpClientFactory);
     }
-
 
     /* insert a exhibit in the database */
     public void insertExhibit(int id, String name, String description, double lat, double lng,
@@ -513,7 +643,7 @@ public class DBAdapter {
         Document document = mDatabase.getDocument(String.valueOf(id));
         Map<String, Object> properties = new HashMap<>();
 
-        if(sliderImages != null && !sliderImages.isEmpty()){
+        if (sliderImages != null && !sliderImages.isEmpty()) {
             properties.put(KEY_TYPE, "slider");
             properties.put(KEY_SLIDER_IMAGES, sliderImages);
             //ensure access for all users in the Couchbase database
@@ -578,94 +708,6 @@ public class DBAdapter {
         } else {
             Log.e("routes", "Could not load image resource for route " + id);
         }
-    }
-
-    public static Attachment getAttachment(int documentId, String filename){
-        Document doc = mDatabase.getDocument(String.valueOf(documentId));
-        Revision rev = doc.getCurrentRevision();
-        Attachment attachment = rev.getAttachment(filename);
-        return attachment;
-    }
-
-
-    /**
-     *  returns an image from the database
-     */
-    public static Drawable getImage(int id, String imageName) {
-        Attachment att = getAttachment(id, imageName);
-        Drawable d = null;
-        if (att != null) {
-            try {
-                BitmapFactory.Options o = new BitmapFactory.Options();
-                o.inJustDecodeBounds = true;
-                InputStream is = att.getContent();
-                Bitmap b = BitmapFactory.decodeStream(is);
-                int width = b.getWidth();
-                int height = b.getHeight();
-
-                WindowManager wm = (WindowManager) staticContext.getSystemService(
-                        Context.WINDOW_SERVICE);
-                Display display = wm.getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                int screen_width = size.x;
-                int screen_height = size.y;
-
-                // check if greater than device's width / height
-                if(width >= screen_width && height >= screen_height) {
-                    final float scale = staticContext.getResources().getDisplayMetrics().density;
-                    int new_width = (int) (width / scale + 0.5f);
-                    int new_height = (int) (height / scale + 0.5f);
-                    Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
-                    d = new BitmapDrawable(staticContext.getResources(), b2);
-                } else {
-                    d = new BitmapDrawable(staticContext.getResources(), b);
-                }
-
-                is.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading image", e);
-            }
-        }
-        return d;
-    }
-
-    /**
-     *  returns an image from the database
-     */
-    public static Drawable getImage(int id, String imageName, int required_size) {
-        Attachment att = getAttachment(id, imageName);
-        Drawable d = null;
-        if (att != null) {
-            try {
-                BitmapFactory.Options o = new BitmapFactory.Options();
-                o.inJustDecodeBounds = true;
-                InputStream is = att.getContent();
-                Bitmap b = BitmapFactory.decodeStream(is);
-
-                //Find the correct scale value. It should be the power of 2.
-                final int REQUIRED_SIZE=required_size;
-                int width_tmp=b.getWidth(), height_tmp=b.getHeight();
-                int scale=1;
-                while(true){
-                    if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE) {
-                        break;
-                    }
-                    width_tmp/=2;
-                    height_tmp/=2;
-                    scale*=2;
-                }
-
-                BitmapFactory.Options o2 = new BitmapFactory.Options();
-                o2.inSampleSize=scale;
-                Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
-                d = new BitmapDrawable(staticContext.getResources(), b2);
-                is.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading image", e);
-            }
-        }
-        return d;
     }
 
     /**
