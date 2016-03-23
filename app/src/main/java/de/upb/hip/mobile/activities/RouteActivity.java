@@ -50,6 +50,7 @@ public class RouteActivity
     /**
      * Get routes from the database and set up the recyclerView.
      * Also pre-processing of the tags
+     *
      * @param savedInstanceState savedInstanceState
      */
     @Override
@@ -89,8 +90,9 @@ public class RouteActivity
 
     /**
      * Inflate the menu; this adds items to the action bar if it is present.
+     *
      * @param menu Menu
-     * @return
+     * @return always true
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,8 +102,10 @@ public class RouteActivity
 
     /**
      * Switch for the filtering of the routes
+     *
      * @param item Menu item
-     * @return
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -119,9 +123,10 @@ public class RouteActivity
 
     /**
      * Method for saving the selected tags
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     *
+     * @param requestCode integer as request code
+     * @param resultCode  integer as result code
+     * @param data        Intent with data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -147,7 +152,8 @@ public class RouteActivity
 
     /**
      * Starts the RouteDetailsActivity for a specific route
-     * @param route
+     *
+     * @param route Route for which the DetailsActivity should be called
      */
     @Override
     public void onRouteSelected(Route route) {
@@ -158,6 +164,7 @@ public class RouteActivity
 
     /**
      * Getter for RouteSet
+     *
      * @return RouteSet
      */
     public RouteSet getRouteSet() {
