@@ -1,38 +1,56 @@
+/*
+ * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.upb.hip.mobile.adapters;
-
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.models.*;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import android.util.Log;
 
+//import de.upb.hip.mobile.activities.*;
+import de.upb.hip.mobile.activities.MainActivity;
+import de.upb.hip.mobile.models.*;
+
+import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.Attachment;
+import com.couchbase.lite.auth.Authenticator;
+import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Emitter;
 import com.couchbase.lite.Manager;
-import com.couchbase.lite.Database;
 import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
-import com.couchbase.lite.Revision;
-import com.couchbase.lite.UnsavedRevision;
-import com.couchbase.lite.View;
-import com.couchbase.lite.android.AndroidContext;
-import com.couchbase.lite.auth.Authenticator;
-import com.couchbase.lite.auth.AuthenticatorFactory;
 import com.couchbase.lite.replicator.Replication;
+import com.couchbase.lite.Revision;
 import com.couchbase.lite.support.CouchbaseLiteHttpClientFactory;
 import com.couchbase.lite.support.PersistentCookieStore;
+import com.couchbase.lite.UnsavedRevision;
+import com.couchbase.lite.View;
+
+import org.apache.http.conn.ssl.SSLSocketFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,10 +73,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.conn.ssl.SSLSocketFactory;
 
 
-/* Class for the connection between app and database */
+
+/**
+ *  Class for the connection between app and database
+ */
 public class DBAdapter {
 
 
@@ -90,36 +110,42 @@ public class DBAdapter {
 
 
     public static final String DB_NAME = "hip"; // local database name
-    private Manager manager = null; // local database manager
-    private static Database database = null; // local database
-    public static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip"; // URL to Server with running Couchbase Sync Gateway
-    private static final String COUCHBASE_USER = "android_user"; // username to access the data bucket on Couchbase Sync Gateway
-    private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0"; // password to access the data bucket on Couchbase Sync Gateway
+    private Manager mManager = null; // local database manager
+    private static Database mDatabase = null; // local database
+    // URL to Server with running Couchbase Sync Gateway
+    public static final String COUCHBASE_SERVER_URL = "https://couchbase-hip.cs.upb.de:4984/hip";
+    // username to access the data bucket on Couchbase Sync Gateway
+    private static final String COUCHBASE_USER = "android_user";
+    // password to access the data bucket on Couchbase Sync Gateway
+    private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0";
 
 
     public static final String TAG = "DBAdapter"; // for logging
-    private final Context context; // Context of application who uses us.
-    private static Context staticcontext; // static context for static getImage()-method
+    private final Context mContext; // Context of application who uses us.
+    private static Context staticContext; // static context for static getImage()-method
 
 
     /* Constructor */
     public DBAdapter(Context ctx) {
-        this.context = ctx;
-        staticcontext = ctx;
-        if (database == null) {
+        mContext = ctx;
+        staticContext = ctx;
+        if (mDatabase == null) {
             initDatabase(false);
-//            insertDummyDataToDatabase(); // uncomment this line to set up the gateway database with new dummy data
+            // uncomment this line to set up the gateway database with new dummy data
+//            insertDummyDataToDatabase();
         }
     }
 
 
-    /* Put some dummy data to the database
-     * Call this function manual, if you need to reset the database. IMPORTANT: This data will replicated to the life database, so be sure what you are doing!
-     * ToDo: Remove this function for productive use! */
+    /** Put some dummy data to the database
+     * Call this function manual, if you need to reset the database.
+     * IMPORTANT: This data will be replicated to the life database, so be sure what you are doing!
+     */
+     // ToDo: Remove this function for productive use!
     public void insertDummyDataToDatabase() {
         try {
-            database.delete();
-            database = null;
+            mDatabase.delete();
+            mDatabase = null;
             initDatabase(true);
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Error deleting local database", e);
@@ -131,37 +157,78 @@ public class DBAdapter {
         String pictureName = "image.jpg";
 
         pictureDescriptions.put(pictureName, "Dom zu Paderborn (Südseite)");
-        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583, "Kirche", "Dom", pictureDescriptions, -1);
+        insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
+                        " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +
+                        "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
+                "Kirche", "Dom", pictureDescriptions, -1);
         addImage(R.drawable.dom, 1, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Gebäude O");
-        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.", 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
+        insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, " +
+                        "Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.",
+                51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
         addImage(R.drawable.uni, 2, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
-        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein interdisziplinäres Forschungsinstitut der Universität Paderborn.", 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
+        insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein " +
+                        "interdisziplinäres Forschungsinstitut der Universität Paderborn.",
+                51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
         addImage(R.drawable.hnf, 3, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Museum in der Kaiserpfalz (aus Richtung Dom)");
-        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964 auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur noch durch die rekonstruierten Grundmauern zu erkennen. Träger des Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums vermietet", 51.719412, 8.755524, "Kirche, Museum", "", pictureDescriptions, 201);
+        insertExhibit(4, "Museum in der Kaiserpfalz", "Das Museum in der Kaiserpfalz befindet" +
+                " sich in Paderborn in unmittelbarer Nähe des Doms. Es stellt Funde aus" +
+                " karolingischer, ottonischer und sächsischer Zeit vor. Es befindet sich an" +
+                " der Stelle, an der man 1964 bei Bauarbeiten die Grundmauern der Pfalzanlage" +
+                " aus dem 8. Jahrhundert bzw. aus der Zeit Heinrichs II. gefunden hat. Sie sind" +
+                " Teil der heutigen Bausubstanz und lassen sich im Mauerwerk des Museums noch"
+                + " sehr gut nachvollziehen. Direkt neben dem heutigen Museum fand man 1964" +
+                " auch die Kaiserpfalz Karl des Großen. Der Umriss dieser Anlage ist heute nur" +
+                " noch durch die rekonstruierten Grundmauern zu erkennen. Träger des" +
+                " Landesmuseums ist der Landschaftsverband Westfalen-Lippe. Das Gebäude gehört" +
+                " dem Metropolitankapitel und wird mietzinsfrei an den Träger des Museums " +
+                "vermietet", 51.719412, 8.755524, "Kirche, Museum", "", pictureDescriptions, 201);
         addImage(R.drawable.pfalz, 4, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
-        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz, seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze. Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889, "Kirche", "", pictureDescriptions, -1);
+        insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist" +
+                " eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner" +
+                " Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der" +
+                " Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung" +
+                " erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz," +
+                " seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze." +
+                " Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die" +
+                " Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist" +
+                " heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889,
+                "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.abdinghof, 5, "image.jpg");
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
-        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606, "Kirche", "", pictureDescriptions, -1);
+        insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die" +
+                " nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war" +
+                " ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen" +
+                " ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge" +
+                " der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606,
+                "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
-        insertExhibit(7, "Liborikapelle", "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle diente als Station auf der alljährlichen Libori-Prozession rund um die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
+        insertExhibit(7, "Liborikapelle",
+                "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern" +
+                        " der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der" +
+                        " vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als" +
+                        " Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite" +
+                        " über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und" +
+                        " Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben" +
+                        " Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle" +
+                        " diente als Station auf der alljährlichen Libori-Prozession rund um" +
+                        "die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
@@ -178,7 +245,8 @@ public class DBAdapter {
         ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
         ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.", waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
+        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.",
+                waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
 
         waypoints = new LinkedList<>();
         waypoints.add(new Waypoint(51.718590, 8.752206, 5));
@@ -191,7 +259,8 @@ public class DBAdapter {
         List<RouteTag> stadtrouteTags = new LinkedList<>();
         stadtrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
 
-        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.", waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
+        insertRoute(102, "Stadtroute", "Dies ist eine kurze Route in der Stadt.",
+                waypoints, 60 * 120, 3.5, stadtrouteTags, "route_stadt.jpg");
 
         List<SliderImage> sliderImages = new LinkedList<>();
         sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
@@ -209,14 +278,18 @@ public class DBAdapter {
     }
 
 
-    /* adds an image from R.drawable to the document defined by document_id in local database */
+    /**
+     *  adds an image from R.drawable to the document defined by document_id in local database
+     */
     private void addImage(int image_number, int document_id, String imageName) {
-        InputStream image = context.getResources().openRawResource(+image_number); // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
+        InputStream image = mContext.getResources().openRawResource(+image_number);
+        // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
         addAttachment(document_id, imageName, "image/jpeg", image);
     }
 
-    public void addAttachment(int document_id, String filename, String mimeType, InputStream attachment){
-        Document doc = database.getDocument(String.valueOf(document_id));
+    public void addAttachment(int document_id, String filename,
+                              String mimeType, InputStream attachment){
+        Document doc = mDatabase.getDocument(String.valueOf(document_id));
         UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
         newRev.setAttachment(filename, mimeType, attachment);
         try {
@@ -227,44 +300,55 @@ public class DBAdapter {
     }
 
 
-    /* notify the UI Thread that the database has changed */
+    /**
+     *  notify the UI Thread that the database has changed
+     */
     private synchronized void notifyExhibitSetChanged() {
-        if(!((Activity) context).getClass().getSimpleName().equals("MainActivity")) return;
+        if(!((Activity) mContext).getClass().getSimpleName().equals("MainActivity")){
+            return;
+        }
 
-        ((MainActivity) context).runOnUiThread(new Runnable() {
+        ((MainActivity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ((MainActivity) context).notifyExhibitSetChanged();
+                ((MainActivity) mContext).notifyExhibitSetChanged();
             }
         });
     }
 
 
-    /* gets the (local) database, ensures the Singleton pattern */
+    /**
+     *  gets the (local) database, ensures the Singleton pattern
+     */
     public Database getDatabaseInstance() {
-        if (this.database == null) {
+        if (this.mDatabase == null) {
             try {
-                this.database = getManagerInstance().getDatabase(DB_NAME);
+                this.mDatabase = getManagerInstance().getDatabase(DB_NAME);
             } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return this.database;
+        return this.mDatabase;
     }
 
 
-    /* gets the manager of the (local) database, ensures the Singleton pattern */
+    /**
+     *  gets the manager of the (local) database, ensures the Singleton pattern
+     */
     public Manager getManagerInstance() throws IOException {
-        if (this.manager == null) {
-            this.manager = new Manager(new AndroidContext(this.context), Manager.DEFAULT_OPTIONS);
+        if (this.mManager == null) {
+            this.mManager = new Manager(new AndroidContext(this.mContext), Manager.DEFAULT_OPTIONS);
         }
-        return this.manager;
+        return this.mManager;
     }
 
 
-    /* initialize the database, the flag enablePush indicates if local changes should be pushed to the gateway */
+    /**
+     *  initialize the database, the flag enablePush indicates
+     *  if local changes should be pushed to the gateway
+     */
     private void initDatabase(Boolean enablePush) {
         try {
             setHttpClientFactory(); // sets the HTTP Factory to connect over SSL to the gateway
@@ -272,7 +356,8 @@ public class DBAdapter {
             /* set up a connection to Sync Gateway */
             URL url = new URL(COUCHBASE_SERVER_URL);
 
-            Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(COUCHBASE_USER, COUCHBASE_PASSWORD); // authenticate on the gateway
+            Authenticator auth = AuthenticatorFactory.createBasicAuthenticator(
+                    COUCHBASE_USER, COUCHBASE_PASSWORD); // authenticate on the gateway
 
             Replication.ChangeListener changeListener = new Replication.ChangeListener() {
                 @Override
@@ -328,13 +413,16 @@ public class DBAdapter {
     }
 
 
-    /* Gets the key store with the (self signed) trusted certificates to the gateway */
+    /**
+     *  Gets the key store with the (self signed) trusted certificates to the gateway
+     */
     private KeyStore getKeyStore() {
         KeyStore keystore = null;
 
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream in = this.context.getResources().openRawResource(R.raw.ssl); // get the public certificate
+            // get the public certificate
+            InputStream in = this.mContext.getResources().openRawResource(R.raw.ssl);
             Certificate ca;
 
             try {
@@ -362,16 +450,20 @@ public class DBAdapter {
     }
 
 
-    /* sets the Couchbase Lite Manager HTTP Factory with the keystore returned by getKeystore() */
+    /**
+     *  sets the Couchbase Lite Manager HTTP Factory with the keystore returned by getKeystore()
+     */
     private void setHttpClientFactory() {
         PersistentCookieStore cookieStore = null;
 
         cookieStore = getDatabaseInstance().getPersistentCookieStore(); // get Cookie Store
 
-        CouchbaseLiteHttpClientFactory cblHttpClientFactory = new CouchbaseLiteHttpClientFactory(cookieStore); // get Factory
+        CouchbaseLiteHttpClientFactory cblHttpClientFactory =
+                new CouchbaseLiteHttpClientFactory(cookieStore); // get Factory
 
         try {
-            cblHttpClientFactory.setSSLSocketFactory(new SSLSocketFactory(getKeyStore())); // sets the keystore
+            cblHttpClientFactory.setSSLSocketFactory(
+                    new SSLSocketFactory(getKeyStore())); // sets the keystore
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (KeyManagementException e) {
@@ -383,13 +475,16 @@ public class DBAdapter {
         }
 
         // set CouchbaseHttpClientFactory to Manager
-        manager.setDefaultHttpClientFactory(cblHttpClientFactory);
+        mManager.setDefaultHttpClientFactory(cblHttpClientFactory);
     }
 
 
     /* insert a exhibit in the database */
-    public void insertExhibit(int id, String name, String description, double lat, double lng, String categories, String tags, HashMap<String, String> pictureDescriptions, int sliderId) {
-        Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
+    public void insertExhibit(int id, String name, String description, double lat, double lng,
+                              String categories, String tags,
+                              HashMap<String, String> pictureDescriptions, int sliderId) {
+        //create a new entry but with predefined id
+        Document document = mDatabase.getDocument(String.valueOf(id));
         Map<String, Object> properties = new HashMap<>();
 
         properties.put(KEY_TYPE, "exhibit");
@@ -399,7 +494,8 @@ public class DBAdapter {
         properties.put(KEY_EXHIBIT_TAGS, tags);
         properties.put(KEY_EXHIBIT_LAT, lat);
         properties.put(KEY_EXHIBIT_LNG, lng);
-        properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
+        //ensure access for all users in the Couchbase database
+        properties.put(KEY_CHANNELS, "*");
         properties.put(KEY_EXHIBIT_PICTURE_DESCRIPTIONS, pictureDescriptions);
         properties.put(KEY_EXHIBIT_SLIDER_ID, sliderId);
 
@@ -414,13 +510,14 @@ public class DBAdapter {
     }
 
     public void insertSlider(int id, List<SliderImage> sliderImages){
-        Document document = database.getDocument(String.valueOf(id));
+        Document document = mDatabase.getDocument(String.valueOf(id));
         Map<String, Object> properties = new HashMap<>();
 
         if(sliderImages != null && !sliderImages.isEmpty()){
             properties.put(KEY_TYPE, "slider");
             properties.put(KEY_SLIDER_IMAGES, sliderImages);
-            properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
+            //ensure access for all users in the Couchbase database
+            properties.put(KEY_CHANNELS, "*");
         }
 
         try {
@@ -431,9 +528,14 @@ public class DBAdapter {
         }
     }
 
-    /* insert a route in the database */
-    public void insertRoute(int id, String title, String description, LinkedList<Waypoint> waypoints, int duration, double distance, List<RouteTag> tags, String imageName) {
-        Document document = database.getDocument(String.valueOf(id)); // this creates a new entry but with predefined id
+    /**
+     *  insert a route in the database
+     */
+    public void insertRoute(int id, String title, String description,
+                            LinkedList<Waypoint> waypoints, int duration, double distance,
+                            List<RouteTag> tags, String imageName) {
+        //create a new entry but with predefined id
+        Document document = mDatabase.getDocument(String.valueOf(id));
         Map<String, Object> properties = new HashMap<>();
 
         properties.put(KEY_TYPE, "route");
@@ -444,7 +546,8 @@ public class DBAdapter {
         properties.put(KEY_ROUTE_DISTANCE, distance);
         properties.put(KEY_ROUTE_TAGS, tags);
         properties.put(KEY_ROUTE_IMAGE_NAME, imageName);
-        properties.put(KEY_CHANNELS, "*"); // ensures the access for all users in the Couchbase database
+        properties.put(KEY_CHANNELS, "*");
+        //KEY_CHANNELS "*" ensures the access for all users in the Couchbase database
 
         try {
             // Save the properties to the document
@@ -455,9 +558,10 @@ public class DBAdapter {
 
         //Add images for route tags as attachment
         for(RouteTag tag: tags){
-            final int resId =  context.getResources().getIdentifier(tag.getImageFilename(), "drawable", context.getPackageName());
+            final int resId =  mContext.getResources().getIdentifier(tag.getImageFilename(),
+                    "drawable", mContext.getPackageName());
             if(resId != 0){
-                InputStream ress = context.getResources().openRawResource(+resId);
+                InputStream ress = mContext.getResources().openRawResource(+resId);
                 addAttachment(id, tag.getImageFilename(), "image/jpeg", ress);
             } else {
                 Log.e("routes", "Could not load image tag resource for route " + id);
@@ -466,9 +570,10 @@ public class DBAdapter {
 
         //Add route image as attachment
         //Use only the part before "." for the filename when accessing the Android resource
-        final int resId = context.getResources().getIdentifier(imageName.split("\\.")[0], "drawable", context.getPackageName());
+        final int resId = mContext.getResources().getIdentifier(imageName.split("\\.")[0],
+                "drawable", mContext.getPackageName());
         if(resId != 0){
-            InputStream ress = context.getResources().openRawResource(+resId);
+            InputStream ress = mContext.getResources().openRawResource(+resId);
             addAttachment(id, imageName, "image/png", ress);
         } else {
             Log.e("routes", "Could not load image resource for route " + id);
@@ -476,14 +581,16 @@ public class DBAdapter {
     }
 
     public static Attachment getAttachment(int documentId, String filename){
-        Document doc = database.getDocument(String.valueOf(documentId));
+        Document doc = mDatabase.getDocument(String.valueOf(documentId));
         Revision rev = doc.getCurrentRevision();
         Attachment attachment = rev.getAttachment(filename);
         return attachment;
     }
 
 
-    /* returns an image from the database */
+    /**
+     *  returns an image from the database
+     */
     public static Drawable getImage(int id, String imageName) {
         Attachment att = getAttachment(id, imageName);
         Drawable d = null;
@@ -496,7 +603,8 @@ public class DBAdapter {
                 int width = b.getWidth();
                 int height = b.getHeight();
 
-                WindowManager wm = (WindowManager) staticcontext.getSystemService(Context.WINDOW_SERVICE);
+                WindowManager wm = (WindowManager) staticContext.getSystemService(
+                        Context.WINDOW_SERVICE);
                 Display display = wm.getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
@@ -505,13 +613,13 @@ public class DBAdapter {
 
                 // check if greater than device's width / height
                 if(width >= screen_width && height >= screen_height) {
-                    final float scale = staticcontext.getResources().getDisplayMetrics().density;
+                    final float scale = staticContext.getResources().getDisplayMetrics().density;
                     int new_width = (int) (width / scale + 0.5f);
                     int new_height = (int) (height / scale + 0.5f);
                     Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
-                    d = new BitmapDrawable(staticcontext.getResources(), b2);
+                    d = new BitmapDrawable(staticContext.getResources(), b2);
                 } else {
-                    d = new BitmapDrawable(staticcontext.getResources(), b);
+                    d = new BitmapDrawable(staticContext.getResources(), b);
                 }
 
                 is.close();
@@ -522,7 +630,9 @@ public class DBAdapter {
         return d;
     }
 
-    /* returns an image from the database */
+    /**
+     *  returns an image from the database
+     */
     public static Drawable getImage(int id, String imageName, int required_size) {
         Attachment att = getAttachment(id, imageName);
         Drawable d = null;
@@ -538,8 +648,9 @@ public class DBAdapter {
                 int width_tmp=b.getWidth(), height_tmp=b.getHeight();
                 int scale=1;
                 while(true){
-                    if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
+                    if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE) {
                         break;
+                    }
                     width_tmp/=2;
                     height_tmp/=2;
                     scale*=2;
@@ -548,7 +659,7 @@ public class DBAdapter {
                 BitmapFactory.Options o2 = new BitmapFactory.Options();
                 o2.inSampleSize=scale;
                 Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
-                d = new BitmapDrawable(staticcontext.getResources(), b2);
+                d = new BitmapDrawable(staticContext.getResources(), b2);
                 is.close();
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
@@ -557,7 +668,9 @@ public class DBAdapter {
         return d;
     }
 
-    /* gets all rows from a view from the database */
+    /**
+     *  gets all rows from a view from the database
+     */
     public List<Map<String, Object>> getView(String view_name) {
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -573,7 +686,8 @@ public class DBAdapter {
             while (enumerator.hasNext()) { // add all documents to result
                 QueryRow row = enumerator.next();
 
-                Map<String, Object> properties = getDatabaseInstance().getDocument(row.getDocumentId()).getProperties();
+                Map<String, Object> properties = getDatabaseInstance().getDocument(
+                        row.getDocumentId()).getProperties();
                 result.add(properties);
             }
         } catch (CouchbaseLiteException e) {
@@ -583,12 +697,16 @@ public class DBAdapter {
     }
 
 
-    /* gets one row_main (specified by id) from database */
+    /**
+     *  gets one row_main (specified by id) from database
+     */
     public Document getDocument(int id) {
         return getDatabaseInstance().getDocument(String.valueOf(id));
     }
 
-    /* gets the total count of data in the local database */
+    /**
+     *  gets the total count of data in the local database
+     */
     public int getDocumentCount() {
         return getDatabaseInstance().getDocumentCount();
     }
