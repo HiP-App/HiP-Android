@@ -16,17 +16,28 @@
 
 package de.upb.hip.mobile.models;
 
+/**
+ * Model for a single image in the imageslider
+ */
 public class SliderImage {
 
     private String mImageName;
     private int mYear;
 
+    /**
+     * Constructor
+     * @param year
+     * @param imageName
+     */
     public SliderImage (int year, String imageName)
     {
         this.mYear = year;
         this.mImageName = imageName;
     }
 
+    /**
+     * Getter and Setter for private Variables
+     */
     public String getImageName() {
         return this.mImageName;
     }
