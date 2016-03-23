@@ -26,6 +26,9 @@ import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 
+/**
+ * Model for set of routes
+ */
 public class RouteSet implements Serializable {
 
     private List<Route> mRoutes = new ArrayList<>();
@@ -34,6 +37,11 @@ public class RouteSet implements Serializable {
 
     }
 
+    /**
+     * Constructor for the RouteSet
+     * Creates a list of route objects
+     * @param list which is returned from DBAdapter
+     */
     public RouteSet(List<Map<String, Object>> list) {
 
         for (int i = 0; i < list.size(); i++) {
@@ -98,14 +106,9 @@ public class RouteSet implements Serializable {
         }
     }
 
-    public void setRoutes(List<Route> routes) {
-        this.mRoutes = routes;
-    }
-
-    public List<Route> getRoutes() {
-        return this.mRoutes;
-    }
-
+    /**
+     * Getter and Setter
+     */
     public Route getRouteByPosition(int position) {
         return mRoutes.get(position);
     }
@@ -125,5 +128,13 @@ public class RouteSet implements Serializable {
 
     public void addRoute(Route r) {
         this.mRoutes.add(r);
+    }
+
+    public void setRoutes(List<Route> routes) {
+        this.mRoutes = routes;
+    }
+
+    public List<Route> getRoutes() {
+        return this.mRoutes;
     }
 }
