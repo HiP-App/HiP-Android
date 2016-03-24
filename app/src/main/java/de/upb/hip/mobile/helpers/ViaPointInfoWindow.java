@@ -42,13 +42,14 @@ public class ViaPointInfoWindow extends MarkerInfoWindow {
 
     /**
      * Constructor
-     * @param layoutResId
-     * @param mapView
-     * @param context
+     *
+     * @param layoutResId integer for Resource ID from the layout
+     * @param mapView     MapView
+     * @param context     Context in which the Activity of the ViaPoint is started
      */
     public ViaPointInfoWindow(int layoutResId, MapView mapView, final Context context) {
         super(layoutResId, mapView);
-        
+
         Button btnInfo = (Button) (mView.findViewById(R.id.bubble_info));
         btnInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -64,7 +65,8 @@ public class ViaPointInfoWindow extends MarkerInfoWindow {
 
     /**
      * Set variables on marker open
-     * @param item
+     *
+     * @param item Marker as Object
      */
     @Override
     public void onOpen(Object item) {
