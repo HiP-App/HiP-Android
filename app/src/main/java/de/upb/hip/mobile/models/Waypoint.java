@@ -16,20 +16,14 @@
 
 package de.upb.hip.mobile.models;
 
-import de.upb.hip.mobile.activities.*;
-import de.upb.hip.mobile.adapters.*;
-import de.upb.hip.mobile.helpers.*;
-import de.upb.hip.mobile.listeners.*;
-import de.upb.hip.mobile.models.*;
-
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.Serializable;
+
+import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
  * Model Class the way points.
  */
-public class Waypoint implements Serializable{
+public class Waypoint implements Serializable {
 
     private double mLatitude;
     private double mLongitude;
