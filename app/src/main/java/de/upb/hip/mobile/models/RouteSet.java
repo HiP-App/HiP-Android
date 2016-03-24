@@ -40,6 +40,7 @@ public class RouteSet implements Serializable {
     /**
      * Constructor for the RouteSet
      * Creates a list of route objects
+     *
      * @param list which is returned from DBAdapter
      */
     public RouteSet(List<Map<String, Object>> list) {
@@ -106,9 +107,7 @@ public class RouteSet implements Serializable {
         }
     }
 
-    /**
-     * Getter and Setter
-     */
+    
     public Route getRouteByPosition(int position) {
         return mRoutes.get(position);
     }
@@ -130,11 +129,11 @@ public class RouteSet implements Serializable {
         this.mRoutes.add(r);
     }
 
-    public void setRoutes(List<Route> routes) {
-        this.mRoutes = routes;
-    }
-
     public List<Route> getRoutes() {
         return this.mRoutes;
+    }
+
+    public void setRoutes(List<Route> routes) {
+        this.mRoutes = routes;
     }
 }
