@@ -41,14 +41,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/licensing_googleMaterial_title_text"
+                android:text="@string/licensing_google_material_title_text"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
                 android:id="@+id/licensingGoogleMaterialBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/licensing_googleMaterial_body_text"
+                android:text="@string/licensing_google_material_body_text"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView

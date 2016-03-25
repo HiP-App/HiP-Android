@@ -35,7 +35,7 @@
 
     <!-- string for route navigation -->
     <string name="drawer_open">Öffne Navigation</string>
-    <string name="drawer_close">Schließ Navigation</string>
+    <string name="drawer_close">Schließe Navigation</string>
     <string name="departure">Abfahrt</string>
     <string name="via_point">Wegpunkt</string>
     <string name="destination">Ziel</string>
@@ -43,11 +43,11 @@
     <string name="step">Schritt</string>
     <string name="itinerary_markers_title">Route Via-Punkte</string>
     <string name="route">Route</string>
-    <string name="no_route">Kein mögliche Route hier</string>
-    <string name="empty_route">Route ist empty</string>
+    <string name="no_route">Keine mögliche Route hier</string>
+    <string name="empty_route">Route ist leer</string>
     <string name="technical_issue">Technische Probleme eine Route zu bekommen</string>
-    <string name="downlod_road">Downloading the road…</string>
-    <string name="creating_map">Creating the map…</string>
+    <string name="download_road">Straße herunterladen…</string>
+    <string name="creating_map">Erstellen der Karte…</string>
     <string name="osm_contributors">&#169; OpenStreetMap contributors</string>
 
     <string name="map_quest_key">VvR4CnlGhrT4AwOXLFCQPzSuuDxbfYEg</string>
@@ -55,8 +55,8 @@
     <!-- string for GPSTracker -->
     <string name="gps_settings">GPS Einstellungen</string>
     <string name="settings">Einstellungen</string>
-    <string name="cancel">Cancel</string>
-    <string name="gps_not_enabled_message">GPS ist nicht aktiviert. Wollen Sie die Einstellungsmenü öffnen?</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="gps_not_enabled_message">GPS ist nicht aktiviert. Wollen Sie das Einstellungsmenü öffnen?</string>
 
     <!-- string for network connection -->
     <string name="network_connection">Netzwerkverbindung</string>
@@ -64,8 +64,8 @@
 
     <!-- Strings for licensing -->
     <string name="licensing_title">Lizenzen</string>
-    <string name="licensing_googleMaterial_title_text">Material Icons</string>
-    <string name="licensing_googleMaterial_body_text">Von <a href="https://design.google.com/icons/">Google</a>, lizensiert unter <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>. Es wurden keine Änderungen vorgenommen.</string>
+    <string name="licensing_google_material_title_text">Material Icons</string>
+    <string name="licensing_google_material_body_text">Von <a href="https://design.google.com/icons/">Google</a>, lizensiert unter <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a>. Es wurden keine Änderungen vorgenommen.</string>
     <string name="licensing_osmdroid_title_text">osmdroid</string>
     <string name="licensing_osmdroid_body_text">Von <a href="https://github.com/osmdroid/osmdroid">osmdroid</a>, lizensiert unter <a href="https://raw.githubusercontent.com/osmdroid/osmdroid/master/LICENSE">Apache License 2.0</a>. Es wurden keine Änderungen vorgenommen.</string>
     <string name="licensing_osmbonuspack_title_text">OSMBonusPack</string>

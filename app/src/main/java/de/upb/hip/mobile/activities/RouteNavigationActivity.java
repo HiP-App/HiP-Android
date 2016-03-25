@@ -936,7 +936,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
 
         protected void onPreExecute() {
-            mProgressDialog.setMessage(getString(R.string.downlod_road));
+            mProgressDialog.setMessage(getString(R.string.download_road));
             mProgressDialog.show();
         }
 
