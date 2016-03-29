@@ -488,7 +488,7 @@ public class RouteDetailsActivity extends ActionBarActivity {
     private void startRouteNavigation() {
         if (mRoute != null) {
             Intent intent = new Intent(getApplicationContext(), RouteNavigationActivity.class);
-            intent.putExtra("route", mRoute);
+            intent.putExtra(RouteNavigationActivity.INTENT_ROUTE, mRoute);
             startActivityForResult(intent, 1);
         } else {
             Toast.makeText(mMap.getContext(), R.string.empty_route, Toast.LENGTH_SHORT).show();

@@ -85,6 +85,22 @@ import de.upb.hip.mobile.models.ViaPointData;
 
 public class RouteNavigationActivity extends Activity implements MapEventsReceiver,
         LocationListener, SensorEventListener {
+
+
+    public static final String INTENT_ROUTE = "route";
+
+
+    //Constants for saving the instance state
+    private static final String SAVEDSTATE_LOCATION = "location";
+    private static final String SAVEDSTATE_TRACKING_MODE = "tracking_mode";
+    private static final String SAVEDSTATE_START = "start";
+    private static final String SAVEDSTATE_DESTINATION = "destination";
+    private static final String SAVEDSTATE_VIAPOINTS = "viapoints";
+    private static final String SAVEDSTATE_REACHED_NODE = "mReachedNode";
+    private static final String SAVEDSTATE_NEXT_NODE = "mNextNode";
+    private static final String SAVEDSTATE_NEXT_VIA_POINT = "mNextViaPoint";
+
+
     protected final int ROUTE_REJECT = 25; //in meters
     protected final String PROX_ALERT = "de.upb.hip.mobile.activities.PROX_ALERT";
     protected final long POINT_RADIUS = 5; // in Meters
@@ -169,7 +185,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.getOverlays().add(mLocationOverlay);
 
         //getting route from intent
-        Route route = (Route) getIntent().getSerializableExtra("route");
+        Route route = (Route) getIntent().getSerializableExtra(INTENT_ROUTE);
         DBAdapter db = new DBAdapter(this);
         // init start
         mStartPoint = geoLocation;
@@ -203,13 +219,13 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         if (savedInstanceState == null) {
             getRoadAsync();
         } else {
-            mLocationOverlay.setLocation((GeoPoint) savedInstanceState.getParcelable("location"));
-            mStartPoint = savedInstanceState.getParcelable("start");
-            //mDestinationPoint = savedInstanceState.getParcelable("destination");
-            //mViaPoints = savedInstanceState.getParcelableArrayList("viapoints");
-            mReachedNode = savedInstanceState.getInt("mReachedNode");
-            mNextNode = savedInstanceState.getInt("mNextNode");
-            mNextViaPoint = savedInstanceState.getInt("mNextViaPoint");
+            mLocationOverlay.setLocation((GeoPoint) savedInstanceState.getParcelable(SAVEDSTATE_LOCATION));
+            mStartPoint = savedInstanceState.getParcelable(SAVEDSTATE_START);
+            //mDestinationPoint = savedInstanceState.getParcelable(SAVEDSTATE_DESTINATION);
+            //mViaPoints = savedInstanceState.getParcelableArrayList(SAVEDSTATE_VIAPOINTS);
+            mReachedNode = savedInstanceState.getInt(SAVEDSTATE_REACHED_NODE);
+            mNextNode = savedInstanceState.getInt(SAVEDSTATE_NEXT_NODE);
+            mNextViaPoint = savedInstanceState.getInt(SAVEDSTATE_NEXT_VIA_POINT);
         }
 
         // calculate distance between current location and start point
@@ -232,7 +248,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         });
 
         if (savedInstanceState != null) {
-            mTrackingMode = savedInstanceState.getBoolean("tracking_mode");
+            mTrackingMode = savedInstanceState.getBoolean(SAVEDSTATE_TRACKING_MODE);
             updateUIWithTrackingMode();
         } else
             mTrackingMode = false;
@@ -738,7 +754,6 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             mRoadOverlays = null;
         }
         if (roads == null || roads[0] == null) {
-
             return;
         }
 
@@ -816,10 +831,13 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         if (polygon.size() > 0) {
             mDestinationPolygon.setPoints(polygon);
         }
-        if (location != -1)
+
+        if (location != -1) {
             mapOverlays.set(location, mDestinationPolygon);
-        else
+        } else {
             mapOverlays.add(1, mDestinationPolygon); //insert just above the MapEventsOverlay.
+        }
+
         mMap.invalidate();
     }
 
@@ -841,14 +859,14 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("location", mLocationOverlay.getLocation());
-        outState.putBoolean("tracking_mode", mTrackingMode);
-        outState.putParcelable("start", mStartPoint);
-        //outState.putParcelable("destination", mDestinationPoint);
-        //outState.putParcelableArrayList("viapoints", mViaPoints);
-        outState.putInt("mReachedNode", mReachedNode);
-        outState.putInt("mNextNode", mNextNode);
-        outState.putInt("mNextViaPoint", mNextViaPoint);
+        outState.putParcelable(SAVEDSTATE_LOCATION, mLocationOverlay.getLocation());
+        outState.putBoolean(SAVEDSTATE_TRACKING_MODE, mTrackingMode);
+        outState.putParcelable(SAVEDSTATE_START, mStartPoint);
+        //outState.putParcelable(SAVEDSTATE_DESTINATION, mDestinationPoint);
+        //outState.putParcelableArrayList(SAVEDSTATE_VIAPOINTS, mViaPoints);
+        outState.putInt(SAVEDSTATE_REACHED_NODE, mReachedNode);
+        outState.putInt(SAVEDSTATE_NEXT_NODE, mNextNode);
+        outState.putInt(SAVEDSTATE_NEXT_VIA_POINT, mNextViaPoint);
     }
 
     @Override
