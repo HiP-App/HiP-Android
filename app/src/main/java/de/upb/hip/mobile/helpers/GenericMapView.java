@@ -20,9 +20,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import org.osmdroid.api.IMapController;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
+import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.MapTileProviderBase;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Overlay;
@@ -34,8 +34,8 @@ import java.util.List;
  * - it supports the MapsForgeTileProvider
  * and it can be defined in a layout.
  * (See also:
- alexey
- 10:26 AM https://github.com/MKergall/osmbonuspack/blob/master/MapsForgeForOsmdroid/src/main/java/org/osmdroid/bonuspack/mapsforge/GenericMapView.java )
+ * alexey
+ * 10:26 AM https://github.com/MKergall/osmbonuspack/blob/master/MapsForgeForOsmdroid/src/main/java/org/osmdroid/bonuspack/mapsforge/GenericMapView.java )
  */
 public class GenericMapView extends FrameLayout {
 
@@ -48,6 +48,7 @@ public class GenericMapView extends FrameLayout {
     /**
      * The TileProvider is set here.
      * The Context is set externally by the NavigationDrawer / MainActivity
+     *
      * @param aTileProvider
      */
     public void setTileProvider(MapTileProviderBase aTileProvider) {
