@@ -26,9 +26,11 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-//import de.upb.hip.mobile.activities.*;
 import de.upb.hip.mobile.activities.MainActivity;
-import de.upb.hip.mobile.models.*;
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.RouteTag;
+import de.upb.hip.mobile.models.SliderImage;
+import de.upb.hip.mobile.models.Waypoint;
 
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.Attachment;
@@ -52,33 +54,23 @@ import com.couchbase.lite.View;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
-import org.apache.http.conn.ssl.SSLSocketFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import de.upb.hip.mobile.activities.MainActivity;
-import de.upb.hip.mobile.activities.R;
-import de.upb.hip.mobile.models.RouteTag;
-import de.upb.hip.mobile.models.SliderImage;
-import de.upb.hip.mobile.models.Waypoint;
-
-
 
 /**
  *  Class for the connection between app and database
@@ -126,12 +118,14 @@ public class DBAdapter {
 
     public static final String TAG = "DBAdapter"; // for logging
     private final Context mContext; // Context of application who uses us.
-    private static Context staticContext; // static context for static getImage()-method
+    private static Context sContext; // static context for static getImage()-method
 
-    /* Constructor */
+    /**
+     *  Constructor
+     */
     public DBAdapter(Context ctx) {
         mContext = ctx;
-        staticContext = ctx;
+        sContext = ctx;
         if (mDatabase == null) {
             initDatabase(false);
             // uncomment this line to set up the gateway database with new dummy data
@@ -161,7 +155,8 @@ public class DBAdapter {
                 int width = b.getWidth();
                 int height = b.getHeight();
 
-                WindowManager wm = (WindowManager) staticContext.getSystemService(Context.WINDOW_SERVICE);
+                WindowManager wm = (WindowManager) sContext.getSystemService(
+                        Context.WINDOW_SERVICE);
                 Display display = wm.getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
@@ -170,13 +165,13 @@ public class DBAdapter {
 
                 // check if greater than device's width / height
                 if (width >= screen_width && height >= screen_height) {
-                    final float scale = staticContext.getResources().getDisplayMetrics().density;
+                    final float scale = sContext.getResources().getDisplayMetrics().density;
                     int new_width = (int) (width / scale + 0.5f);
                     int new_height = (int) (height / scale + 0.5f);
                     Bitmap b2 = Bitmap.createScaledBitmap(b, new_width, new_height, false);
-                    d = new BitmapDrawable(staticContext.getResources(), b2);
+                    d = new BitmapDrawable(sContext.getResources(), b2);
                 } else {
-                    d = new BitmapDrawable(staticContext.getResources(), b);
+                    d = new BitmapDrawable(sContext.getResources(), b);
                 }
 
                 is.close();
@@ -187,7 +182,9 @@ public class DBAdapter {
         return d;
     }
 
-    /* returns an image from the database */
+    /**
+     *  returns an image from the database
+     */
     public static Drawable getImage(int id, String imageName, int required_size) {
         Attachment att = getAttachment(id, imageName);
         Drawable d = null;
@@ -213,7 +210,7 @@ public class DBAdapter {
                 BitmapFactory.Options o2 = new BitmapFactory.Options();
                 o2.inSampleSize = scale;
                 Bitmap b2 = Bitmap.createScaledBitmap(b, width_tmp, height_tmp, false);
-                d = new BitmapDrawable(staticContext.getResources(), b2);
+                d = new BitmapDrawable(sContext.getResources(), b2);
                 is.close();
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
@@ -243,22 +240,22 @@ public class DBAdapter {
 
         pictureDescriptions.put(pictureName, "Dom zu Paderborn (Südseite)");
         insertExhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
-                        " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +
-                        "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
+                " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +
+                "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
                 "Kirche", "Dom", pictureDescriptions, -1);
         addImage(R.drawable.dom, 1, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Gebäude O");
         insertExhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, " +
-                        "Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.",
+                "Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.",
                 51.706768, 8.771104, "Uni", "Universität", pictureDescriptions, -1);
         addImage(R.drawable.uni, 2, pictureName);
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Das HNI-Gebäude");
         insertExhibit(3, "Heinz Nixdorf Institut", "Das Heinz Nixdorf Institut (HNI) ist ein " +
-                        "interdisziplinäres Forschungsinstitut der Universität Paderborn.",
+                "interdisziplinäres Forschungsinstitut der Universität Paderborn.",
                 51.7292257, 8.7434972, "Uni", "HNI", pictureDescriptions, -1);
         addImage(R.drawable.hnf, 3, pictureName);
 
@@ -281,24 +278,24 @@ public class DBAdapter {
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Abdinghofkirche (außen)");
         insertExhibit(5, "Abdinghofkirche", "Das Abdinghofkloster Sankt Peter und Paul ist" +
-                        " eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner" +
-                        " Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der" +
-                        " Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung" +
-                        " erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz," +
-                        " seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze." +
-                        " Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die" +
-                        " Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist" +
-                        " heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889,
+                " eine ehemalige Abtei der Benediktiner in Paderborn, bestehend von seiner" +
+                " Gründung im Jahre 1015 bis zu seiner Säkularisation am 25. März 1803. In der" +
+                " Zeit seines Bestehens standen ihm insgesamt 51 Äbte vor. Kulturelle Bedeutung" +
+                " erlangte es durch seine Bibliothek, die angeschlossene Schule, ein Hospiz," +
+                " seine Werkstatt für Buchmaler und Buchbinderei und wichtige Kirchenschätze." +
+                " Zudem war das Kloster lange Zeit Grundbesitzer im Wesergebiet (so die" +
+                " Externsteine) und am Niederrhein bis in die Niederlande. Die Kirche ist" +
+                " heute eine evangelisch-lutherische Pfarrkirche.", 51.718725, 8.752889,
                 "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.abdinghof, 5, "image.jpg");
 
         pictureDescriptions.clear();
         pictureDescriptions.put(pictureName, "Busdorfkirche (außen)");
         insertExhibit(6, "Busdorfkirche", "Die Busdorfkirche ist eine Kirche in Paderborn, die" +
-                        " nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war" +
-                        " ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen" +
-                        " ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge" +
-                        " der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606,
+                " nach dem Vorbild der Grabeskirche in Jerusalem entstand. Das Stift Busdorf war" +
+                " ein 1036 gegründetes Kollegiatstift in Paderborn. Stift und Kirche lagen" +
+                " ursprünglich außerhalb der Stadt, wurden aber im 11./12. Jahrhundert im Zuge" +
+                " der Stadterweiterung in diese einbezogen.", 51.7186951, 8.7577606,
                 "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.busdorfkirche_aussen, 6, pictureName);
 
@@ -306,14 +303,14 @@ public class DBAdapter {
         pictureDescriptions.put("image.jpg", "Liborikapelle (außen)");
         insertExhibit(7, "Liborikapelle",
                 "Die spätbarocke, äußerlich unscheinbare Liborikapelle ist vor den Mauern" +
-                        " der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der" +
-                        " vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als" +
-                        " Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite" +
-                        " über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und" +
-                        " Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben" +
-                        " Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle" +
-                        " diente als Station auf der alljährlichen Libori-Prozession rund um" +
-                        "die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
+                " der alten Stadt auf dem Liboriberg zu finden. Von weitem leuchtet der" +
+                " vergoldete Pfau als Wetterfahne auf dem Dachreiter. Ein Pfau als" +
+                " Zeichen für die Verehrung des hl. Liborius schmückt auch die Stirnseite" +
+                " über dem auf Säulen ruhenden Vordach. Inschriften zeigen Gebete und" +
+                " Lobsprüche für den Stadt- und Bistumsheiligen Liborius und geben" +
+                " Hinweis auf den Erbauer sowie auf das Erbauungsjahr 1730. Die Kapelle" +
+                " diente als Station auf der alljährlichen Libori-Prozession rund um" +
+                "die Stadt.", 51.715041, 8.754022, "Kirche", "", pictureDescriptions, -1);
         addImage(R.drawable.liboriuskapelle, 7, "image.jpg");
 
         pictureDescriptions.clear();
@@ -609,7 +606,9 @@ public class DBAdapter {
         mManager.setDefaultHttpClientFactory(cblHttpClientFactory);
     }
 
-    /* insert a exhibit in the database */
+    /**
+     *  insert a exhibit in the database
+     */
     public void insertExhibit(int id, String name, String description, double lat, double lng,
                               String categories, String tags,
                               HashMap<String, String> pictureDescriptions, int sliderId) {
