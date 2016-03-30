@@ -12,47 +12,53 @@ import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.Waypoint;
 
-
+/**
+ * Test for the DBAdapter
+ */
 public class DBAdapterTest extends AndroidTestCase {
 
+    private DBAdapter mTestObject;
 
-    private DBAdapter testobject;
-
-
-    /* Constructor */
     public DBAdapterTest() {
         super();
     }
 
 
-    /* Setup test environment */
+    /**
+     * Setup test environment
+     * @throws Exception
+     */
     @Override
-    protected void setUp() throws Exception{
+    protected void setUp() throws Exception {
         super.setUp();
-        testobject = new DBAdapter(getContext());
+        mTestObject = new DBAdapter(getContext());
     }
 
 
-    /* test if adapter is set up correctly */
+    /**
+     * test if adapter is set up correctly
+     */
     public void testAdapterExists() {
-        assertNotNull("adapter is null", testobject);
+        assertNotNull("adapter is null", mTestObject);
     }
 
 
-    /* test if database is empty and therefor not correctly synchronized */
-    // ToDo: Comment in after iss-hipm-123 is merged into development
-    // public void testDatabaseNotEmpty() {
-    //    assertTrue("database is empty!", testobject.getDocumentCount() > 0);
-    //}
+    /**
+     * test if database is empty and therefor not correctly synchronized
+     */
+    public void testDatabaseNotEmpty() {
+        assertTrue("database is empty!", mTestObject.getDocumentCount() > 0);
+    }
 
-
-    /* test if the Stadtroute is retrieved correctly */
+    /**
+     * test if the Stadtroute is retrieved correctly
+     */
     public void testGetStadtroute() {
-        RouteSet routeSet = new RouteSet(testobject.getView("routes"));
+        RouteSet routeSet = new RouteSet(mTestObject.getView("routes"));
         assertNotNull(routeSet);
 
         for (Route route : routeSet.getRoutes()) {
-            if (route.getTitle() == "Stadtroute") {
+            if (route.getTitle().equals("Stadtroute")) {
                 /* found Stadtroute, check attributes */
                 assertEquals(route.getDescription(), "Dies ist eine kurze Route in der Stadt.");
                 assertEquals(route.getDuration(), 7200);
@@ -103,24 +109,29 @@ public class DBAdapterTest extends AndroidTestCase {
     }
 
 
-    /* test the exhibits view */
+    /**
+     * test the exhibits view
+     */
     public void testExhibitsView() {
-        assertNotNull(testobject.getView("exhibits"));
-        assertTrue(testobject.getView("exhibits").size() > 0);
+        assertNotNull(mTestObject.getView("exhibits"));
+        assertTrue(mTestObject.getView("exhibits").size() > 0);
     }
 
 
-    /* test the getDocument() function */
+    /**
+     * Test the getDocument() function
+     */
     public void testGetDocument() {
-        Document exhibit = testobject.getDocument(1);
+        Document exhibit = mTestObject.getDocument(1);
         assertNotNull(exhibit);
         assertEquals(exhibit.getProperty("name"), "Paderborner Dom");
     }
 
-
-    /* negative test if wrong document ids lead to an empty document */
+    /**
+     * negative test if wrong document ids lead to an empty document
+     */
     public void testNegativeGetDocument() {
-        Document exhibit = testobject.getDocument(-1);
+        Document exhibit = mTestObject.getDocument(-1);
         assertNull(exhibit.getProperties());
     }
 }
