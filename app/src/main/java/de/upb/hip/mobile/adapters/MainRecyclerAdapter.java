@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.helpers.ImageManipulation;
 import de.upb.hip.mobile.models.Exhibit;
@@ -36,14 +38,16 @@ import de.upb.hip.mobile.models.ExhibitSet;
  */
 public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder> {
     private ExhibitSet mExhibitSet;
+    private LatLng mLocation;
 
     /**
      * Constructor for the MainRecyclerAdapter
      *
      * @param exhibitSet set of Exhibits to be shown
      */
-    public MainRecyclerAdapter(ExhibitSet exhibitSet) {
+    public MainRecyclerAdapter(ExhibitSet exhibitSet,  LatLng location) {
         this.mExhibitSet = exhibitSet;
+        mLocation = location;
     }
 
     /**
@@ -74,7 +78,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
         // update the holder with new data
         holder.mName.setText(exhibit.getName());
-        double doubleDistance = exhibit.getDistance();
+        double doubleDistance = exhibit.getDistance(mLocation);
 
         int intDistance;
         String distance;
