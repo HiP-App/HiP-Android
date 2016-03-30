@@ -16,16 +16,21 @@
 
 package de.upb.hip.mobile.models;
 
+import com.couchbase.lite.Document;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
-
-import de.upb.hip.mobile.adapters.DBAdapter;
-import com.couchbase.lite.Document;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import de.upb.hip.mobile.adapters.DBAdapter;
+
+/**
+ * Exhibit objects store general information to exhibit points
+ * they have an id which should be unique, although in theory the same id can be assigned to
+ * more than one exhibit
+ */
 public class Exhibit {
 
     private int mId;
@@ -34,23 +39,22 @@ public class Exhibit {
     private LatLng mLatlng;
     private String[] mCategories;
     private String[] mTags;
-    private double mDistance;
     private int mSliderId;
     private HashMap<String, String> mPictureDescriptions;
 
-    public Exhibit (Document document) {
+    public Exhibit(Document document) {
 
         Map<String, Object> properties = document.getProperties();
         int id = Integer.valueOf(document.getId());
-        String name = (String)properties.get(DBAdapter.KEY_EXHIBIT_NAME);
-        String description = (String)properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
-        double lat = (double)properties.get(DBAdapter.KEY_EXHIBIT_LAT);
-        double lng = (double)properties.get(DBAdapter.KEY_EXHIBIT_LNG);
-        String categories = (String)properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
-        String tags = (String)properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
-        int sliderId = (int)properties.get(DBAdapter.KEY_EXHIBIT_SLIDER_ID);
+        String name = (String) properties.get(DBAdapter.KEY_EXHIBIT_NAME);
+        String description = (String) properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
+        double lat = (double) properties.get(DBAdapter.KEY_EXHIBIT_LAT);
+        double lng = (double) properties.get(DBAdapter.KEY_EXHIBIT_LNG);
+        String categories = (String) properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
+        String tags = (String) properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
+        int sliderId = (int) properties.get(DBAdapter.KEY_EXHIBIT_SLIDER_ID);
 
-        mPictureDescriptions = (LinkedHashMap<String, String>)document.getProperty
+        mPictureDescriptions = (LinkedHashMap<String, String>) document.getProperty
                 (DBAdapter.KEY_EXHIBIT_PICTURE_DESCRIPTIONS);
 
         mId = id;
@@ -62,8 +66,8 @@ public class Exhibit {
         mSliderId = sliderId;
     }
 
-    public Exhibit (int id, String name, String description, double lat,
-                    double lng, String categories, String tags) {
+    public Exhibit(int id, String name, String description, double lat,
+                   double lng, String categories, String tags) {
         mId = id;
         mName = name;
         mDescription = description;
@@ -72,19 +76,24 @@ public class Exhibit {
         mTags = tags.split(",");
     }
 
-    public void setDistance (LatLng position) {
-        mDistance = SphericalUtil.computeDistanceBetween(position, mLatlng);
+    /**
+     * calculates the distance from position to the exhibit location.
+     * @param position user location
+     * @return
+     */
+    public double getDistance(LatLng position) {
+        return SphericalUtil.computeDistanceBetween(position, mLatlng);
     }
 
     public int getId() {
         return mId;
     }
 
-    public String getName(){
+    public String getName() {
         return mName;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return mDescription;
     }
 
@@ -96,7 +105,7 @@ public class Exhibit {
         return mCategories.clone();
     }
 
-    public String[] getTags(){
+    public String[] getTags() {
         return mTags.clone();
     }
 
@@ -104,12 +113,8 @@ public class Exhibit {
         return mSliderId;
     }
 
-    public HashMap<String, String> getPictureDescriptions(){
+    public HashMap<String, String> getPictureDescriptions() {
         return new HashMap<String, String>(mPictureDescriptions);   //return a new object
-                // so as to leave this one intact, when the return object is changed
-    }
-
-    public double getDistance(){
-        return mDistance;
+        // so as to leave this one intact, when the return object is changed
     }
 }

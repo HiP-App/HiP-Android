@@ -64,7 +64,6 @@ public class ExhibitSet {
             String tags = (String) properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
 
             Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
-            exhibit.setDistance(this.mPosition);
 
             for (String categorie : exhibit.getCategories()) {
                 if (!this.mCategories.contains(categorie)) this.mCategories.add(categorie);
@@ -108,10 +107,6 @@ public class ExhibitSet {
     public void updatePosition(LatLng position) {
         this.mPosition = position;
 
-        for (Exhibit exhibit : mInitSet) {
-            exhibit.setDistance(this.mPosition);
-        }
-
         this.orderByDistance();
     }
 
@@ -128,7 +123,7 @@ public class ExhibitSet {
         int i = 0;
 
         while (this.mActiveSet.size() > 0) {
-            currentDistance = this.mActiveSet.get(i).getDistance();
+            currentDistance = this.mActiveSet.get(i).getDistance(this.mPosition);
             if (minDistance == 0) {
                 minDistance = currentDistance;
                 minPosition = i;
