@@ -25,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -206,20 +205,21 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
                         (geoPoint, exhibit.getName(), exhibit.getDescription(), exhibit.getId());
             } else {
                 if (i == route.getWayPoints().size() - 1) {
-                    viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.destination),
-                            "", -1);
+                    viaPointsData.setViaPointData(geoPoint,
+                            getResources().getString(R.string.destination), "", -1);
                 } else {
-                    viaPointsData.setViaPointData(geoPoint, getResources().getString(R.string.via_point),
-                            "", -1);
+                    viaPointsData.setViaPointData(geoPoint,
+                            getResources().getString(R.string.via_point), "", -1);
                 }
             }
             mViaPoints.add(viaPointsData);
         }
 
         if (savedInstanceState == null) {
-            getRoadAsync();
+            getRoadAsync(0);
         } else {
-            mLocationOverlay.setLocation((GeoPoint) savedInstanceState.getParcelable(SAVEDSTATE_LOCATION));
+            mLocationOverlay.setLocation((GeoPoint) savedInstanceState
+                    .getParcelable(SAVEDSTATE_LOCATION));
             mStartPoint = savedInstanceState.getParcelable(SAVEDSTATE_START);
             //mDestinationPoint = savedInstanceState.getParcelable(SAVEDSTATE_DESTINATION);
             //mViaPoints = savedInstanceState.getParcelableArrayList(SAVEDSTATE_VIAPOINTS);
@@ -258,7 +258,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.getOverlays().add(mRoadNodeMarkers);
 
         if (savedInstanceState != null) {
-            updateUIWithRoads(mRoads);
+            updateUiWithRoads(mRoads);
         }
     }
 
@@ -405,7 +405,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         if (mRoads[0].mNodes.get(mReachedNode).mInstructions != null) {
             instructions = mRoads[0].mNodes.get(mReachedNode).mInstructions;
         }
-        String length = String.valueOf((int) (mRoads[0].mNodes.get(mReachedNode).mLength * 1000)) + " m";
+        String length = String.valueOf((int) (mRoads[0]
+                .mNodes.get(mReachedNode).mLength * 1000)) + " m";
         drawStepInfo(image, instructions, length);
 
         int type = -1;
@@ -494,22 +495,6 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      * update maneuver icon until the next step
      */
     private void updateManeuverIcon(Drawable drawable) {
-
-//        // set maneuver icon
-//        ImageView ivManeuverIcon = (ImageView) findViewById(R.id.routeNavigationManeuverIcon);
-//        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-//        Bitmap newImage = Bitmap.createBitmap(ivManeuverIcon.getWidth(), ivManeuverIcon.getHeight(),
-//                Bitmap.Config.ARGB_8888);
-//
-//        int maneuverIconCenterX = (ivManeuverIcon.getWidth() - bitmap.getWidth()) / 2;
-//        int maneuverIconCenterY = (ivManeuverIcon.getHeight() - bitmap.getHeight()) / 2;
-//
-//        Canvas cManeuverIcon = new Canvas(newImage);
-//        cManeuverIcon.drawBitmap(bitmap, maneuverIconCenterX, maneuverIconCenterY, null);
-//
-//        ivManeuverIcon.setImageBitmap(newImage);
-
-
         ImageView ivManeuverIcon = (ImageView) findViewById(R.id.routeNavigationManeuverIcon);
         ivManeuverIcon.setImageBitmap(((BitmapDrawable) drawable).getBitmap());
     }
@@ -519,29 +504,6 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      */
     //TODO calculate position for instruction if instruction too long for one line
     private void updateInstructionInfo(String instructions) {
-
-        // I replaced this ImageView version with TextView version, but I don't know if this is OK
-        // christian
-
-
-//        // set maneuver instruction
-//        ImageView ivManeuverInstruction = (ImageView) findViewById(R.id.routeNavigationInstruction);
-//
-//        Paint paint = getPaintForTextInstructions();
-//        Bitmap newImage = Bitmap.createBitmap(ivManeuverInstruction.getWidth(),
-//                ivManeuverInstruction.getHeight(), Bitmap.Config.ARGB_8888);
-//
-//        Canvas cManeuverInfo = new Canvas(newImage);
-//
-//        Rect bounds = new Rect();
-//        paint.getTextBounds(instructions, 0, instructions.length(), bounds);
-//
-//        int textY = cManeuverInfo.getHeight() / 2 - bounds.height() / 2;
-//        int textX = cManeuverInfo.getWidth() / 2;
-//
-//        cManeuverInfo.drawText(instructions, textX, textY, paint);
-//        ivManeuverInstruction.setImageBitmap(newImage);
-
         TextView ivManeuverInstruction = (TextView) findViewById(R.id.routeNavigationInstruction);
         ivManeuverInstruction.setText(instructions);
     }
@@ -550,44 +512,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      * update textual distance for user information
      */
     private void updateDistanceInfo(String length) {
-
-        // I replaced this ImageView version with TextView version, but I don't know if this is OK
-        // christian
-
-//        Paint paint = getPaintForTextInstructions();
-//
-//        ImageView ivManeuverDistance = (ImageView) findViewById(R.id.routeNavigationDistance);
-//        Bitmap newImage = Bitmap.createBitmap(ivManeuverDistance.getWidth(),
-//                ivManeuverDistance.getHeight(), Bitmap.Config.ARGB_8888);
-//
-//        Canvas cManeuverDistance = new Canvas(newImage);
-//
-//        Rect bounds = new Rect();
-//        paint.getTextBounds(length, 0, length.length(), bounds);
-//
-//        int textY = cManeuverDistance.getHeight() / 2;
-//        int textX = cManeuverDistance.getWidth() / 2;
-//
-//        cManeuverDistance.drawText(length, textX, textY, paint);
-//        ivManeuverDistance.setImageBitmap(newImage);
-
         TextView ivManeuverDistance = (TextView) findViewById(R.id.routeNavigationDistance);
         ivManeuverDistance.setText(length);
-    }
-
-    /**
-     * get style for drawing the text
-     */
-    private Paint getPaintForTextInstructions() {
-        int textSize = 50;
-        Paint paint = new Paint();
-
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(textSize);
-
-        return paint;
     }
 
     /**
@@ -704,7 +630,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         Drawable icon = ContextCompat.getDrawable(this, R.drawable.marker_node);
         int n = road.mNodes.size();
 
-        MarkerInfoWindow infoWindow = new MarkerInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mMap);
+        MarkerInfoWindow infoWindow = new MarkerInfoWindow(
+                org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mMap);
         TypedArray iconIds = getResources().obtainTypedArray(R.array.direction_icons);
 
         for (int i = index; i < n; i++) {
@@ -713,7 +640,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             Marker nodeMarker = new Marker(mMap);
             nodeMarker.setTitle(getString(R.string.step) + " " + (i + 1));
             nodeMarker.setSnippet(instructions);
-            nodeMarker.setSubDescription(Road.getLengthDurationText(this, node.mLength, node.mDuration));
+            nodeMarker.setSubDescription(
+                    Road.getLengthDurationText(this, node.mLength, node.mDuration));
             nodeMarker.setPosition(node.mLocation);
             nodeMarker.setIcon(icon);
             nodeMarker.setInfoWindow(infoWindow); //use a shared infowindow.
@@ -744,7 +672,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.invalidate();
     }
 
-    void updateUIWithRoads(Road[] roads) {
+    void updateUiWithRoads(Road[] roads) {
         mRoadNodeMarkers.getItems().clear();
         List<Overlay> mapOverlays = mMap.getOverlays();
         if (mRoadOverlays != null) {
@@ -769,7 +697,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
             String routeDesc = roads[i].getLengthDurationText(this, -1);
             roadPolyline.setTitle(getString(R.string.route) + " - " + routeDesc);
-            roadPolyline.setInfoWindow(new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mMap));
+            roadPolyline.setInfoWindow(
+                    new BasicInfoWindow(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mMap));
             roadPolyline.setRelatedObject(i);
             mapOverlays.add(1, roadPolyline);
             //we insert the road overlays at the "bottom", just above the MapEventsOverlay,
@@ -778,10 +707,12 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         selectRoad(0);
     }
 
-    public void getRoadAsync() {
-        getRoadAsync(0);
-    }
 
+    /**
+     * Gets a road in the background and notifies the listener when its ready
+     *
+     * @param index The first waypoint of the road
+     */
     public void getRoadAsync(int index) {
         mRoads = null;
         GeoPoint roadStartPoint = null;
@@ -793,7 +724,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
 
         if (roadStartPoint == null) {
-            updateUIWithRoads(null);
+            updateUiWithRoads(null);
             updateUIWithPolygon(mViaPoints, "");
             return;
         }
@@ -806,7 +737,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
 
         //waypoints.add(mDestinationPoint);
-        new UpdateRoadTask(this).execute(waypoints);
+        new UpdateRoadTask().execute(waypoints);
     }
 
     /**
@@ -841,16 +772,29 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         mMap.invalidate();
     }
 
+    /**
+     * Adds an alert that triggers when a user is within a defined range of a specific coordinate
+     *
+     * @param latitude  the latitude of the alert point
+     * @param longitude the longitude of the alert point
+     */
     private void addProximityAlert(double latitude, double longitude) {
         Intent intent = new Intent(PROX_ALERT);
 
-        mProximityIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        mProximityIntent = PendingIntent.getBroadcast(this, 0, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
         mGpsTracker.getLocationManager().addProximityAlert(
-                latitude, // the latitude of the central point of the alert region
-                longitude, // the longitude of the central point of the alert region
-                POINT_RADIUS, // the radius of the central point of the alert region, in meters
-                PROX_ALERT_EXPIRATION, // time for this proximity alert, in milliseconds, or -1 to indicate no expiration
-                mProximityIntent // will be used to generate an Intent to fire when entry to or exit from the alert region is detected
+                // the latitude of the central point of the alert region
+                latitude,
+                // the longitude of the central point of the alert region
+                longitude,
+                // the radius of the central point of the alert region, in meters
+                POINT_RADIUS,
+                // time for this proximity alert, in milliseconds, or -1 to indicate no expiration
+                PROX_ALERT_EXPIRATION,
+                // will be used to generate an Intent to fire when entry to
+                // or exit from the alert region is detected
+                mProximityIntent
         );
     }
 
@@ -947,11 +891,6 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
      * Async task to get the road in a separate thread.
      */
     private class UpdateRoadTask extends AsyncTask<Object, Void, Road[]> {
-        private final Context mContext;
-
-        private UpdateRoadTask(Context mContext) {
-            this.mContext = mContext;
-        }
 
         protected void onPreExecute() {
             mProgressDialog.setMessage(getString(R.string.download_road));
@@ -972,7 +911,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             mProgressDialog.setMessage(getString(R.string.creating_map));
             mRoads = result;
             if (mRoads != null) {
-                updateUIWithRoads(result);
+                updateUiWithRoads(result);
 
                 // TODO Remove this as soon as no needs to run on emulator
                 // needed to set route info and dismiss busy waiting dialog on emulator
@@ -988,12 +927,16 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
     }
 
+    /**
+     * Gets called when the user approaches a node
+     */
     public class ProximityIntentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String key = LocationManager.KEY_PROXIMITY_ENTERING;
             Boolean entering = intent.getBooleanExtra(key, false);
             if (entering) {
+                //We entered near a node, count up the reached nodes
                 mReachedNode++;
                 mGpsTracker.getLocationManager().removeProximityAlert(mProximityIntent);
             }
