@@ -277,7 +277,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
             @Override
             protected Object doInBackground(Object[] params) {
                 NominatimPOIProvider poiProvider = new NominatimPOIProvider("Uni-Paderborn HiP App");
-                final ArrayList<POI> pois = poiProvider.getPOICloseTo(position, "restaurant", 50, 0.1);
+                final ArrayList<POI> pois = poiProvider.getPOICloseTo(position, "restaurant", 50, 0.05);
 
                 final FolderOverlay poiMarkers = new FolderOverlay(RouteNavigationActivity.this);
                 RouteNavigationActivity.this.runOnUiThread(new Runnable() {
@@ -285,7 +285,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
                     public void run() {
                         map.getOverlays().add(poiMarkers);
 
-                        Drawable poiIcon = getResources().getDrawable(R.drawable.route_tag_restaurant);
+                        Drawable poiIcon = getResources().getDrawable(R.drawable.map_restaurant);
                         for (POI poi : pois) {
                             Marker poiMarker = new Marker(map);
                             poiMarker.setTitle(poi.mType);
