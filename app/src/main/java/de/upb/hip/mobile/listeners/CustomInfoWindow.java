@@ -41,7 +41,7 @@ public class CustomInfoWindow extends MarkerInfoWindow {
         POI poi = (POI) ((Marker) item).getRelatedObject();
         mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo).setVisibility(View.VISIBLE);
         String title = "";
-        //The title is before the first "," in the  string
+        //The title is before the first "," in the string
         String[] split = poi.mDescription.split(",");
         if (split.length > 0) {
             title = split[0];
