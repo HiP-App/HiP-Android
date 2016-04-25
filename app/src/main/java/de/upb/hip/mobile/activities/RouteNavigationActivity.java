@@ -38,7 +38,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -75,6 +74,7 @@ import java.util.Map;
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+import de.upb.hip.mobile.listeners.CustomInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
@@ -295,6 +295,8 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
                             /*if (poi.mThumbnail != null){
                                 poiItem.setImage(new BitmapDrawable(poi.mThumbnail));
                             }*/
+                            poiMarker.setInfoWindow(new CustomInfoWindow(map));
+                            poiMarker.setRelatedObject(poi);
                             poiMarkers.add(poiMarker);
                         }
                     }
