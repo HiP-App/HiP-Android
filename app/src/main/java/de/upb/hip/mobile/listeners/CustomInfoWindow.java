@@ -27,11 +27,12 @@ import org.osmdroid.views.MapView;
 
 /**
  * This class customizes the info window that is opened when clicking a POI marker on the map
+ * All it does is display the name of the restaurant in a bubble.
  */
 public class CustomInfoWindow extends MarkerInfoWindow {
     public CustomInfoWindow(MapView mapView) {
         super(org.osmdroid.bonuspack.R.layout.bonuspack_bubble, mapView);
-        Button btn = (Button)(mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo));
+        Button btn = (Button) (mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo));
 
     }
 
@@ -39,9 +40,12 @@ public class CustomInfoWindow extends MarkerInfoWindow {
     public void onOpen(Object item) {
         super.onOpen(item);
         POI poi = (POI) ((Marker) item).getRelatedObject();
-        mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo).setVisibility(View.VISIBLE);
+        //Hide the poinless "play" icon
+        mView.findViewById(org.osmdroid.bonuspack.R.id.bubble_moreinfo).setVisibility(View.GONE);
+
         String title = "";
-        //The title is before the first "," in the string
+        //The title is before the first "," in the string, the rest is the address in an
+        //ugly format. So we cut off everything after the title.
         String[] split = poi.mDescription.split(",");
         if (split.length > 0) {
             title = split[0];
