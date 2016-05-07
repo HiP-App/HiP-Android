@@ -28,6 +28,9 @@ import android.view.ViewTreeObserver;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
+
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
@@ -167,6 +170,9 @@ public class MainActivity extends BaseActivity {
         //swipe_container
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainSwipeContainer);
         mSwipeLayout.setEnabled(false);
+
+        //HockeyApp Code
+        checkForUpdates();
     }
 
 
@@ -312,6 +318,8 @@ public class MainActivity extends BaseActivity {
         mGpsTracker.getLocation();
 
         super.onResume();
+        //HockeyApp Code
+        checkForCrashes();
     }
 
 
@@ -321,6 +329,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        //HockeyApp Code
+        unregisterManagers();
     }
 
 
@@ -332,5 +343,25 @@ public class MainActivity extends BaseActivity {
         mGpsTracker.stopUsingGPS();
 
         super.onPause();
+
+        //HockeyApp Code
+        unregisterManagers();
+    }
+
+
+    /**
+     * HockeyApp methods
+     */
+    private void checkForCrashes() {
+        CrashManager.register(this);
+    }
+
+    private void checkForUpdates() {
+        // Remove this for store builds!
+        UpdateManager.register(this);
+    }
+
+    private void unregisterManagers() {
+        UpdateManager.unregister();
     }
 }

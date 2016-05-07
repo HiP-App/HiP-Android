@@ -21,6 +21,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         multiDexEnabled true
+
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "c06e339d53db43c0ae12fc04fb90c263"]
     }
     buildTypes {
         release {
@@ -47,6 +49,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.0.+'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.couchbase.lite:couchbase-lite-android:1.1.0'
+
+    compile 'net.hockeyapp.android:HockeySDK:4.0.0'
 
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test:runner:0.2+'){
