@@ -89,6 +89,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/licensing_couchbase_body_text"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/licensing_mapicons_title_text"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/licensingMapiconsBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/licensing_mapicons_body_text"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
     </RelativeLayout>
 

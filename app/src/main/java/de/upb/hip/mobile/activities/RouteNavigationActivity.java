@@ -45,6 +45,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.location.NominatimPOIProvider;
+import org.osmdroid.bonuspack.location.POI;
 import org.osmdroid.bonuspack.overlays.BasicInfoWindow;
 import org.osmdroid.bonuspack.overlays.FolderOverlay;
 import org.osmdroid.bonuspack.overlays.MapEventsReceiver;
@@ -72,6 +74,7 @@ import java.util.Map;
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
+import de.upb.hip.mobile.listeners.CustomInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
@@ -234,6 +237,12 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
 
         updateUIWithItineraryMarkers();
 
+        //Add the POIs around the starting point of the map
+        if (route.getWayPoints().size() > 0) {
+            addPOIsToMap(mMap, new GeoPoint(route.getWayPoints().get(0).getLatitude(),
+                    route.getWayPoints().get(0).getLongitude()));
+        }
+
         // a scale bar in the top-left corner of the screen
         ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mMap);
         mMap.getOverlays().add(scaleBarOverlay);
@@ -262,6 +271,45 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
         }
     }
 
+    private void addPOIsToMap(final MapView map, final GeoPoint position) {
+        new AsyncTask() {
+
+            @Override
+            protected Object doInBackground(Object[] params) {
+                NominatimPOIProvider poiProvider = new NominatimPOIProvider("Uni-Paderborn HiP App");
+                final ArrayList<POI> pois = poiProvider.getPOICloseTo(position, "restaurant", 50, 0.05);
+
+                final FolderOverlay poiMarkers = new FolderOverlay(RouteNavigationActivity.this);
+                RouteNavigationActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        map.getOverlays().add(poiMarkers);
+
+                        Drawable poiIcon = getResources().getDrawable(R.drawable.map_restaurant);
+                        for (POI poi : pois) {
+                            Marker poiMarker = new Marker(map);
+                            poiMarker.setTitle(poi.mType);
+                            poiMarker.setSnippet(poi.mDescription);
+                            poiMarker.setPosition(poi.mLocation);
+                            poiMarker.setIcon(poiIcon);
+                            /*if (poi.mThumbnail != null){
+                                poiItem.setImage(new BitmapDrawable(poi.mThumbnail));
+                            }*/
+                            poiMarker.setInfoWindow(new CustomInfoWindow(map));
+                            poiMarker.setRelatedObject(poi);
+                            poiMarkers.add(poiMarker);
+                        }
+                    }
+                });
+
+
+                return null;
+            }
+        }.execute();
+
+    }
+
+
     /**
      * LocationListener implementation
      */
@@ -269,6 +317,7 @@ public class RouteNavigationActivity extends Activity implements MapEventsReceiv
     public void onLocationChanged(final Location location) {
 
         GeoPoint newLocation = new GeoPoint(location);
+
         if (!mLocationOverlay.isEnabled()) {
             //we get the location for the first time:
             mLocationOverlay.setEnabled(true);
