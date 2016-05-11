@@ -27,11 +27,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitDeserializer;
 
 /**
  * Activity Class for the Image-Slider View, where a picture at the top can be changed with a fading
@@ -65,8 +65,8 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
 
         // read mExhibit with given exhibit-id from Database
         mDatabase = new DBAdapter(this);
-        int exhibitId = getIntent().getIntExtra("exhibit-id", 0);
-        mExhibit = new Exhibit(mDatabase.getDocument(exhibitId));
+        int exhibitId = getIntent().getIntExtra(INTENT_EXHIBIT_ID, 0);
+        mExhibit = ExhibitDeserializer.deserializeExhibit(mDatabase.getDocument(exhibitId));
 
         setData();
 
@@ -75,8 +75,9 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         // set picture description in view
         TextView mDescriptionTextView =
                 (TextView) findViewById(R.id.displayImageSliderDescriptionText);
-        mDescriptionTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().
-                getStringExtra("imageName")));
+        //TODO: Reimplement this?!
+        //mDescriptionTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().
+        //        getStringExtra(INTENT_IMAGE_NAME)));
 
         // modify action bar with back button and title
         ActionBar actionBar = getSupportActionBar();
@@ -330,7 +331,8 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
      * Set the mPicDataList Array with data of the database
      */
     private void setData() {
-        int sliderID = mExhibit.getSliderId();
+        //TODO: Reimplement this
+        /*int sliderID = mExhibit.getSliderId();
         @SuppressWarnings("unchecked") // getProperty returns always Maps with String and Object
                 ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)
                 mDatabase.getDocument(sliderID).getProperty(DBAdapter.KEY_SLIDER_IMAGES);
@@ -341,7 +343,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
             mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID,
                     (String) properties.get(DBAdapter.KEY_SLIDER_IMAGE_NAME)),
                     (int) properties.get(DBAdapter.KEY_SLIDER_IMAGE_YEAR)));
-        }
+        }*/
     }
 
     /**

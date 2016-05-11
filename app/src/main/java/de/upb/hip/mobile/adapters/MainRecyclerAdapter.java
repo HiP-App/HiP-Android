@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
      *
      * @param exhibitSet set of Exhibits to be shown
      */
-    public MainRecyclerAdapter(ExhibitSet exhibitSet,  LatLng location) {
+    public MainRecyclerAdapter(ExhibitSet exhibitSet, LatLng location) {
         this.mExhibitSet = exhibitSet;
         mLocation = location;
     }
@@ -97,10 +98,16 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
         holder.mDistance.setText(distance);
 
-        Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 64);
-        BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
-        Bitmap bmp = bitmapDrawable.getBitmap();
-        holder.mImage.setImageBitmap(ImageManipulation.getCroppedImage(bmp, 100));
+        //Workaround code while there is no "image.jpeg" in the DB anymore
+        try {
+            Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 64);
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
+            Bitmap bmp = bitmapDrawable.getBitmap();
+            holder.mImage.setImageBitmap(ImageManipulation.getCroppedImage(bmp, 100));
+        } catch (Exception e) {
+            Log.e("main-recycler", e.toString());
+        }
+
     }
 
     /**

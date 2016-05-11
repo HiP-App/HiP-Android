@@ -56,15 +56,7 @@ public class ExhibitSet {
         // add all exhibits
         for (int i = 0; i < list.size(); i++) {
             Map<String, Object> properties = list.get(i);
-            int id = Integer.valueOf((String) properties.get(DBAdapter.KEY_ID));
-            String name = (String) properties.get(DBAdapter.KEY_EXHIBIT_NAME);
-            String description = (String) properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
-            double lat = (double) properties.get(DBAdapter.KEY_EXHIBIT_LAT);
-            double lng = (double) properties.get(DBAdapter.KEY_EXHIBIT_LNG);
-            String categories = (String) properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
-            String tags = (String) properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
-
-            Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
+            Exhibit exhibit = ExhibitDeserializer.deserializeExhibit(properties);
 
             for (String categorie : exhibit.getCategories()) {
                 if (!this.mCategories.contains(categorie)) this.mCategories.add(categorie);
