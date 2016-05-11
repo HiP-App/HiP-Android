@@ -30,8 +30,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.helpers.ImageManipulation;
-import de.upb.hip.mobile.models.Exhibit;
-import de.upb.hip.mobile.models.ExhibitSet;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
 /**
  * Adapter for the RecyclerView

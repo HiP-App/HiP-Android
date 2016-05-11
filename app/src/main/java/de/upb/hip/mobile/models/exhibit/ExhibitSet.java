@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.upb.hip.mobile.models;
+package de.upb.hip.mobile.models.exhibit;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,6 +31,7 @@ import java.util.Map;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.SetMarker;
 
 
 /**

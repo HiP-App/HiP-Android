@@ -31,7 +31,7 @@ import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
-import de.upb.hip.mobile.models.Exhibit;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * Activity Class for the Image-Slider View, where a picture at the top can be changed with a fading

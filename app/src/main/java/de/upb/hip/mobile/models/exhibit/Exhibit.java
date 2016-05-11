@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.upb.hip.mobile.models;
+package de.upb.hip.mobile.models.exhibit;
 
 import com.couchbase.lite.Document;
 import com.google.android.gms.maps.model.LatLng;

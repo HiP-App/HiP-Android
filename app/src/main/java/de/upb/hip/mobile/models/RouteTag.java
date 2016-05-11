@@ -101,7 +101,7 @@ public class RouteTag implements Serializable {
 
     /**
      * Getter for the name of the image belonging to the tag.
-     * IMPORTANT: Can only be called if getImage(routeId, imageFilename) was called at least once.
+     * IMPORTANT: Can only be called if getmImage(routeId, imageFilename) was called at least once.
      * Else returns null.
      *
      * @return image Drawable

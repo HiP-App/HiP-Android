@@ -73,10 +73,10 @@ import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
-import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.SetMarker;
 import de.upb.hip.mobile.models.ViaPointData;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * Create the route on the map and show step by step instruction for the navigation

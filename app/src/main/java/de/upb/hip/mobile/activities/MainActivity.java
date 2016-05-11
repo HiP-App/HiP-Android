@@ -49,9 +49,9 @@ import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
-import de.upb.hip.mobile.models.Exhibit;
-import de.upb.hip.mobile.models.ExhibitSet;
 import de.upb.hip.mobile.models.SetMarker;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
 
 /**

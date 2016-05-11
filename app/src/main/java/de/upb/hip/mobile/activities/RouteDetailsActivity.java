@@ -59,11 +59,11 @@ import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
-import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.SetMarker;
 import de.upb.hip.mobile.models.Waypoint;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * Activity Class for the route details view, where the details of a route are show, including a

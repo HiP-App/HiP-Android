@@ -19,6 +19,7 @@ package de.upb.hip.mobile.models;
 import java.io.Serializable;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * Model Class the way points.

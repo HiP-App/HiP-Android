@@ -16,10 +16,12 @@
 
 package de.upb.hip.mobile.models;
 
+import java.io.Serializable;
+
 /**
  * Model for a single image in the imageslider
  */
-public class SliderImage {
+public class SliderImage implements Serializable {
 
     private String mImageName;
     private int mYear;
