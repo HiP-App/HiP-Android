@@ -54,12 +54,11 @@ public class ExhibitSet {
         this.mPosition = position;
 
         // add all exhibits
-        for (int i = 0; i < list.size(); i++) {
-            Map<String, Object> properties = list.get(i);
+        for (Map<String, Object> properties : list) {
             Exhibit exhibit = ExhibitDeserializer.deserializeExhibit(properties);
 
-            for (String categorie : exhibit.getCategories()) {
-                if (!this.mCategories.contains(categorie)) this.mCategories.add(categorie);
+            for (String category : exhibit.getCategories()) {
+                if (!this.mCategories.contains(category)) this.mCategories.add(category);
             }
 
             this.mInitSet.add(exhibit);
@@ -74,16 +73,16 @@ public class ExhibitSet {
     /**
      * update the categories
      *
-     * @param strArray array with categories as string
+     * @param categories list with categories as string
      */
-    public void updateCategories(List<String> strArray) {
+    public void updateCategories(List<String> categories) {
 
         this.mActiveSet = new ArrayList<>();
 
-        for (int i = 0; i < strArray.size(); i++) {
+        for (String category : categories) {
 
             for (Exhibit exhibit : mInitSet) {
-                if (Arrays.asList(exhibit.getCategories()).contains(strArray.get(i))) {
+                if (Arrays.asList(exhibit.getCategories()).contains(category)) {
                     this.mActiveSet.add(exhibit);
                 }
             }
