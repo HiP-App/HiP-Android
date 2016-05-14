@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.upb.hip.mobile.models.exhibit;
+package de.upb.hip.mobile.helpers.db;
 
 import android.util.Log;
 
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * A helper class for serializing all objects related to exhibits

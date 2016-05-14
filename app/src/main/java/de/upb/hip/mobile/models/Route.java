@@ -17,7 +17,6 @@
 package de.upb.hip.mobile.models;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +27,7 @@ public class Route implements Serializable {
     private int mId;
     private String mTitle;
     private String mDescription;
-    private ArrayList<Waypoint> mWayPoints;
+    private List<Waypoint> mWayPoints;
     private int mDuration; //in seconds
     private double mDistance; //in km
     private List<RouteTag> mTags;
@@ -46,7 +45,7 @@ public class Route implements Serializable {
      * @param tags        The tags of the route.
      * @param imageName   The name of the image, that belongs to the route.
      */
-    public Route(int id, String title, String description, ArrayList<Waypoint> wayPoints,
+    public Route(int id, String title, String description, List<Waypoint> wayPoints,
                  int duration, double distance, List<RouteTag> tags, String imageName) {
         this.mId = id;
         this.mTitle = title;
@@ -90,7 +89,7 @@ public class Route implements Serializable {
      *
      * @return way points
      */
-    public ArrayList<Waypoint> getWayPoints() {
+    public List<Waypoint> getWayPoints() {
         return this.mWayPoints;
     }
 

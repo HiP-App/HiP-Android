@@ -31,6 +31,7 @@ import java.util.Map;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
 import de.upb.hip.mobile.models.SetMarker;
 
 

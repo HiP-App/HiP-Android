@@ -34,7 +34,7 @@ import de.upb.hip.mobile.adapters.DBAdapter;
 /**
  * A model class for an image
  */
-public class Image implements Serializable {
+public class Image extends DBFile implements Serializable {
     private final String mDescription;
     private final String mFilename;
     private final String mTitle; //Called "name" in DB diagram
@@ -43,7 +43,8 @@ public class Image implements Serializable {
     @JsonIgnore
     transient private Drawable mImage;
 
-    public Image(String mDescription, String mFilename, String mTitle) {
+    public Image(int docId, String mDescription, String mFilename, String mTitle) {
+        super(docId);
         this.mDescription = mDescription;
         this.mFilename = mFilename;
         this.mTitle = mTitle;

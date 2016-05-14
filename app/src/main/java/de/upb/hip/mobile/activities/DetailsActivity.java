@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.couchbase.lite.Document;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
-import de.upb.hip.mobile.models.exhibit.ExhibitDeserializer;
 
 /*
  * Copyright (C) 2016 History in Paderborn App - Universität Paderborn

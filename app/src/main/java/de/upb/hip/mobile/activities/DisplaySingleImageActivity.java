@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
-import de.upb.hip.mobile.models.exhibit.ExhibitDeserializer;
 
 /**
  * This activity shows a single image together with a descriptive text

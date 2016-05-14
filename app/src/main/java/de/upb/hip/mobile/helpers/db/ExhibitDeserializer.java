@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.upb.hip.mobile.models.exhibit;
+package de.upb.hip.mobile.helpers.db;
 
 import com.couchbase.lite.Document;
 
@@ -24,6 +24,8 @@ import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.models.Image;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.Page;
 
 /**
  * A helper class for deserializing all objects related to exhibits

@@ -37,7 +37,6 @@ import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.Revision;
-import com.couchbase.lite.UnsavedRevision;
 import com.couchbase.lite.View;
 import com.couchbase.lite.android.AndroidContext;
 import com.couchbase.lite.auth.Authenticator;
@@ -61,19 +60,12 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
-import de.upb.hip.mobile.models.RouteTag;
-import de.upb.hip.mobile.models.SliderImage;
-import de.upb.hip.mobile.models.Waypoint;
-import de.upb.hip.mobile.models.exhibit.Exhibit;
-import de.upb.hip.mobile.models.exhibit.ExhibitSerializer;
-import de.upb.hip.mobile.models.exhibit.Page;
+import de.upb.hip.mobile.helpers.db.DBDummyDataFiller;
 
 /**
  * Class for the connection between app and database
@@ -129,8 +121,19 @@ public class DBAdapter {
         sContext = ctx;
         if (mDatabase == null) {
             initDatabase(true);
-            // uncomment this line to set up the gateway database with new dummy data
-            insertDummyDataToDatabase();
+
+            // Enable this to set up the gateway database with new dummy data
+            if (true) {
+                try {
+                    mDatabase.delete();
+                    mDatabase = null;
+                    initDatabase(true);
+                    new DBDummyDataFiller(mDatabase, this, ctx).insertData();
+                } catch (CouchbaseLiteException e) {
+                    Log.e(TAG, "Error deleting local database", e);
+                    return;
+                }
+            }
         }
     }
 
@@ -220,94 +223,6 @@ public class DBAdapter {
         return d;
     }
 
-    /**
-     * Put some dummy data to the database
-     * Call this function manual, if you need to reset the database.
-     * IMPORTANT: This data will be replicated to the life database, so be sure what you are doing!
-     */
-    // ToDo: Remove this function for productive use!
-    public void insertDummyDataToDatabase() {
-        try {
-            mDatabase.delete();
-            mDatabase = null;
-            initDatabase(true);
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error deleting local database", e);
-            return;
-        }
-
-        /* insert text */
-
-        Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
-                " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +
-                "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, null, new LinkedList<Page>());
-        insertExhibit(e1);
-
-        Exhibit e2 = new Exhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, " +
-                "Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.",
-                51.706768, 8.771104, new String[]{"Uni"}, new String[]{"Universität"}, null, new LinkedList<Page>());
-        insertExhibit(e2);
-
-
-        /**
-         * The data adding code below needs to be refactored!
-         */
-
-        LinkedList<Waypoint> waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(51.715606, 8.746552, -1));
-        waypoints.add(new Waypoint(51.718178, 8.747164, -1));
-        waypoints.add(new Waypoint(51.722850, 8.750780, -1));
-        waypoints.add(new Waypoint(51.722710, 8.758365, -1));
-        waypoints.add(new Waypoint(51.718789, 8.762699, -1));
-        waypoints.add(new Waypoint(51.715745, 8.757796, -1));
-        waypoints.add(new Waypoint(51.715207, 8.752142, 7));
-        waypoints.add(new Waypoint(51.715606, 8.746552, -1));
-
-        List<RouteTag> ringrouteTags = new LinkedList<>();
-        ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
-        ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
-
-        insertRoute(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.",
-                waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
-
-
-
-        List<SliderImage> sliderImages = new LinkedList<>();
-        sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
-        sliderImages.add(new SliderImage(799, "Phase 2.jpg"));
-        sliderImages.add(new SliderImage(836, "Phase 3.jpg"));
-        sliderImages.add(new SliderImage(900, "Phase 4.jpg"));
-        sliderImages.add(new SliderImage(938, "Phase 5.jpg"));
-        insertSlider(201, sliderImages);
-
-        addImage(R.drawable.phasei, 201, "Phase 1.jpg");
-        addImage(R.drawable.phaseii, 201, "Phase 2.jpg");
-        addImage(R.drawable.phaseiii, 201, "Phase 3.jpg");
-        addImage(R.drawable.phaseiv, 201, "Phase 4.jpg");
-        addImage(R.drawable.phasev, 201, "Phase 5.jpg");
-    }
-
-    /**
-     * adds an image from R.drawable to the document defined by document_id in local database
-     */
-    private void addImage(int image_number, int document_id, String imageName) {
-        InputStream image = mContext.getResources().openRawResource(+image_number);
-        // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
-        addAttachment(document_id, imageName, "image/jpeg", image);
-    }
-
-    public void addAttachment(int document_id, String filename,
-                              String mimeType, InputStream attachment) {
-        Document doc = mDatabase.getDocument(String.valueOf(document_id));
-        UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
-        newRev.setAttachment(filename, mimeType, attachment);
-        try {
-            newRev.save();
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error attaching resource " + filename + " to document " + document_id, e);
-        }
-    }
 
     /**
      * notify the UI Thread that the database has changed
@@ -482,86 +397,6 @@ public class DBAdapter {
         mManager.setDefaultHttpClientFactory(cblHttpClientFactory);
     }
 
-    /**
-     * insert a exhibit in the database
-     */
-    public void insertExhibit(Exhibit exhibit) {
-        //create a new entry but with predefined id
-        Document document = mDatabase.getDocument(String.valueOf(exhibit.getId()));
-        ExhibitSerializer.serializeExhibit(document, exhibit);
-
-    }
-
-    public void insertSlider(int id, List<SliderImage> sliderImages) {
-        Document document = mDatabase.getDocument(String.valueOf(id));
-        Map<String, Object> properties = new HashMap<>();
-
-        if (sliderImages != null && !sliderImages.isEmpty()) {
-            properties.put(KEY_TYPE, "slider");
-            properties.put(KEY_SLIDER_IMAGES, sliderImages);
-            //ensure access for all users in the Couchbase database
-            properties.put(KEY_CHANNELS, "*");
-        }
-
-        try {
-            // Save the properties to the document
-            document.putProperties(properties);
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error putting properties", e);
-        }
-    }
-
-    /**
-     * insert a route in the database
-     */
-    public void insertRoute(int id, String title, String description,
-                            LinkedList<Waypoint> waypoints, int duration, double distance,
-                            List<RouteTag> tags, String imageName) {
-        //create a new entry but with predefined id
-        Document document = mDatabase.getDocument(String.valueOf(id));
-        Map<String, Object> properties = new HashMap<>();
-
-        properties.put(KEY_TYPE, "route");
-        properties.put(KEY_ROUTE_TITLE, title);
-        properties.put(KEY_ROUTE_DESCRIPTION, description);
-        properties.put(KEY_ROUTE_WAYPOINTS, waypoints);
-        properties.put(KEY_ROUTE_DURATION, duration);
-        properties.put(KEY_ROUTE_DISTANCE, distance);
-        properties.put(KEY_ROUTE_TAGS, tags);
-        properties.put(KEY_ROUTE_IMAGE_NAME, imageName);
-        properties.put(KEY_CHANNELS, "*");
-        //KEY_CHANNELS "*" ensures the access for all users in the Couchbase database
-
-        try {
-            // Save the properties to the document
-            document.putProperties(properties);
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error putting properties", e);
-        }
-
-        //Add images for route tags as attachment
-        for (RouteTag tag : tags) {
-            final int resId = mContext.getResources().getIdentifier(tag.getImageFilename(),
-                    "drawable", mContext.getPackageName());
-            if (resId != 0) {
-                InputStream ress = mContext.getResources().openRawResource(+resId);
-                addAttachment(id, tag.getImageFilename(), "image/jpeg", ress);
-            } else {
-                Log.e("routes", "Could not load image tag resource for route " + id);
-            }
-        }
-
-        //Add route image as attachment
-        //Use only the part before "." for the filename when accessing the Android resource
-        final int resId = mContext.getResources().getIdentifier(imageName.split("\\.")[0],
-                "drawable", mContext.getPackageName());
-        if (resId != 0) {
-            InputStream ress = mContext.getResources().openRawResource(+resId);
-            addAttachment(id, imageName, "image/png", ress);
-        } else {
-            Log.e("routes", "Could not load image resource for route " + id);
-        }
-    }
 
     /**
      * gets all rows from a view from the database

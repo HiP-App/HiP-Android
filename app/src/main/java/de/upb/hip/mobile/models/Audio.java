@@ -16,14 +16,17 @@
 
 package de.upb.hip.mobile.models;
 
+import java.io.Serializable;
+
 /**
  * A model class representing an audio file
  */
-public class Audio {
+public class Audio extends DBFile implements Serializable {
 
     private final String filename;
 
-    public Audio(String filename) {
+    public Audio(int docId, String filename) {
+        super(docId);
         this.filename = filename;
     }
 

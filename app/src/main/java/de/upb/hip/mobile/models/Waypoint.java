@@ -19,8 +19,8 @@ package de.upb.hip.mobile.models;
 import java.io.Serializable;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
-import de.upb.hip.mobile.models.exhibit.ExhibitDeserializer;
 
 /**
  * Model Class the way points.
