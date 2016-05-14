@@ -52,9 +52,9 @@ import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
-import de.upb.hip.mobile.models.Exhibit;
-import de.upb.hip.mobile.models.ExhibitSet;
 import de.upb.hip.mobile.models.SetMarker;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
 
 /**
@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter
-        mAdapter = new MainRecyclerAdapter(this.mExhibitSet, new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLongitude()));
+        mAdapter = new MainRecyclerAdapter(this.mExhibitSet, new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLongitude()), getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this));
@@ -258,7 +258,7 @@ public class MainActivity extends BaseActivity {
         mSwipeLayout.setRefreshing(false);
         mExhibitSet = new ExhibitSet(mDatabase.getView("exhibits"),
                 new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLatitude()));
-        mAdapter = new MainRecyclerAdapter(mExhibitSet, new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLongitude()));
+        mAdapter = new MainRecyclerAdapter(mExhibitSet, new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLongitude()), getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         mExhibitSet.addMarker(mMarker, getApplicationContext());

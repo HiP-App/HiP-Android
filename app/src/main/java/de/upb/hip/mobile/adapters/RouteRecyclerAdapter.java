@@ -1,12 +1,7 @@
 package de.upb.hip.mobile.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +10,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.couchbase.lite.Attachment;
-import com.couchbase.lite.CouchbaseLiteException;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -118,19 +110,12 @@ public class RouteRecyclerAdapter
             holder.mTagsLayout.removeAllViews();
             for (RouteTag tag : route.getTags()) {
                 ImageView tagImageView = new ImageView(mContext);
-                tagImageView.setImageDrawable(tag.getImage(route.getId(), mContext));
+                tagImageView.setImageDrawable(tag.getImage().getDawableImage(mContext));
                 holder.mTagsLayout.addView(tagImageView);
             }
         }
 
-        Attachment att = DBAdapter.getAttachment(route.getId(), route.getImageName());
-        try {
-            Bitmap b = BitmapFactory.decodeStream(att.getContent());
-            Drawable image = new BitmapDrawable(mContext.getResources(), b);
-            holder.mImage.setImageDrawable(image);
-        } catch (CouchbaseLiteException e) {
-            Log.e("routes", e.toString());
-        }
+        holder.mImage.setImageDrawable(route.getImage().getDawableImage(mContext));
         holder.mView.setId(route.getId());
     }
 

@@ -19,6 +19,8 @@ package de.upb.hip.mobile.models;
 import java.io.Serializable;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * Model Class the way points.
@@ -49,7 +51,7 @@ public class Waypoint implements Serializable {
      * @return Exhibit
      */
     public Exhibit getExhibit(DBAdapter dbAdapter) {
-        return new Exhibit(dbAdapter.getDocument(mExhibitId));
+        return ExhibitDeserializer.deserializeExhibit(dbAdapter.getDocument(mExhibitId));
     }
 
     /**

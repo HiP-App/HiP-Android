@@ -8,7 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
-import de.upb.hip.mobile.models.Exhibit;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * This activity shows a single image together with a descriptive text
@@ -36,14 +37,15 @@ public class DisplaySingleImageActivity extends ActionBarActivity {
 
         mDatabase = new DBAdapter(this);
         mExhibitId = getIntent().getIntExtra(INTENT_EXHIBIT_ID, 0);
-        mExhibit = new Exhibit(mDatabase.getDocument(mExhibitId));
+        mExhibit = ExhibitDeserializer.deserializeExhibit(mDatabase.getDocument(mExhibitId));
 
         //TODO: Replace this string constant
         Drawable d = DBAdapter.getImage(mExhibitId, "image.jpg");
         mImageView.setImageDrawable(d);
 
-        mTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().getStringExtra(INTENT_IMAGE_NAME)));
-
+        //TODO: Reimplement this
+        // mTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().getStringExtra(INTENT_IMAGE_NAME)));
+        mTextView.setText("REIMPLEMENT ME!");
         setUpActionBar();
 
     }

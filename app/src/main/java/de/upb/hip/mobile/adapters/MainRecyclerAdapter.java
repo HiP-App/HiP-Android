@@ -16,10 +16,12 @@
 
 package de.upb.hip.mobile.adapters;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +32,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.helpers.ImageManipulation;
-import de.upb.hip.mobile.models.Exhibit;
-import de.upb.hip.mobile.models.ExhibitSet;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
 /**
  * Adapter for the RecyclerView
@@ -39,15 +41,17 @@ import de.upb.hip.mobile.models.ExhibitSet;
 public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder> {
     private ExhibitSet mExhibitSet;
     private LatLng mLocation;
+    private Context mContext;
 
     /**
      * Constructor for the MainRecyclerAdapter
      *
      * @param exhibitSet set of Exhibits to be shown
      */
-    public MainRecyclerAdapter(ExhibitSet exhibitSet,  LatLng location) {
+    public MainRecyclerAdapter(ExhibitSet exhibitSet, LatLng location, Context context) {
         this.mExhibitSet = exhibitSet;
-        mLocation = location;
+        this.mLocation = location;
+        this.mContext = context;
     }
 
     /**
@@ -97,10 +101,20 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
         holder.mDistance.setText(distance);
 
-        Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 64);
-        BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
-        Bitmap bmp = bitmapDrawable.getBitmap();
-        holder.mImage.setImageBitmap(ImageManipulation.getCroppedImage(bmp, 100));
+        //Workaround code while there is no "image.jpeg" in the DB anymore
+        try {
+            Drawable draw = exhibit.getImage().getDawableImage(mContext);
+            //Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 64);
+            //BitmapDrawable bitmapDrawable = (BitmapDrawable) d;
+            //Bitmap bmp = bitmapDrawable.getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) draw).getBitmap();
+            // Scale it to 50 x 50
+            BitmapDrawable d = new BitmapDrawable(mContext.getResources(), Bitmap.createScaledBitmap(bitmap, 64, 64, true));
+            holder.mImage.setImageBitmap(ImageManipulation.getCroppedImage(d.getBitmap(), 100));
+        } catch (Exception e) {
+            Log.e("main-recycler", e.toString());
+        }
+
     }
 
     /**

@@ -19,41 +19,13 @@ package de.upb.hip.mobile.models;
 import java.io.Serializable;
 
 /**
- * Model for a single image in the imageslider
+ * A model class representing an audio file
  */
-public class SliderImage implements Serializable {
+public class Audio extends DBFile implements Serializable {
 
-    private String mImageName;
-    private int mYear;
-
-    /**
-     * Constructor
-     * @param year
-     * @param imageName
-     */
-    public SliderImage (int year, String imageName)
-    {
-        this.mYear = year;
-        this.mImageName = imageName;
+    public Audio(int docId, String filename) {
+        super(docId, filename);
     }
 
-    /**
-     * Getter and Setter for private Variables
-     */
-    public String getImageName() {
-        return this.mImageName;
-    }
-
-    public void setImageName(String imageName) {
-        this.mImageName = imageName;
-    }
-
-    public int getYear() {
-        return mYear;
-    }
-
-    public void setYear(int year) {
-        this.mYear = year;
-    }
-
+    //TODO: Add methods for getting this as a playable file from the database
 }

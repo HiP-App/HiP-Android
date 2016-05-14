@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package de.upb.hip.mobile.models;
+package de.upb.hip.mobile.models.exhibit;
 
-import com.couchbase.lite.Document;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
-import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.Image;
 
 /**
  * Exhibit objects store general information to exhibit points
@@ -39,45 +37,24 @@ public class Exhibit {
     private LatLng mLatlng;
     private String[] mCategories;
     private String[] mTags;
-    private int mSliderId;
-    private HashMap<String, String> mPictureDescriptions;
-
-    public Exhibit(Document document) {
-
-        Map<String, Object> properties = document.getProperties();
-        int id = Integer.valueOf(document.getId());
-        String name = (String) properties.get(DBAdapter.KEY_EXHIBIT_NAME);
-        String description = (String) properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
-        double lat = (double) properties.get(DBAdapter.KEY_EXHIBIT_LAT);
-        double lng = (double) properties.get(DBAdapter.KEY_EXHIBIT_LNG);
-        String categories = (String) properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
-        String tags = (String) properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
-        int sliderId = (int) properties.get(DBAdapter.KEY_EXHIBIT_SLIDER_ID);
-
-        mPictureDescriptions = (LinkedHashMap<String, String>) document.getProperty
-                (DBAdapter.KEY_EXHIBIT_PICTURE_DESCRIPTIONS);
-
-        mId = id;
-        mName = name;
-        mDescription = description;
-        mLatlng = new LatLng(lat, lng);
-        mCategories = categories.split(",");
-        mTags = tags.split(",");
-        mSliderId = sliderId;
-    }
+    private Image mImage;
+    private List<Page> mPages = new LinkedList<>();
 
     public Exhibit(int id, String name, String description, double lat,
-                   double lng, String categories, String tags) {
+                   double lng, String[] categories, String[] tags, Image image, List<Page> pages) {
         mId = id;
         mName = name;
         mDescription = description;
         mLatlng = new LatLng(lat, lng);
-        mCategories = categories.split(",");
-        mTags = tags.split(",");
+        mCategories = categories;
+        mTags = tags;
+        mImage = image;
+        this.mPages = pages;
     }
 
     /**
      * calculates the distance from position to the exhibit location.
+     *
      * @param position user location
      * @return
      */
@@ -105,16 +82,16 @@ public class Exhibit {
         return mCategories.clone();
     }
 
+    public Image getImage() {
+        return mImage;
+    }
+
     public String[] getTags() {
         return mTags.clone();
     }
 
-    public int getSliderId() {
-        return mSliderId;
+    public List<Page> getPages() {
+        return mPages;
     }
 
-    public HashMap<String, String> getPictureDescriptions() {
-        return new HashMap<String, String>(mPictureDescriptions);   //return a new object
-        // so as to leave this one intact, when the return object is changed
-    }
 }

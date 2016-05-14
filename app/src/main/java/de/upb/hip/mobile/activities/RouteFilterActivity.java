@@ -30,7 +30,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,8 +64,6 @@ public class RouteFilterActivity extends ActionBarActivity {
         for (Route route : routeSet.getRoutes()) {
             for (RouteTag tag : route.getTags()) {
                 if (!uniqueTags.containsKey(tag.getTag())) {
-                    //Call getImage so that the route tag caches its image
-                    tag.getImage(route.getId(), getApplicationContext());
                     uniqueTags.put(tag.getTag(),
                             new RouteTagHolder(activeTags.contains(tag.getTag()), tag));
                 }
@@ -234,7 +231,7 @@ public class RouteFilterActivity extends ActionBarActivity {
             checkBox.setTag(tagHolder);
             checkBox.setText(tag.getName());
             checkBox.setChecked(tagHolder.isSelected());
-            imageView.setImageDrawable(tag.getImage());
+            imageView.setImageDrawable(tag.getImage().getDawableImage(getContext()));
 
             return convertView;
         }

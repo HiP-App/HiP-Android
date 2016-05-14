@@ -18,9 +18,6 @@ package de.upb.hip.mobile.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,7 +26,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -37,9 +33,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.couchbase.lite.Attachment;
-import com.couchbase.lite.CouchbaseLiteException;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
@@ -59,11 +52,11 @@ import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
-import de.upb.hip.mobile.models.Exhibit;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.SetMarker;
 import de.upb.hip.mobile.models.Waypoint;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
  * Activity Class for the route details view, where the details of a route are show, including a
@@ -401,18 +394,9 @@ public class RouteDetailsActivity extends ActionBarActivity {
             for (RouteTag tag : mRoute.getTags()) {
                 ImageView tagImageView = new ImageView(getApplicationContext());
                 tagImageView.setImageDrawable(
-                        tag.getImage(mRoute.getId(), getApplicationContext()));
+                        tag.getImage().getDawableImage(getApplicationContext()));
                 tagsLayout.addView(tagImageView);
             }
-        }
-
-        //Add image
-        Attachment attachment = DBAdapter.getAttachment(mRoute.getId(), mRoute.getImageName());
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
-            Drawable image = new BitmapDrawable(getResources(), bitmap);
-        } catch (CouchbaseLiteException e) {
-            Log.e("routes", e.toString());
         }
     }
 

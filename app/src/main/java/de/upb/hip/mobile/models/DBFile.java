@@ -19,41 +19,24 @@ package de.upb.hip.mobile.models;
 import java.io.Serializable;
 
 /**
- * Model for a single image in the imageslider
+ * A base class for all files that are loaded from the DB
  */
-public class SliderImage implements Serializable {
+public abstract class DBFile implements Serializable {
 
-    private String mImageName;
-    private int mYear;
+    //The ID of the DB document the file is attached to is required for retrieving it from the DB.
+    private final int mDocumentId;
+    private final String mFilename;
 
-    /**
-     * Constructor
-     * @param year
-     * @param imageName
-     */
-    public SliderImage (int year, String imageName)
-    {
-        this.mYear = year;
-        this.mImageName = imageName;
+    public DBFile(int mDocumentId, String filename) {
+        this.mDocumentId = mDocumentId;
+        this.mFilename = filename;
     }
 
-    /**
-     * Getter and Setter for private Variables
-     */
-    public String getImageName() {
-        return this.mImageName;
+    public int getDocumentId() {
+        return mDocumentId;
     }
 
-    public void setImageName(String imageName) {
-        this.mImageName = imageName;
+    public String getFilename() {
+        return mFilename;
     }
-
-    public int getYear() {
-        return mYear;
-    }
-
-    public void setYear(int year) {
-        this.mYear = year;
-    }
-
 }

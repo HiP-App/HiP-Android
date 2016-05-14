@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.upb.hip.mobile.models;
+package de.upb.hip.mobile.models.exhibit;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,6 +31,8 @@ import java.util.Map;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
+import de.upb.hip.mobile.models.SetMarker;
 
 
 /**
@@ -53,20 +55,11 @@ public class ExhibitSet {
         this.mPosition = position;
 
         // add all exhibits
-        for (int i = 0; i < list.size(); i++) {
-            Map<String, Object> properties = list.get(i);
-            int id = Integer.valueOf((String) properties.get(DBAdapter.KEY_ID));
-            String name = (String) properties.get(DBAdapter.KEY_EXHIBIT_NAME);
-            String description = (String) properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
-            double lat = (double) properties.get(DBAdapter.KEY_EXHIBIT_LAT);
-            double lng = (double) properties.get(DBAdapter.KEY_EXHIBIT_LNG);
-            String categories = (String) properties.get(DBAdapter.KEY_EXHIBIT_CATEGORIES);
-            String tags = (String) properties.get(DBAdapter.KEY_EXHIBIT_TAGS);
+        for (Map<String, Object> properties : list) {
+            Exhibit exhibit = ExhibitDeserializer.deserializeExhibit(properties);
 
-            Exhibit exhibit = new Exhibit(id, name, description, lat, lng, categories, tags);
-
-            for (String categorie : exhibit.getCategories()) {
-                if (!this.mCategories.contains(categorie)) this.mCategories.add(categorie);
+            for (String category : exhibit.getCategories()) {
+                if (!this.mCategories.contains(category)) this.mCategories.add(category);
             }
 
             this.mInitSet.add(exhibit);
@@ -81,16 +74,16 @@ public class ExhibitSet {
     /**
      * update the categories
      *
-     * @param strArray array with categories as string
+     * @param categories list with categories as string
      */
-    public void updateCategories(List<String> strArray) {
+    public void updateCategories(List<String> categories) {
 
         this.mActiveSet = new ArrayList<>();
 
-        for (int i = 0; i < strArray.size(); i++) {
+        for (String category : categories) {
 
             for (Exhibit exhibit : mInitSet) {
-                if (Arrays.asList(exhibit.getCategories()).contains(strArray.get(i))) {
+                if (Arrays.asList(exhibit.getCategories()).contains(category)) {
                     this.mActiveSet.add(exhibit);
                 }
             }

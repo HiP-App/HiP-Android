@@ -15,7 +15,8 @@ import android.widget.TextView;
 import com.couchbase.lite.Document;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
-import de.upb.hip.mobile.models.Exhibit;
+import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /*
  * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
@@ -59,6 +60,7 @@ public class DetailsActivity extends ActionBarActivity {
     /**
      * Set up the Details. Load the correct image and text.
      * Add a transitionListener, if necessary
+     *
      * @param savedInstanceState
      */
     @Override
@@ -95,13 +97,11 @@ public class DetailsActivity extends ActionBarActivity {
         mImageView.setImageDrawable(d);
 
         Document document = mDatabase.getDocument(mExhibitId);
-        Exhibit exhibit = new Exhibit(document);
+        Exhibit exhibit = ExhibitDeserializer.deserializeExhibit(document);
+
         mTextView.setText(exhibit.getName());
-        if (exhibit.getSliderId() != -1) {
-            mIsSlider = true;
-        } else {
-            mIsSlider = false;
-        }
+        //TODO: Remove this workaround code as exhibits can't have sliders anymore
+        mIsSlider = false;
 
         TextView txtDescription = (TextView) findViewById(R.id.detailsDescription);
         txtDescription.setText(exhibit.getDescription());
