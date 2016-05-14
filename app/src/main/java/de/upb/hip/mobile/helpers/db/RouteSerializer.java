@@ -5,14 +5,17 @@ import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.DBFile;
+import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.Route;
-import de.upb.hip.mobile.models.RouteTag;
 
 /**
  * A helper class for serializing all objects related to a route
@@ -25,16 +28,17 @@ public class RouteSerializer {
     public static void serializeRoute(Document document, Route route, Context mContext, DBDummyDataFiller filler) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put(DBAdapter.KEY_TYPE, "route");
-        properties.put(DBAdapter.KEY_ROUTE_TITLE, route.getTitle());
-        properties.put(DBAdapter.KEY_ROUTE_DESCRIPTION, route.getDescription());
-        properties.put(DBAdapter.KEY_ROUTE_WAYPOINTS, route.getWayPoints());
-        properties.put(DBAdapter.KEY_ROUTE_DURATION, route.getDuration());
-        properties.put(DBAdapter.KEY_ROUTE_DISTANCE, route.getDistance());
-        properties.put(DBAdapter.KEY_ROUTE_TAGS, route.getTags());
-        properties.put(DBAdapter.KEY_ROUTE_IMAGE_NAME, route.getImageName());
+        DBFileTypeAdapter dbFileTypeAdapter = new DBFileTypeAdapter();
+        GsonBuilder builder = new GsonBuilder();
+        //Register type adapter so we can get a list of all files in the database
+        builder.registerTypeAdapter(Image.class, dbFileTypeAdapter);
+
+        Gson gson = builder.create();
+        String data = gson.toJson(route);
+        properties.put(DBAdapter.KEY_DATA, data);
+
+        properties.put(DBAdapter.KEY_TYPE, DBAdapter.TYPE_ROUTE);
         properties.put(DBAdapter.KEY_CHANNELS, "*");
-        //KEY_CHANNELS "*" ensures the access for all users in the Couchbase database
 
         try {
             // Save the properties to the document
@@ -43,27 +47,16 @@ public class RouteSerializer {
             Log.e(TAG, "Error putting properties", e);
         }
 
-        //Add images for route tags as attachment
-        for (RouteTag tag : route.getTags()) {
-            final int resId = mContext.getResources().getIdentifier(tag.getImageFilename(),
+        for (DBFile file : dbFileTypeAdapter.getFiles()) {
+            final int resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
                     "drawable", mContext.getPackageName());
             if (resId != 0) {
                 InputStream ress = mContext.getResources().openRawResource(+resId);
-                filler.addAttachment(route.getId(), tag.getImageFilename(), "image/jpeg", ress);
+                //TODO: Determine MIME type
+                filler.addAttachment(route.getId(), file.getFilename(), "image/jpeg", ress);
             } else {
-                Log.e("routes", "Could not load image tag resource for route " + route.getId());
+                Log.e("routes", "Could not load image resource for route " + route.getId());
             }
-        }
-
-        //Add route image as attachment
-        //Use only the part before "." for the filename when accessing the Android resource
-        final int resId = mContext.getResources().getIdentifier(route.getImageName().split("\\.")[0],
-                "drawable", mContext.getPackageName());
-        if (resId != 0) {
-            InputStream ress = mContext.getResources().openRawResource(+resId);
-            filler.addAttachment(route.getId(), route.getImageName(), "image/png", ress);
-        } else {
-            Log.e("routes", "Could not load image resource for route " + route.getId());
         }
     }
 }

@@ -62,7 +62,7 @@ public class DBAdapterTest extends AndroidTestCase {
                 /* found Stadtroute, check attributes */
                 assertEquals(route.getDescription(), "Dies ist eine kurze Route in der Stadt.");
                 assertEquals(route.getDuration(), 7200);
-                assertEquals(route.getImageName(), "route_stadt.jpg");
+                assertEquals(route.getImage().getFilename(), "route_stadt.jpg");
 
                 /* check tags */
                 assertEquals(route.getTags().size(), 1);

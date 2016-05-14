@@ -78,6 +78,10 @@ public class DBAdapter {
     public static final String KEY_CHANNELS = "channels";
     public static final String KEY_ID = "_id";
 
+    public static final String KEY_DATA = "data";
+    public static final String TYPE_EXHIBIT = "exhibit";
+    public static final String TYPE_ROUTE = "route";
+
     public static final String KEY_EXHIBIT_NAME = "name";
     public static final String KEY_EXHIBIT_DESCRIPTION = "description";
     public static final String KEY_EXHIBIT_LAT = "lat";
@@ -97,7 +101,7 @@ public class DBAdapter {
     public static final String KEY_ROUTE_DURATION = "duration";
     public static final String KEY_ROUTE_DISTANCE = "distance";
     public static final String KEY_ROUTE_TAGS = "tags";
-    public static final String KEY_ROUTE_IMAGE_NAME = "imageName";
+    public static final String KEY_ROUTE_IMAGE = "image";
 
 
     public static final String DB_NAME = "hip"; // local database name
@@ -109,7 +113,7 @@ public class DBAdapter {
     // password to access the data bucket on Couchbase Sync Gateway
     private static final String COUCHBASE_PASSWORD = "5eG410KF2fnPSnS0";
     private static Database mDatabase = null; // local database
-    private static Context sContext; // static context for static getImage()-method
+    private static Context sContext; // static context for static getDawableImage()-method
     private final Context mContext; // Context of application who uses us.
     private Manager mManager = null; // local database manager
 
@@ -293,7 +297,7 @@ public class DBAdapter {
             pull.setAuthenticator(auth);
             pull.setCreateTarget(true); // creates the local database, if it doesn't exist
             pull.addChangeListener(changeListener);
-            pull.start();
+            //pull.start();
 
             if (enablePush) {
                 /* all changes should be pushed to the database */
@@ -301,7 +305,7 @@ public class DBAdapter {
                 push.setContinuous(true); // sync all changes
                 push.setAuthenticator(auth);
                 push.addChangeListener(changeListener);
-                push.start();
+                //push.start();
             }
 
             /* initialize local views */
@@ -309,7 +313,7 @@ public class DBAdapter {
             exhibitsView.setMap(new Mapper() {
                 @Override
                 public void map(Map<String, Object> document, Emitter emitter) {
-                    if (document.get("type").equals("exhibit")) {
+                    if (document.get(KEY_TYPE) != null && document.get(KEY_TYPE).equals(TYPE_EXHIBIT)) {
                         emitter.emit(document.get("id"), null);
                     }
                 }
@@ -320,7 +324,7 @@ public class DBAdapter {
             routeView.setMap(new Mapper() {
                 @Override
                 public void map(Map<String, Object> document, Emitter emitter) {
-                    if (document.get("type").equals("route")) {
+                    if (document.get(KEY_TYPE) != null && document.get(KEY_TYPE).equals(TYPE_ROUTE)) {
                         emitter.emit(document.get("id"), null);
                     }
                 }

@@ -17,15 +17,12 @@
 package de.upb.hip.mobile.helpers.db;
 
 import com.couchbase.lite.Document;
+import com.google.gson.Gson;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
-import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
-import de.upb.hip.mobile.models.exhibit.Page;
 
 /**
  * A helper class for deserializing all objects related to exhibits
@@ -39,7 +36,9 @@ public class ExhibitDeserializer {
 
 
     public static Exhibit deserializeExhibit(Map<String, Object> properties) {
-        int id = Integer.valueOf((String) properties.get(DBAdapter.KEY_ID));
+        Gson gson = new Gson();
+        return gson.fromJson((String) properties.get(DBAdapter.KEY_DATA), Exhibit.class);
+        /*int id = Integer.valueOf((String) properties.get(DBAdapter.KEY_ID));
         String name = (String) properties.get(DBAdapter.KEY_EXHIBIT_NAME);
         String description = (String) properties.get(DBAdapter.KEY_EXHIBIT_DESCRIPTION);
         double lat = (double) properties.get(DBAdapter.KEY_EXHIBIT_LAT);
@@ -62,8 +61,8 @@ public class ExhibitDeserializer {
         Image image = (Image) properties.get(DBAdapter.KEY_EXHIBIT_IMAGE);
 
         //TODO: Deserialize page list
-        List<Page> pages = (LinkedList<Page>) properties.get(DBAdapter.KEY_EXHIBIT_PAGES);
-
-        return new Exhibit(id, name, description, lat, lng, categories, tags, image, pages);
+        //List<Page> pages = (LinkedList<Page>) properties.get(DBAdapter.KEY_EXHIBIT_PAGES);
+        //TODO: Remove hack
+        return new Exhibit(id, name, description, lat, lng, categories, tags, image, new LinkedList<Page>());*/
     }
 }

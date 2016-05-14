@@ -16,6 +16,7 @@ import java.util.Map;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.SliderImage;
@@ -45,12 +46,12 @@ public class DBDummyDataFiller {
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
                 " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +
                 "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, null, new LinkedList<Page>());
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "dom.jpg", ""), new LinkedList<Page>());
         insertExhibit(e1);
 
         Exhibit e2 = new Exhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, " +
                 "Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.",
-                51.706768, 8.771104, new String[]{"Uni"}, new String[]{"Universität"}, null, new LinkedList<Page>());
+                51.706768, 8.771104, new String[]{"Uni"}, new String[]{"Universität"}, new Image(2, "", "uni.jpg", ""), new LinkedList<Page>());
         insertExhibit(e2);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
@@ -64,11 +65,11 @@ public class DBDummyDataFiller {
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
-        ringrouteTags.add(new RouteTag("bar", "Bar", "route_tag_bar"));
-        ringrouteTags.add(new RouteTag("restaurant", "Restaurant", "route_tag_restaurant"));
+        ringrouteTags.add(new RouteTag("bar", "Bar", new Image(101, "", "route_tag_bar", "")));
+        ringrouteTags.add(new RouteTag("restaurant", "Restaurant", new Image(101, "", "route_tag_restaurant", "")));
 
         Route ringroute = new Route(101, "Ringroute", "Dies ist ein einfacher Rundweg rund um den Ring.",
-                waypoints, 60 * 30, 5.2, ringrouteTags, "route_ring.jpg");
+                waypoints, 60 * 30, 5.2, ringrouteTags, new Image(101, "", "route_ring.jpg", ""));
 
         insertRoute(ringroute);
 
@@ -95,7 +96,7 @@ public class DBDummyDataFiller {
     public void insertExhibit(Exhibit exhibit) {
         //create a new entry but with predefined id
         Document document = mDatabase.getDocument(String.valueOf(exhibit.getId()));
-        ExhibitSerializer.serializeExhibit(document, exhibit);
+        ExhibitSerializer.serializeExhibit(document, exhibit, mContext, this);
 
     }
 
@@ -154,3 +155,4 @@ public class DBDummyDataFiller {
         }
     }
 }
+

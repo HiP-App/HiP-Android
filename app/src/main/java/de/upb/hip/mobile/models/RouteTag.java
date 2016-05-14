@@ -16,20 +16,7 @@
 
 package de.upb.hip.mobile.models;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-
-import com.couchbase.lite.Attachment;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
-
-import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
  * Model class for the route tag.
@@ -38,23 +25,19 @@ public class RouteTag implements Serializable {
 
     private String mTag;
     private String mName;
-    private String mImageFilename;
-
-    //Do not try to serialize the image
-    @JsonIgnore
-    transient private Drawable mImage;
+    private Image mImage;
 
     /**
      * Constructor for the RouteTag model.
      *
      * @param tag           Internal name of the tag.
      * @param name          Displayed name of the tag in the app.
-     * @param imageFilename Name of the image of the tag.
+     * @param image         The image of the tag.
      */
-    public RouteTag(String tag, String name, String imageFilename) {
+    public RouteTag(String tag, String name, Image image) {
         this.mTag = tag;
         this.mName = name;
-        this.mImageFilename = imageFilename;
+        this.mImage = image;
     }
 
     /**
@@ -75,38 +58,7 @@ public class RouteTag implements Serializable {
         return mName;
     }
 
-    /**
-     * Getter for the tag image. Gets the image from the database on the first call of this method.
-     *
-     * @param routeId ID of the route.
-     * @param context The android application context
-     * @return Image Drawable
-     */
-    public Drawable getImage(int routeId, Context context) {
-        if (mImage != null) {
-            return mImage;
-        }
-
-        Attachment attachment = DBAdapter.getAttachment(routeId, mImageFilename);
-
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
-            mImage = new BitmapDrawable(context.getResources(), bitmap);
-        } catch (CouchbaseLiteException e) {
-            Log.e("routes", e.toString());
-        }
-
-        return mImage;
-    }
-
-    /**
-     * Getter for the name of the image belonging to the tag.
-     * IMPORTANT: Can only be called if getmImage(routeId, imageFilename) was called at least once.
-     * Else returns null.
-     *
-     * @return image Drawable
-     */
-    public Drawable getImage() {
+    public Image getImage() {
         return mImage;
     }
 
@@ -116,6 +68,6 @@ public class RouteTag implements Serializable {
      * @return Name of the image of the tag.
      */
     public String getImageFilename() {
-        return mImageFilename;
+        return mImage.getFilename();
     }
 }

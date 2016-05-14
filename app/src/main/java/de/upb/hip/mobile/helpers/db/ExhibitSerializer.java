@@ -16,15 +16,21 @@
 
 package de.upb.hip.mobile.helpers.db;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.DBFile;
+import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 
 /**
@@ -32,29 +38,42 @@ import de.upb.hip.mobile.models.exhibit.Exhibit;
  * This class is specific to the CouchBase Database!
  */
 public class ExhibitSerializer {
+    public static final String TAG = "exhibit-serializer";
 
 
-    public static void serializeExhibit(Document document, Exhibit exhibit) {
+    public static void serializeExhibit(Document document, Exhibit exhibit, Context mContext, DBDummyDataFiller filler) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put(DBAdapter.KEY_TYPE, "exhibit");
-        properties.put(DBAdapter.KEY_EXHIBIT_NAME, exhibit.getName());
-        properties.put(DBAdapter.KEY_EXHIBIT_DESCRIPTION, exhibit.getDescription());
-        properties.put(DBAdapter.KEY_EXHIBIT_CATEGORIES, exhibit.getCategories());
-        properties.put(DBAdapter.KEY_EXHIBIT_TAGS, exhibit.getTags());
-        properties.put(DBAdapter.KEY_EXHIBIT_LAT, exhibit.getLatlng().latitude);
-        properties.put(DBAdapter.KEY_EXHIBIT_LNG, exhibit.getLatlng().longitude);
-        properties.put(DBAdapter.KEY_EXHIBIT_IMAGE, exhibit.getImage());
-        properties.put(DBAdapter.KEY_EXHIBIT_PAGES, exhibit.getPages());
 
+        DBFileTypeAdapter dbFileTypeAdapter = new DBFileTypeAdapter();
+        GsonBuilder builder = new GsonBuilder();
+        //Register type adapter so we can get a list of all files in the database
+        builder.registerTypeAdapter(Image.class, dbFileTypeAdapter);
 
-        //ensure access for all users in the Couchbase database
+        Gson gson = builder.create();
+        String data = gson.toJson(exhibit);
+        properties.put(DBAdapter.KEY_DATA, data);
+
+        properties.put(DBAdapter.KEY_TYPE, DBAdapter.TYPE_EXHIBIT);
         properties.put(DBAdapter.KEY_CHANNELS, "*");
 
         try {
+            // Save the properties to the document
             document.putProperties(properties);
         } catch (CouchbaseLiteException e) {
-            Log.e("exhibit-serializer", e.toString());
+            Log.e(TAG, "Error putting properties", e);
+        }
+
+        for (DBFile file : dbFileTypeAdapter.getFiles()) {
+            final int resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
+                    "drawable", mContext.getPackageName());
+            if (resId != 0) {
+                InputStream ress = mContext.getResources().openRawResource(+resId);
+                //TODO: Determine MIME type
+                filler.addAttachment(exhibit.getId(), file.getFilename(), "image/jpeg", ress);
+            } else {
+                Log.e("routes", "Could not load image resource for exhibit " + exhibit.getId());
+            }
         }
     }
 }

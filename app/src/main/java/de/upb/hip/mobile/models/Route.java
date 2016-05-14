@@ -31,7 +31,7 @@ public class Route implements Serializable {
     private int mDuration; //in seconds
     private double mDistance; //in km
     private List<RouteTag> mTags;
-    private String mImageName;
+    private Image mImage;
 
     /**
      * Constructor for route.
@@ -43,10 +43,10 @@ public class Route implements Serializable {
      * @param duration    The duration of the route in seconds.
      * @param distance    The distance of the route in kilometer.
      * @param tags        The tags of the route.
-     * @param imageName   The name of the image, that belongs to the route.
+     * @param image       The image, that belongs to the route.
      */
     public Route(int id, String title, String description, List<Waypoint> wayPoints,
-                 int duration, double distance, List<RouteTag> tags, String imageName) {
+                 int duration, double distance, List<RouteTag> tags, Image image) {
         this.mId = id;
         this.mTitle = title;
         this.mDescription = description;
@@ -54,7 +54,7 @@ public class Route implements Serializable {
         this.mDuration = duration;
         this.mDistance = distance;
         this.mTags = tags;
-        this.mImageName = imageName;
+        this.mImage = image;
     }
 
     /**
@@ -121,11 +121,11 @@ public class Route implements Serializable {
     }
 
     /**
-     * Getter for the routes image name.
+     * Getter for the routes image.
      *
-     * @return image name
+     * @return image
      */
-    public String getImageName() {
-        return this.mImageName;
+    public Image getImage() {
+        return this.mImage;
     }
 }

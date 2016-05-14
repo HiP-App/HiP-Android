@@ -36,7 +36,6 @@ import de.upb.hip.mobile.adapters.DBAdapter;
  */
 public class Image extends DBFile implements Serializable {
     private final String mDescription;
-    private final String mFilename;
     private final String mTitle; //Called "name" in DB diagram
 
     //Do not try to serialize the image
@@ -44,36 +43,22 @@ public class Image extends DBFile implements Serializable {
     transient private Drawable mImage;
 
     public Image(int docId, String mDescription, String mFilename, String mTitle) {
-        super(docId);
+        super(docId, mFilename);
         this.mDescription = mDescription;
-        this.mFilename = mFilename;
         this.mTitle = mTitle;
     }
 
-    /**
-     * Gets an image from the DB and deserializes it
-     *
-     * @param documentId     - The ID of the document this image is attached to
-     * @param attachmentName - The mFilename of the Image
-     * @param context        - The android context, needed for generating a bitmap
-     * @return - A deserialized image
-     */
-    public static Drawable getDrawableFromDatabase(int documentId, String attachmentName, Context context) {
-        Drawable image = null;
+    public Drawable getDawableImage(Context ctx) {
+        if (mImage == null) {
+            Attachment attachment = DBAdapter.getAttachment(getDocumentId(), getFilename());
 
-        Attachment attachment = DBAdapter.getAttachment(documentId, attachmentName);
-
-        try {
-            Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
-            image = new BitmapDrawable(context.getResources(), bitmap);
-        } catch (CouchbaseLiteException e) {
-            Log.e("routes", e.toString());
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
+                mImage = new BitmapDrawable(ctx.getResources(), bitmap);
+            } catch (CouchbaseLiteException e) {
+                Log.e("routes", e.toString());
+            }
         }
-
-        return image;
-    }
-
-    public Drawable getImage() {
         return mImage;
     }
 
@@ -88,10 +73,6 @@ public class Image extends DBFile implements Serializable {
 
     public String getDescription() {
         return mDescription;
-    }
-
-    public String getFilename() {
-        return mFilename;
     }
 
     public String getTitle() {

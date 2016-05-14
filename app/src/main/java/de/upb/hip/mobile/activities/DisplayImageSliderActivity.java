@@ -340,7 +340,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         // add all pictures to the mPicDataList
         for (int i = 0; i < images.size(); i++) {
             Map<String, Object> properties = images.get(i);
-            mPicDataList.add(new PictureData(DBAdapter.getImage(sliderID,
+            mPicDataList.add(new PictureData(DBAdapter.getDawableImage(sliderID,
                     (String) properties.get(DBAdapter.KEY_SLIDER_IMAGE_NAME)),
                     (int) properties.get(DBAdapter.KEY_SLIDER_IMAGE_YEAR)));
         }*/
