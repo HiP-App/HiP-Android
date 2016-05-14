@@ -292,7 +292,8 @@ public class DBAdapter {
             };
 
             Replication pull = getDatabaseInstance().createPullReplication(url);
-
+            //TODO: PULL & PUSH DISABLED since currently not needed and causting problems
+            //Re-enable for production use
             pull.setContinuous(true); // sync all changes, ToDo: Sync later only neccessary entries
             pull.setAuthenticator(auth);
             pull.setCreateTarget(true); // creates the local database, if it doesn't exist
