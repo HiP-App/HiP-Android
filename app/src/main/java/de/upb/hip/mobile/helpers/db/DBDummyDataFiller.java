@@ -14,15 +14,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.SliderImage;
 import de.upb.hip.mobile.models.Waypoint;
+import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ImagePage;
 import de.upb.hip.mobile.models.exhibit.Page;
+import de.upb.hip.mobile.models.exhibit.TextPage;
+import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
 /**
  * This class adds dummy data to the DB until we can obtain real data from team CMS
@@ -30,7 +33,15 @@ import de.upb.hip.mobile.models.exhibit.Page;
 public class DBDummyDataFiller {
 
     public static final String TAG = "db-filler";
-
+    private static final String lorem =
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor" +
+                    " invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero " +
+                    "eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no " +
+                    "sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, " +
+                    "consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et " +
+                    "dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo " +
+                    "dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem " +
+                    "ipsum dolor sit amet.";
     private final Database mDatabase;
     private final DBAdapter mDbAdapter;
     private final Context mContext;
@@ -43,10 +54,26 @@ public class DBDummyDataFiller {
     }
 
     public void insertData() {
+        // Create some example pages for the Dom
+        LinkedList<Page> domPages = new LinkedList<>();
+        domPages.add(new AppetizerPage("", new Image(1, lorem, "abdinghof.jpg", "Abdinghof")));
+        domPages.add(new TextPage(lorem, null));
+        domPages.add(new ImagePage(new Image(1, lorem, "abdinghof.jpg", "Abdinghof"), null, null));
+
+        List<Image> sliderImages = new LinkedList<>();
+        List<Long> sliderTimes = new LinkedList<>();
+        sliderImages.add(new Image(1, "image 1 desc gwegs ", "Phase 1.jpg", "Img1"));
+        sliderTimes.add(776l);
+        sliderImages.add(new Image(1, "image 2 desc gwegs ", "Phase 2.jpg", "Img2"));
+        sliderTimes.add(799l);
+        sliderImages.add(new Image(1, "image 3 desc gwegs ", "Phase 3.jpg", "Img3"));
+        sliderTimes.add(836l);
+        domPages.add(new TimeSliderPage("Slidertitle", lorem, null, sliderTimes, sliderImages));
+
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
                 " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +
                 "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "dom.jpg", ""), new LinkedList<Page>());
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "dom.jpg", ""), domPages);
         insertExhibit(e1);
 
         Exhibit e2 = new Exhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, " +
@@ -72,21 +99,6 @@ public class DBDummyDataFiller {
                 waypoints, 60 * 30, 5.2, ringrouteTags, new Image(101, "", "route_ring.jpg", ""));
 
         insertRoute(ringroute);
-
-
-        List<SliderImage> sliderImages = new LinkedList<>();
-        sliderImages.add(new SliderImage(776, "Phase 1.jpg"));
-        sliderImages.add(new SliderImage(799, "Phase 2.jpg"));
-        sliderImages.add(new SliderImage(836, "Phase 3.jpg"));
-        sliderImages.add(new SliderImage(900, "Phase 4.jpg"));
-        sliderImages.add(new SliderImage(938, "Phase 5.jpg"));
-        insertSlider(201, sliderImages);
-
-        addImage(R.drawable.phasei, 201, "Phase 1.jpg");
-        addImage(R.drawable.phaseii, 201, "Phase 2.jpg");
-        addImage(R.drawable.phaseiii, 201, "Phase 3.jpg");
-        addImage(R.drawable.phaseiv, 201, "Phase 4.jpg");
-        addImage(R.drawable.phasev, 201, "Phase 5.jpg");
     }
 
 

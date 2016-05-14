@@ -98,6 +98,7 @@ public class DetailsActivity extends ActionBarActivity {
 
         Document document = mDatabase.getDocument(mExhibitId);
         Exhibit exhibit = ExhibitDeserializer.deserializeExhibit(document);
+
         mTextView.setText(exhibit.getName());
         //TODO: Remove this workaround code as exhibits can't have sliders anymore
         mIsSlider = false;

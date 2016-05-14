@@ -32,11 +32,11 @@ public class AppetizerPage implements Page, Serializable {
         this.mImage = mImage;
     }
 
-    private String getText() {
+    public String getText() {
         return mText;
     }
 
-    private Image getImage() {
+    public Image getImage() {
         return mImage;
     }
 
