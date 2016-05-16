@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import de.upb.hip.mobile.activities.DetailsActivity;
+import de.upb.hip.mobile.activities.ExhibitDetailsActivity;
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
 
@@ -66,7 +67,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if (childView != null && mGestureDetector.onTouchEvent(e)) {
 
-            Intent intent = new Intent(this.mMainActivity, DetailsActivity.class);
+            Intent intent = new Intent(this.mMainActivity, ExhibitDetailsActivity.class);
 
             @SuppressWarnings("unchecked") // type of array is unimportant for runtime
                     ActivityOptionsCompat activityOptions =
@@ -80,7 +81,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                             new Pair<>(childView.findViewById(R.id.mainRowItemName),
                                     DetailsActivity.VIEW_NAME_TITLE));
 
-            intent.putExtra(DetailsActivity.INTENT_EXHIBIT_ID, childView.getId());
+            intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_ID, childView.getId());
             ActivityCompat.startActivity(this.mMainActivity, intent, activityOptions.toBundle());
         }
         return false;
@@ -95,5 +96,10 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
      */
     @Override
     public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        // intentionally left blank
     }
 }
