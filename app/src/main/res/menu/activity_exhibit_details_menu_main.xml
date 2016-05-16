@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/action_audio"
-        android:icon="@drawable/ic_headset_24dp"
+        android:icon="@drawable/ic_headset_white_24dp"
         android:title="@string/action_audio"
         app:showAsAction="ifRoom" />
 

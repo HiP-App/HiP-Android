@@ -26,8 +26,6 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -115,7 +113,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exhibit_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_clear_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -329,7 +327,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     private void setFabNextAction() {
         fabAction = BottomSheetConfig.FabAction.NEXT;
-        fab.setImageResource(R.drawable.ic_arrow_forward_black_24dp);
+        fab.setImageResource(R.drawable.ic_arrow_forward_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -340,7 +338,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     private void setFabExpandAction() {
         fabAction = BottomSheetConfig.FabAction.EXPAND;
-        fab.setImageResource(R.drawable.ic_expand_less_black_24dp);
+        fab.setImageResource(R.drawable.ic_expand_less_white_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -351,7 +349,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     private void setFabCollapseAction() {
         fabAction = BottomSheetConfig.FabAction.COLLAPSE;
-        fab.setImageResource(R.drawable.ic_expand_more_black_24dp);
+        fab.setImageResource(R.drawable.ic_expand_more_white_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -497,9 +495,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         btnPlayPause.setImageResource(android.R.color.transparent);
 
         if (isAudioPlaying)
-            btnPlayPause.setImageResource(R.drawable.ic_pause_black_24dp);
+            btnPlayPause.setImageResource(R.drawable.ic_pause_black_36dp);
         else
-            btnPlayPause.setImageResource(R.drawable.ic_play_arrow_black_24dp);
+            btnPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
 
         isAudioPlaying = (!isAudioPlaying);
     }
