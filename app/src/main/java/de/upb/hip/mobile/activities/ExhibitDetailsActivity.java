@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -176,10 +177,21 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         btnPlayPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                togglePlayPause();
+                if (isAudioPlaying) {
+                    pauseAudioPlayback();
+                    isAudioPlaying = false;
+                } else {
+                    startAudioPlayback();
+                    isAudioPlaying = true;
+                    btnPlayPause.setImageResource(android.R.color.transparent);
+                }
+                updatePlayPauseButtonIcon();
             }
         });
 
+        updatePlayPauseButtonIcon();
+
+        // set up previous / next button
         btnPreviousPage = (ImageButton) findViewById(R.id.buttonPrevious);
         btnPreviousPage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -490,7 +502,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void togglePlayPause() {
+    /** Starts the playback of the audio associated with the page. */
+    private void startAudioPlayback() {
+        Toast.makeText(this, "Playing Audio", Toast.LENGTH_SHORT).show();
+        // TODO: integrate media player
+    }
+
+    /** Pauses the playback of the audio. */
+    private void pauseAudioPlayback() {
+        Toast.makeText(this, "Pausing Audio", Toast.LENGTH_SHORT).show();
+        // TODO: integrate media player
+    }
+
+    /** Updates the icon displayed in the Play/Pause button */
+    private void updatePlayPauseButtonIcon() {
         // remove old image first
         btnPlayPause.setImageResource(android.R.color.transparent);
 
@@ -499,6 +524,5 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         else
             btnPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
 
-        isAudioPlaying = (!isAudioPlaying);
     }
 }
