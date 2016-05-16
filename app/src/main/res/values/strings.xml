@@ -75,6 +75,11 @@
     <string name="licensing_mapicons_title_text">Map Icons</string>
     <string name="licensing_mapicons_body_text">Von <a href="https://mapicons.mapsmarker.com/">Maps Icons Collection</a>, lizensiert unter <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA 3.0</a>. Es wurden keine Änderungen vorgenommen.</string>
 
+    <!-- Strings for the audio toolbar captions -->
+    <string name="audio_toolbar_play_pause">Play/Pause</string>
+    <string name="audio_toolbar_progress">Fortschritt</string>
+    <string name="audio_toolbar_cc">Untertitel</string>
+
 
     <string-array name="nav_drawer_entries">
         <item>Übersicht</item>
