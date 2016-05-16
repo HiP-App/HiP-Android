@@ -59,8 +59,8 @@ public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
         bsFragment.setDescription(appetizerText);
 
         return new BottomSheetConfig.Builder()
-                .maxHeight(210)
-                .peekHeight(210)
+                .maxHeight(200)
+                .peekHeight(200)
                 .fabAction(BottomSheetConfig.FabAction.NEXT)
                 .bottomSheetFragment(bsFragment)
                 .getBottomSheetConfig();

@@ -39,10 +39,10 @@ public class BottomSheetConfig {
     private BottomSheetFragment bottomSheetFragment;
 
     /** The maximum height of the bottom sheet (in dp) */
-    private int maxHeight = 260;
+    private int maxHeight = 220;
 
     /** The height of the bottom sheet when it is collapsed (in dp) */
-    private int peekHeight = 105;
+    private int peekHeight = 80;
 
     /* The action associated with the FAB */
     private FabAction fabAction = FabAction.EXPAND;
