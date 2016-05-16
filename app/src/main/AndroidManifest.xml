@@ -106,6 +106,11 @@
             android:label="@string/licensing_title"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.WithActionBar" />
+
+        <!-- Services need to be declared,
+        otherwise they are not known to the system and won't be run -->
+        <service
+            android:name="de.upb.hip.mobile.helpers.MediaPlayerService" />
     </application>
 
 </manifest>
