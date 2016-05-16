@@ -65,7 +65,7 @@
             android:name=".ExhibitDetailsActivity"
             android:label="@string/title_activity_main"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.WithActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DisplaySingleImageActivity"
             android:label="@string/title_activity_display_single_image"
