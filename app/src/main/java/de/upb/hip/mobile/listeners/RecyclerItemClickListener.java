@@ -18,19 +18,17 @@ package de.upb.hip.mobile.listeners;
 
 import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.Serializable;
+import java.util.List;
 
-import de.upb.hip.mobile.activities.DetailsActivity;
 import de.upb.hip.mobile.activities.ExhibitDetailsActivity;
 import de.upb.hip.mobile.activities.MainActivity;
-import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
@@ -83,10 +81,18 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
             }
 
             if (exhibit != null) {
-                Serializable pageList = (Serializable) exhibit.getPages();
                 String exhibitName = exhibit.getName();
+                List pageList = exhibit.getPages();
+                if (pageList == null || pageList.isEmpty()) {
+                    Toast.makeText(mMainActivity,
+                            "Keine weiteren Informationen vorhanden für " + exhibitName,
+                            Toast.LENGTH_SHORT)
+                            .show();
+                    return false;
+                }
                 intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_NAME, exhibitName);
-                intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_PAGES, pageList);
+                intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_PAGES,
+                        (Serializable) pageList);
                 ActivityCompat.startActivity(this.mMainActivity, intent, null);
             }
         }
