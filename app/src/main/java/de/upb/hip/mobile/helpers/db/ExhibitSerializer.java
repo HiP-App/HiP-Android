@@ -46,11 +46,6 @@ import de.upb.hip.mobile.models.exhibit.Page;
 public class ExhibitSerializer {
     public static final String TAG = "exhibit-serializer";
 
-    /*public static final String PAGE_TYPE = "type";
-    public static final String PAGE_APPETIZER = "appetizer";
-    public static final String PAGE_IMAGE = "image";
-    public static final String PAGE_TEXT = "text";
-    public static final String PAGE_TIMESLIDER = "timeslider";*/
     public static final String CLASS_META_KEY = "CLASS_META_KEY";
 
     public static void serializeExhibit(Document document, Exhibit exhibit, Context mContext, DBDummyDataFiller filler) {
@@ -98,22 +93,6 @@ public class ExhibitSerializer {
 
         @Override
         public JsonElement serialize(Page src, Type typeOfSrc, JsonSerializationContext context) {
-            /*JsonElement elem = gson.toJsonTree(src);
-            String type = "";
-            if(src instanceof AppetizerPage){
-                type = PAGE_APPETIZER;
-            } else if (src instanceof ImagePage){
-                type = PAGE_IMAGE;
-            } else if (src instanceof TextPage){
-                type = PAGE_TEXT;
-            } else if (src instanceof TimeSliderPage){
-                type = PAGE_TIMESLIDER;
-            } else {
-                Log.e(TAG, "Received unregonized page");
-            }
-            JsonObject o = elem.getAsJsonObject();
-            o.addProperty(PAGE_TYPE, type);
-            return o;*/
             JsonElement jsonEle = gson.toJsonTree(src);
             jsonEle.getAsJsonObject().addProperty(CLASS_META_KEY,
                     src.getClass().getCanonicalName());
