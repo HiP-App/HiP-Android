@@ -25,16 +25,21 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.Serializable;
+
 import de.upb.hip.mobile.activities.DetailsActivity;
 import de.upb.hip.mobile.activities.ExhibitDetailsActivity;
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
 /**
  * Listener for the Recycler View in MainActivity
  */
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
     private MainActivity mMainActivity;
+    private ExhibitSet mExhibitSet;
     private GestureDetector mGestureDetector;
 
 
@@ -43,8 +48,9 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
      *
      * @param mMainActivity MainActivity of the app
      */
-    public RecyclerItemClickListener(MainActivity mMainActivity) {
+    public RecyclerItemClickListener(MainActivity mMainActivity, ExhibitSet mExhibitSet) {
         this.mMainActivity = mMainActivity;
+        this.mExhibitSet = mExhibitSet;
         mGestureDetector = new GestureDetector(mMainActivity,
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
@@ -69,20 +75,20 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
 
             Intent intent = new Intent(this.mMainActivity, ExhibitDetailsActivity.class);
 
-            @SuppressWarnings("unchecked") // type of array is unimportant for runtime
-                    ActivityOptionsCompat activityOptions =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            this.mMainActivity,
-                            // Now we provide a list of Pair items which contain the view we can
-                            // transitioning from, and the name of the view it is transitioning to,
-                            // in the launched activity
-                            new Pair<>(childView.findViewById(R.id.mainRowItemImage),
-                                    DetailsActivity.VIEW_NAME_IMAGE),
-                            new Pair<>(childView.findViewById(R.id.mainRowItemName),
-                                    DetailsActivity.VIEW_NAME_TITLE));
+            Exhibit exhibit = null;
+            for (int i = 0; i < mExhibitSet.getSize(); ++i) {
+                exhibit = mExhibitSet.getExhibit(i);
+                if (exhibit.getId() == childView.getId())
+                    break;
+            }
 
-            intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_ID, childView.getId());
-            ActivityCompat.startActivity(this.mMainActivity, intent, activityOptions.toBundle());
+            if (exhibit != null) {
+                Serializable pageList = (Serializable) exhibit.getPages();
+                String exhibitName = exhibit.getName();
+                intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_NAME, exhibitName);
+                intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_PAGES, pageList);
+                ActivityCompat.startActivity(this.mMainActivity, intent, null);
+            }
         }
         return false;
     }

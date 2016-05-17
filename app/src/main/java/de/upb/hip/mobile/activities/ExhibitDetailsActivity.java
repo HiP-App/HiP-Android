@@ -46,15 +46,15 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
-import de.upb.hip.mobile.models.Image;
-import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
-import de.upb.hip.mobile.models.exhibit.TextPage;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
 
 /** Coordinates subpages with details for an exhibit. */
 public class ExhibitDetailsActivity extends AppCompatActivity {
+
+    /** Stores the name of the current exhibit */
+    private String exhibitName = "";
 
     /** Stores the pages for the current exhibit */
     private List<Page> exhibitPages = new LinkedList<>();
@@ -80,8 +80,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Tag used to identify the current BottomSheetFragment in the FragmentManager */
     public static final String TAG_CURRENT_BOTTOMSHEET_FRAGMENT = "CURRENT_BOTTOM_SHEET_FRAGMENT";
 
+    //logging
+    public static final String TAG = "ExhibitDetailsActivity";
+
     // keys for saving/accessing the state
-    public static final String INTENT_EXTRA_EXHIBIT_ID = "de.upb.hip.mobile.extra.exhibit_id";
+    public static final String INTENT_EXTRA_EXHIBIT_PAGES = "de.upb.hip.mobile.extra.exhibit_pages";
+    public static final String INTENT_EXTRA_EXHIBIT_NAME = "de.upb.hip.mobile.extra.exhibit_name";
+
+    public static final String KEY_EXHIBIT_NAME = "ExhibitDetailsActivity.exhibitName";
     public static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
     public static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
     public static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
@@ -102,6 +108,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putString(KEY_EXHIBIT_NAME, exhibitName);
         outState.putSerializable(KEY_EXHIBIT_PAGES, (Serializable) exhibitPages);
         outState.putInt(KEY_CURRENT_PAGE_INDEX, currentPageIndex);
         outState.putBoolean(KEY_AUDIO_PLAYING, isAudioPlaying);
@@ -122,25 +129,23 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             // activity re-creation because of device rotation, instant run, ...
 
+            exhibitName = savedInstanceState.getString(KEY_EXHIBIT_NAME);
             exhibitPages = (List<Page>) savedInstanceState.getSerializable(KEY_EXHIBIT_PAGES);
             currentPageIndex = savedInstanceState.getInt(KEY_CURRENT_PAGE_INDEX, 0);
             isAudioPlaying = savedInstanceState.getBoolean(KEY_AUDIO_PLAYING, false);
             isAudioToolbarHidden = true;
             extras = savedInstanceState.getBundle(KEY_EXTRAS);
 
-            if (exhibitPages == null)
-                throw new NullPointerException("exhibitPages cannot be null!");
-
         } else {
             // activity creation because of intent
             Intent intent = getIntent();
             extras = intent.getExtras();
-            // TODO: extract pages from exhibit contained in intent instead of subsequent init
-            exhibitPages.add(new AppetizerPage("Some appetizer text",
-                    new Image(1, "some description", "abdinghof.jpg", "Abdinghof")));
-            exhibitPages.add(new TextPage("This will be a DummyPage bec. of the Factory...", null));
-            exhibitPages.add(new TextPage("This will be a DummyPage bec. of the Factory...", null));
+            exhibitName = intent.getStringExtra(INTENT_EXTRA_EXHIBIT_NAME);
+            exhibitPages = (List<Page>) intent.getSerializableExtra(INTENT_EXTRA_EXHIBIT_PAGES);
         }
+
+        if (exhibitPages == null)
+            throw new NullPointerException("exhibitPages cannot be null!");
 
         // set up bottom sheet behavior
         bottomSheet = findViewById(R.id.bottom_sheet);
@@ -236,7 +241,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
         // get ExhibitPageFragment for Page
         Page page = exhibitPages.get(currentPageIndex);
-        ExhibitPageFragment pageFragment = ExhibitPageFragmentFactory.getFragmentForExhibitPage(page);
+        ExhibitPageFragment pageFragment =
+                ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
         if (pageFragment == null)
             throw new NullPointerException("pageFragment is null!");
@@ -302,6 +308,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         } else {    // config.displayBottomSheet == false
             bottomSheet.setVisibility(View.GONE);
         }
+
+        // TODO: handle audio
 
     }
 

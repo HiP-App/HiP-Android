@@ -17,15 +17,21 @@
 package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.fragments.bottomsheetfragments.SimpleBottomSheetFragment;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
+import de.upb.hip.mobile.models.Image;
+import de.upb.hip.mobile.models.exhibit.AppetizerPage;
+import de.upb.hip.mobile.models.exhibit.Page;
 
 
 /**
@@ -34,10 +40,10 @@ import de.upb.hip.mobile.helpers.BottomSheetConfig;
 public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
 
     /** Title for the appetizer bottom sheet */
-    private String appetizerTitle = "default appetizer title";
+    private String appetizerTitle = "Historisches Paderborn";
 
-    /** Appetizer text displayed in the bottom sheet */
-    private String appetizerText = "default appetizer text";
+    /** Stores the model instance for this page */
+    private AppetizerPage page = null;
 
 
     public AppetizerExhibitPageFragment() {
@@ -45,18 +51,39 @@ public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
     }
 
 
+    public void setAppetizerTitle(String title) {
+        this.appetizerTitle = title;
+    }
+
+    @Override
+    public void setPage(Page page) {
+        this.page = (AppetizerPage) page;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_exhibitpage_dummy, container, false);
+        View v = inflater.inflate(R.layout.fragment_exhibitpage_appetizer, container, false);
+
+        // set image
+        ImageView imgView = (ImageView) v.findViewById(R.id.imgAppetizer);
+        if (imgView != null && page != null) {
+            Image img = page.getImage();
+            Drawable drawable = img.getDawableImage(getContext());
+            Log.w("AEPF", "drawable null? " + (drawable == null));
+            imgView.setImageDrawable(drawable);
+        }
+
+        return v;
     }
 
     @Override
     public BottomSheetConfig getBottomSheetConfig() {
         SimpleBottomSheetFragment bsFragment = new SimpleBottomSheetFragment();
         bsFragment.setTitle(appetizerTitle);
-        bsFragment.setDescription(appetizerText);
+        if (page != null)
+            bsFragment.setDescription(page.getText());
 
         return new BottomSheetConfig.Builder()
                 .maxHeight(200)
@@ -66,8 +93,4 @@ public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
                 .getBottomSheetConfig();
     }
 
-    @Override
-    public Type getType() {
-        return Type.APPETIZER;
-    }
 }

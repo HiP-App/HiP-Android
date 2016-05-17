@@ -30,12 +30,18 @@ public class ExhibitPageFragmentFactory {
      * @param page Page to create an ExhibitPageFragment for.
      * @return the created ExhibitPageFragment.
      */
-    public static ExhibitPageFragment getFragmentForExhibitPage(Page page) {
+    public static ExhibitPageFragment getFragmentForExhibitPage(Page page, String exhibitName) {
 
         // TODO: update this
-        if (page instanceof AppetizerPage)
-            return new AppetizerExhibitPageFragment();
-        else
+        if (page instanceof AppetizerPage) {
+            AppetizerPage appetizerPage = (AppetizerPage) page;
+            AppetizerExhibitPageFragment fragment = new AppetizerExhibitPageFragment();
+            fragment.setPage(appetizerPage);
+            if (exhibitName != null)
+                fragment.setAppetizerTitle(exhibitName);
+
+            return fragment;
+        } else
             return new DummyExhibitPageFragment();
     }
 

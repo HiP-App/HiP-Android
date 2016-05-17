@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.fragments.bottomsheetfragments.SimpleBottomSheetFragment;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
+import de.upb.hip.mobile.models.exhibit.Page;
 
 /**
  * A simple {@link ExhibitPageFragment} subclass for testing purposes.
@@ -41,6 +42,10 @@ public class DummyExhibitPageFragment extends ExhibitPageFragment {
         count++;
     }
 
+    @Override
+    public void setPage(Page page) {
+        // intentionally left blank for this dummy implementation
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,8 +65,4 @@ public class DummyExhibitPageFragment extends ExhibitPageFragment {
                 .getBottomSheetConfig();
     }
 
-    @Override
-    public Type getType() {
-        return Type.IMAGE;
-    }
 }

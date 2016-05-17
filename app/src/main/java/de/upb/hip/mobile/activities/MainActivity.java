@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity {
         mAdapter = new MainRecyclerAdapter(this.mExhibitSet, new LatLng(mGeoLocation.getLatitude(), mGeoLocation.getLongitude()), getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, mExhibitSet));
 
         // detecting that the current view is compleatly created and then
         // zoom to boundingbox on map
