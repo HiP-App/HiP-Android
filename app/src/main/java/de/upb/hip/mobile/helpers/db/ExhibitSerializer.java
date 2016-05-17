@@ -76,6 +76,7 @@ public class ExhibitSerializer {
         }
 
         for (DBFile file : dbFileTypeAdapter.getFiles()) {
+            Log.i(TAG, "Saving file " + file.getFilename() + " to document " + document.getId());
             final int resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
                     "drawable", mContext.getPackageName());
             if (resId != 0) {
@@ -83,19 +84,16 @@ public class ExhibitSerializer {
                 //TODO: Determine MIME type
                 filler.addAttachment(exhibit.getId(), file.getFilename(), "image/jpeg", ress);
             } else {
-                Log.e("routes", "Could not load image resource for exhibit " + exhibit.getId());
+                Log.e("routes", "Could not load image resource " + file.getFilename() + " for exhibit " + exhibit.getId());
             }
         }
     }
 
     private static class PageTypeAdapter implements JsonSerializer<Page> {
-        Gson gson = new Gson();
-
         @Override
         public JsonElement serialize(Page src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonElement jsonEle = gson.toJsonTree(src);
-            jsonEle.getAsJsonObject().addProperty(CLASS_META_KEY,
-                    src.getClass().getCanonicalName());
+            JsonElement jsonEle = context.serialize(src);
+            jsonEle.getAsJsonObject().addProperty(CLASS_META_KEY, src.getClass().getCanonicalName());
             return jsonEle;
         }
     }
