@@ -23,7 +23,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ExhibitDetailsActivity"
-    tools:showIn="@layout/activity_exhibit_details">
+    tools:showIn="@layout/activity_exhibit_details"
+    android:background="@android:color/black">
 
     <RelativeLayout
         android:id="@+id/content_fragment_container"

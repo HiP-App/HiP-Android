@@ -20,7 +20,6 @@ package de.upb.hip.mobile.fragments.exhibitpagefragments;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +70,6 @@ public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
         if (imgView != null && page != null) {
             Image img = page.getImage();
             Drawable drawable = img.getDawableImage(getContext());
-            Log.w("AEPF", "drawable null? " + (drawable == null));
             imgView.setImageDrawable(drawable);
         }
 
