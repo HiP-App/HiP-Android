@@ -79,11 +79,11 @@ public class DBDummyDataFiller {
 
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
-        sliderImages.add(new Image(1, "image 1 desc gwegs ", "Phase 1.jpg", "Img1"));
+        sliderImages.add(new Image(1, "image 1 desc gwegs ", "phasei.jpg", "Img1"));
         sliderTimes.add(776l);
-        sliderImages.add(new Image(1, "image 2 desc gwegs ", "Phase 2.jpg", "Img2"));
+        sliderImages.add(new Image(1, "image 2 desc gwegs ", "phaseii.jpg", "Img2"));
         sliderTimes.add(799l);
-        sliderImages.add(new Image(1, "image 3 desc gwegs ", "Phase 3.jpg", "Img3"));
+        sliderImages.add(new Image(1, "image 3 desc gwegs ", "phaseiii.jpg", "Img3"));
         sliderTimes.add(836l);
         domPages.add(new TimeSliderPage("Slidertitle", lorem, null, sliderTimes, sliderImages));
 
