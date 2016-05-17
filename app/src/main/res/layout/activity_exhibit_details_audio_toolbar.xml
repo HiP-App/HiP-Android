@@ -79,6 +79,7 @@
                 android:orientation="vertical">
 
                 <ImageButton
+                    android:id="@+id/btnCaptions"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/ic_closed_caption_black_24dp" />

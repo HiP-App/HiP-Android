@@ -26,6 +26,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -195,6 +197,16 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         });
 
         updatePlayPauseButtonIcon();
+
+        // set up CC button
+        ImageButton btnCaptions = (ImageButton) findViewById(R.id.btnCaptions);
+        btnCaptions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCaptions();
+            }
+        });
+
 
         // set up previous / next button
         btnPreviousPage = (ImageButton) findViewById(R.id.buttonPrevious);
@@ -532,5 +544,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         else
             btnPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
 
+    }
+
+    /** Shows the caption for the text that is currently read out */
+    private void showCaptions() {
+        String lorem = getString(R.string.lorem_100_words);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setTitle(R.string.audio_toolbar_cc)
+                .setMessage(lorem + " " + lorem)
+                .setNegativeButton("Schließen", null);
+        AlertDialog dialog = builder.show();
+
+        // show scrollbars
+        TextView tv = (TextView) dialog.findViewById(android.R.id.message);
+        if (tv != null)
+            tv.setVerticalScrollBarEnabled(true);
     }
 }
