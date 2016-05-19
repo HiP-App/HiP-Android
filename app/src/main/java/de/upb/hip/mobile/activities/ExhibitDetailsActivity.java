@@ -513,13 +513,13 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Starts the playback of the audio associated with the page. */
     private void startAudioPlayback() {
-        Toast.makeText(this, "Playing Audio", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
     }
 
     /** Pauses the playback of the audio. */
     private void pauseAudioPlayback() {
-        Toast.makeText(this, "Pausing Audio", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
     }
 

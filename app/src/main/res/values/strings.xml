@@ -88,6 +88,8 @@
     <string name="close">Schließen</string>
 
     <string name="no_further_exhibit_info">"Keine weiteren Informationen vorhanden für "</string>
+    <string name="audio_playing_indicator">Playing Audio</string>
+    <string name="audio_pausing_indicator">Pausing Audio</string>
 
 
     <string-array name="nav_drawer_entries">
