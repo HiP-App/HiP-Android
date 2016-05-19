@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -75,12 +74,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Stores the current action associated with the FAB */
     private BottomSheetConfig.FabAction fabAction;
-
-    /** Tag used to identify the current ExhibitPageFragment in the FragmentManager */
-    public static final String TAG_CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
-
-    /** Tag used to identify the current BottomSheetFragment in the FragmentManager */
-    public static final String TAG_CURRENT_BOTTOMSHEET_FRAGMENT = "CURRENT_BOTTOM_SHEET_FRAGMENT";
 
     //logging
     public static final String TAG = "ExhibitDetailsActivity";
@@ -266,15 +259,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // remove old fragment and display new fragment
         if (findViewById(R.id.content_fragment_container) != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            // remove current fragment (if present)
-            Fragment currentFragment =
-                    getSupportFragmentManager().findFragmentByTag(TAG_CURRENT_FRAGMENT);
-            if (currentFragment != null)
-                transaction.remove(currentFragment);
-
-            // add new fragment
-            transaction.add(R.id.content_fragment_container, pageFragment, TAG_CURRENT_FRAGMENT);
+            transaction.replace(R.id.content_fragment_container, pageFragment);
             transaction.commit();
         }
 
@@ -301,21 +286,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             if (sheetFragment == null)
                 throw new NullPointerException("sheetFragment is null!");
 
+            // FIXME: this somehow fails if the BottomSheet is expanded
             // TODO: this seems to take some time. would it help to do this in a separate thread?
             // remove old fragment and display new fragment
             if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                // remove current fragment (if present)
-                Fragment currentFragment =
-                        getSupportFragmentManager().findFragmentByTag(TAG_CURRENT_BOTTOMSHEET_FRAGMENT);
-                if (currentFragment != null)
-                    transaction.remove(currentFragment);
-
-                // FIXME: this somehow fails if the BottomSheet is expanded
-                // add new fragment
-                transaction.add(R.id.bottom_sheet_fragment_container, sheetFragment,
-                        TAG_CURRENT_BOTTOMSHEET_FRAGMENT);
+                transaction.replace(R.id.bottom_sheet_fragment_container, sheetFragment);
                 transaction.commit();
             }
 
