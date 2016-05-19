@@ -19,7 +19,6 @@ package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ import de.upb.hip.mobile.models.exhibit.Page;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A {@link ExhibitPageFragment} subclass for the {@link AppetizerPage}.
  */
 public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
 
