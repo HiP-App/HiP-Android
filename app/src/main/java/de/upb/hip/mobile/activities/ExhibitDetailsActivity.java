@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -75,6 +74,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Stores the current action associated with the FAB */
     private BottomSheetConfig.FabAction fabAction;
 
+    /** Reference to the BottomSheetFragment currently displayed */
+    private BottomSheetFragment bottomSheetFragment = null;
+
     //logging
     public static final String TAG = "ExhibitDetailsActivity";
 
@@ -82,12 +84,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_EXHIBIT_PAGES = "de.upb.hip.mobile.extra.exhibit_pages";
     public static final String INTENT_EXTRA_EXHIBIT_NAME = "de.upb.hip.mobile.extra.exhibit_name";
 
-    public static final String KEY_EXHIBIT_NAME = "ExhibitDetailsActivity.exhibitName";
-    public static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
-    public static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
-    public static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
-    public static final String KEY_AUDIO_TOOLBAR_HIDDEN = "ExhibitDetailsActivity.isAudioToolbarHidden";
-    public static final String KEY_EXTRAS = "ExhibitDetailsActivity.extras";
+    private static final String KEY_EXHIBIT_NAME = "ExhibitDetailsActivity.exhibitName";
+    private static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
+    private static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
+    private static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
+    private static final String KEY_AUDIO_TOOLBAR_HIDDEN = "ExhibitDetailsActivity.isAudioToolbarHidden";
+    private static final String KEY_EXTRAS = "ExhibitDetailsActivity.extras";
 
     // ui elements
     private FloatingActionButton fab;
@@ -101,7 +103,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
         outState.putString(KEY_EXHIBIT_NAME, exhibitName);
         outState.putSerializable(KEY_EXHIBIT_PAGES, (Serializable) exhibitPages);
@@ -109,6 +110,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         outState.putBoolean(KEY_AUDIO_PLAYING, isAudioPlaying);
         outState.putBoolean(KEY_AUDIO_TOOLBAR_HIDDEN, isAudioToolbarHidden);
         outState.putBundle(KEY_EXTRAS, extras);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -148,15 +151,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // toggle between expand / collapse
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED
-                        && fabAction == BottomSheetConfig.FabAction.COLLAPSE) {
-                    setFabAction(BottomSheetConfig.FabAction.EXPAND);
-                } else {
-                    if (newState == BottomSheetBehavior.STATE_EXPANDED
-                            && fabAction == BottomSheetConfig.FabAction.EXPAND) {
+                // toggle between expand / collapse , inform fragment
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    if (fabAction == BottomSheetConfig.FabAction.COLLAPSE)
+                        setFabAction(BottomSheetConfig.FabAction.EXPAND);
+
+                    if (bottomSheetFragment != null)
+                        bottomSheetFragment.onBottomSheetCollapse();
+
+                } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    if (fabAction == BottomSheetConfig.FabAction.EXPAND)
                         setFabAction(BottomSheetConfig.FabAction.COLLAPSE);
-                    }
+
+                    if (bottomSheetFragment != null)
+                        bottomSheetFragment.onBottomSheetExpand();
                 }
             }
 
@@ -195,7 +203,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         updatePlayPauseButtonIcon();
 
         // set up CC button
-        ImageButton btnCaptions = (ImageButton) findViewById(R.id.btnCaptions);
+        final ImageButton btnCaptions = (ImageButton) findViewById(R.id.btnCaptions);
         btnCaptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -222,6 +230,24 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         });
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (fabAction) {
+                    case NEXT:
+                        displayNextExhibitPage();
+                        break;
+                    case COLLAPSE:
+                        setFabAction(BottomSheetConfig.FabAction.EXPAND);
+                        break;
+                    case EXPAND:
+                        setFabAction(BottomSheetConfig.FabAction.COLLAPSE);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported FAB action!");
+                }
+            }
+        });
 
         displayCurrentExhibitPage();
 
@@ -281,17 +307,17 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setLayoutParams(params);
 
             // set content
-            BottomSheetFragment sheetFragment = config.getBottomSheetFragment();
+            bottomSheetFragment = config.getBottomSheetFragment();
 
-            if (sheetFragment == null)
+            if (bottomSheetFragment == null)
                 throw new NullPointerException("sheetFragment is null!");
 
-            // FIXME: this somehow fails if the BottomSheet is expanded
+            // FIXME: adding the new fragment somehow fails if the BottomSheet is expanded
             // TODO: this seems to take some time. would it help to do this in a separate thread?
             // remove old fragment and display new fragment
             if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.bottom_sheet_fragment_container, sheetFragment);
+                transaction.replace(R.id.bottom_sheet_fragment_container, bottomSheetFragment);
                 transaction.commit();
             }
 
@@ -321,9 +347,15 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
     }
 
-    /** Sets the action of the FAB */
+    /**
+     * Sets the action of the FAB. Adjusts the appearance (visibility and icon) of the FAB
+     * and the state of the bottom sheet accordingly.
+     *
+     * @param action FAB action to set.
+     */
     public void setFabAction(BottomSheetConfig.FabAction action) {
 
+        fabAction = action;
         fab.setVisibility(View.VISIBLE);
 
         switch (action) {
@@ -331,54 +363,19 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 fab.setVisibility(View.GONE);
                 break;
             case NEXT:
-                setFabNextAction();
+                fab.setImageResource(R.drawable.ic_arrow_forward_48dp);
                 break;
             case COLLAPSE:
-                setFabCollapseAction();
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                fab.setImageResource(R.drawable.ic_expand_more_white_48dp);
                 break;
             case EXPAND:
-                setFabExpandAction();
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                fab.setImageResource(R.drawable.ic_expand_less_white_48dp);
                 break;
             default:
-                throw new RuntimeException("Unsupported FAB action!");
+                throw new IllegalArgumentException("Unsupported FAB action!");
         }
-
-        fabAction = action;
-    }
-
-    /** Don't use this! Use setFabAction instead! */
-    private void setFabNextAction() {
-        fab.setImageResource(R.drawable.ic_arrow_forward_48dp);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayNextExhibitPage();
-            }
-        });
-    }
-
-    /** Don't use this! Use setFabAction instead! */
-    private void setFabExpandAction() {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        fab.setImageResource(R.drawable.ic_expand_less_white_48dp);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
-    }
-
-    /** Don't use this! Use setFabAction instead! */
-    private void setFabCollapseAction() {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        fab.setImageResource(R.drawable.ic_expand_more_white_48dp);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
     }
 
     /**
@@ -447,7 +444,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                     public void onAnimationEnd() {
                         mRevealView.setVisibility(View.INVISIBLE);
                         isAudioToolbarHidden = true;
-
                     }
 
                     @Override
@@ -539,16 +535,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Shows the caption for the text that is currently read out */
     private void showCaptions() {
+        // TODO: adapt this to retrieved data
         String lorem = getString(R.string.lorem_100_words);
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
                 .setMessage(lorem + " " + lorem)
                 .setNegativeButton("Schließen", null);
         AlertDialog dialog = builder.show();
-
-        // show scrollbars
-        TextView tv = (TextView) dialog.findViewById(android.R.id.message);
-        if (tv != null)
-            tv.setVerticalScrollBarEnabled(true);
     }
 }
