@@ -297,6 +297,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
         if (config.isDisplayBottomSheet()) {
 
+            bottomSheet.setVisibility(View.VISIBLE);
+
             // configure peek height and max height
             int peekHeightInPixels = (int) PixelDpConversion.convertDpToPixel(config.getPeekHeight());
             bottomSheetBehavior.setPeekHeight(peekHeightInPixels);
