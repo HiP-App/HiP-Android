@@ -38,7 +38,7 @@ import de.upb.hip.mobile.models.exhibit.Page;
 public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
 
     /** Title for the appetizer bottom sheet */
-    private String appetizerTitle = "Historisches Paderborn";
+    private String appetizerTitle = "Default Appetizer Title";
 
     /** Stores the model instance for this page */
     private AppetizerPage page = null;

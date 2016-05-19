@@ -29,6 +29,7 @@ import java.util.List;
 
 import de.upb.hip.mobile.activities.ExhibitDetailsActivity;
 import de.upb.hip.mobile.activities.MainActivity;
+import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
@@ -85,7 +86,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                 List pageList = exhibit.getPages();
                 if (pageList == null || pageList.isEmpty()) {
                     Toast.makeText(mMainActivity,
-                            "Keine weiteren Informationen vorhanden für " + exhibitName,
+                            mMainActivity.getString(R.string.no_further_exhibit_info) + exhibitName,
                             Toast.LENGTH_SHORT)
                             .show();
                     return false;

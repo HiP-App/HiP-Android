@@ -542,7 +542,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
                 .setMessage(lorem + " " + lorem)
-                .setNegativeButton("Schließen", null);
+                .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
     }
 }
