@@ -298,11 +298,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             params.height = maxHeightInPixels;
             bottomSheet.setLayoutParams(params);
 
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-            // configure FAB (includes expanded/collapsed state)
-            setFabAction(config.getFabAction());
-
             // set content
             BottomSheetFragment sheetFragment = config.getBottomSheetFragment();
 
@@ -320,15 +315,15 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 if (currentFragment != null)
                     transaction.remove(currentFragment);
 
+                // FIXME: this somehow fails if the BottomSheet is expanded
                 // add new fragment
                 transaction.add(R.id.bottom_sheet_fragment_container, sheetFragment,
                         TAG_CURRENT_BOTTOMSHEET_FRAGMENT);
                 transaction.commit();
             }
 
-            Log.w(TAG, "visibility: " + bottomSheet.getVisibility());
-            Log.w(TAG, "peekHeight: " + bottomSheetBehavior.getPeekHeight());
-            Log.w(TAG, "height: " + bottomSheet.getLayoutParams().height);
+            // configure FAB (includes expanded/collapsed state)
+            setFabAction(config.getFabAction());
 
         } else {    // config.displayBottomSheet == false
             bottomSheet.setVisibility(View.GONE);
@@ -378,7 +373,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         fabAction = action;
     }
 
-    // don't use this
+    /** Don't use this! Use setFabAction instead! */
     private void setFabNextAction() {
         fab.setImageResource(R.drawable.ic_arrow_forward_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -389,7 +384,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // don't use this
+    /** Don't use this! Use setFabAction instead! */
     private void setFabExpandAction() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         fab.setImageResource(R.drawable.ic_expand_less_white_48dp);
@@ -401,7 +396,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // don't use this
+    /** Don't use this! Use setFabAction instead! */
     private void setFabCollapseAction() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         fab.setImageResource(R.drawable.ic_expand_more_white_48dp);
