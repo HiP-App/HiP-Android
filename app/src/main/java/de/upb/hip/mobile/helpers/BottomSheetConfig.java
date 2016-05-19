@@ -27,6 +27,7 @@ public class BottomSheetConfig {
 
     /** Describes the action the FAB should perform on click */
     public enum FabAction {
+        NONE,
         EXPAND,
         COLLAPSE,
         NEXT
