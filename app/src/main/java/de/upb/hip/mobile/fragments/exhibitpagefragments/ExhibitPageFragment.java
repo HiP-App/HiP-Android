@@ -16,7 +16,6 @@
 
 package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
@@ -27,18 +26,6 @@ import de.upb.hip.mobile.models.exhibit.Page;
  * Abstract superclass for Fragments that are displayed as pages in the ExhibitDetailsActivity.
  */
 public abstract class ExhibitPageFragment extends Fragment {
-
-    /** Uri pointing to the audio file that should be played */
-    private Uri audio = null;
-
-    public Uri getAudio() {
-        return audio;
-    }
-
-    public void setAudio(Uri audio) {
-        this.audio = audio;
-    }
-
 
     /** Returns the BottomSheetConfig for the PageFragment */
     public abstract BottomSheetConfig getBottomSheetConfig();
