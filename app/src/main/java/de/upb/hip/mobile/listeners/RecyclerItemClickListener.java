@@ -18,22 +18,27 @@ package de.upb.hip.mobile.listeners;
 
 import android.content.Intent;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-import de.upb.hip.mobile.activities.DetailsActivity;
+import java.io.Serializable;
+import java.util.List;
+
+import de.upb.hip.mobile.activities.ExhibitDetailsActivity;
 import de.upb.hip.mobile.activities.MainActivity;
 import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
 /**
  * Listener for the Recycler View in MainActivity
  */
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
     private MainActivity mMainActivity;
+    private ExhibitSet mExhibitSet;
     private GestureDetector mGestureDetector;
 
 
@@ -42,8 +47,9 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
      *
      * @param mMainActivity MainActivity of the app
      */
-    public RecyclerItemClickListener(MainActivity mMainActivity) {
+    public RecyclerItemClickListener(MainActivity mMainActivity, ExhibitSet mExhibitSet) {
         this.mMainActivity = mMainActivity;
+        this.mExhibitSet = mExhibitSet;
         mGestureDetector = new GestureDetector(mMainActivity,
                 new GestureDetector.SimpleOnGestureListener() {
                     @Override
@@ -66,22 +72,30 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if (childView != null && mGestureDetector.onTouchEvent(e)) {
 
-            Intent intent = new Intent(this.mMainActivity, DetailsActivity.class);
+            Intent intent = new Intent(this.mMainActivity, ExhibitDetailsActivity.class);
 
-            @SuppressWarnings("unchecked") // type of array is unimportant for runtime
-                    ActivityOptionsCompat activityOptions =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            this.mMainActivity,
-                            // Now we provide a list of Pair items which contain the view we can
-                            // transitioning from, and the name of the view it is transitioning to,
-                            // in the launched activity
-                            new Pair<>(childView.findViewById(R.id.mainRowItemImage),
-                                    DetailsActivity.VIEW_NAME_IMAGE),
-                            new Pair<>(childView.findViewById(R.id.mainRowItemName),
-                                    DetailsActivity.VIEW_NAME_TITLE));
+            Exhibit exhibit = null;
+            for (int i = 0; i < mExhibitSet.getSize(); ++i) {
+                exhibit = mExhibitSet.getExhibit(i);
+                if (exhibit.getId() == childView.getId())
+                    break;
+            }
 
-            intent.putExtra(DetailsActivity.INTENT_EXHIBIT_ID, childView.getId());
-            ActivityCompat.startActivity(this.mMainActivity, intent, activityOptions.toBundle());
+            if (exhibit != null) {
+                String exhibitName = exhibit.getName();
+                List pageList = exhibit.getPages();
+                if (pageList == null || pageList.isEmpty()) {
+                    Toast.makeText(mMainActivity,
+                            mMainActivity.getString(R.string.no_further_exhibit_info) + exhibitName,
+                            Toast.LENGTH_SHORT)
+                            .show();
+                    return false;
+                }
+                intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_NAME, exhibitName);
+                intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_PAGES,
+                        (Serializable) pageList);
+                ActivityCompat.startActivity(this.mMainActivity, intent, null);
+            }
         }
         return false;
     }
@@ -95,5 +109,10 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
      */
     @Override
     public void onTouchEvent(RecyclerView view, MotionEvent motionEvent) {
+    }
+
+    @Override
+    public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        // intentionally left blank
     }
 }

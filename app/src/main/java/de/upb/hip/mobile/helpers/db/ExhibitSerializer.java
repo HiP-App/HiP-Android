@@ -46,11 +46,6 @@ import de.upb.hip.mobile.models.exhibit.Page;
 public class ExhibitSerializer {
     public static final String TAG = "exhibit-serializer";
 
-    /*public static final String PAGE_TYPE = "type";
-    public static final String PAGE_APPETIZER = "appetizer";
-    public static final String PAGE_IMAGE = "image";
-    public static final String PAGE_TEXT = "text";
-    public static final String PAGE_TIMESLIDER = "timeslider";*/
     public static final String CLASS_META_KEY = "CLASS_META_KEY";
 
     public static void serializeExhibit(Document document, Exhibit exhibit, Context mContext, DBDummyDataFiller filler) {
@@ -81,6 +76,7 @@ public class ExhibitSerializer {
         }
 
         for (DBFile file : dbFileTypeAdapter.getFiles()) {
+            Log.i(TAG, "Saving file " + file.getFilename() + " to document " + document.getId());
             final int resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
                     "drawable", mContext.getPackageName());
             if (resId != 0) {
@@ -88,35 +84,16 @@ public class ExhibitSerializer {
                 //TODO: Determine MIME type
                 filler.addAttachment(exhibit.getId(), file.getFilename(), "image/jpeg", ress);
             } else {
-                Log.e("routes", "Could not load image resource for exhibit " + exhibit.getId());
+                Log.e("routes", "Could not load image resource " + file.getFilename() + " for exhibit " + exhibit.getId());
             }
         }
     }
 
     private static class PageTypeAdapter implements JsonSerializer<Page> {
-        Gson gson = new Gson();
-
         @Override
         public JsonElement serialize(Page src, Type typeOfSrc, JsonSerializationContext context) {
-            /*JsonElement elem = gson.toJsonTree(src);
-            String type = "";
-            if(src instanceof AppetizerPage){
-                type = PAGE_APPETIZER;
-            } else if (src instanceof ImagePage){
-                type = PAGE_IMAGE;
-            } else if (src instanceof TextPage){
-                type = PAGE_TEXT;
-            } else if (src instanceof TimeSliderPage){
-                type = PAGE_TIMESLIDER;
-            } else {
-                Log.e(TAG, "Received unregonized page");
-            }
-            JsonObject o = elem.getAsJsonObject();
-            o.addProperty(PAGE_TYPE, type);
-            return o;*/
-            JsonElement jsonEle = gson.toJsonTree(src);
-            jsonEle.getAsJsonObject().addProperty(CLASS_META_KEY,
-                    src.getClass().getCanonicalName());
+            JsonElement jsonEle = context.serialize(src);
+            jsonEle.getAsJsonObject().addProperty(CLASS_META_KEY, src.getClass().getCanonicalName());
             return jsonEle;
         }
     }

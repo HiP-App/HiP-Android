@@ -1,20 +1,21 @@
 // incompatible API changes
-def versionMajor = 0
+def versionMajor = 1
 // added functionality in a backwards-compatible manner, must be <=99
-def versionMinor = 1
+def versionMinor = 0
 // backwards-compatible bug fixes, must be <=99
 def versionPatch = 0
 
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         applicationId "de.upb.hip.mobile"
         minSdkVersion 19
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
@@ -31,6 +32,10 @@ android {
         }
     }
 
+    dexOptions {
+        javaMaxHeapSize "2g"
+    }
+
     // workaround for "duplicate files during packaging of APK" issue
     // see https://groups.google.com/d/msg/adt-dev/bl5Rc4Szpzg/wC8cylTWuIEJ
     packagingOptions {
@@ -44,9 +49,10 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.android.support:appcompat-v7:22.0.+'
-    compile 'com.android.support:cardview-v7:22.0.+'
-    compile 'com.android.support:recyclerview-v7:22.0.+'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:cardview-v7:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.couchbase.lite:couchbase-lite-android:1.1.0'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
@@ -76,4 +82,5 @@ dependencies {
 
     //including using JitPack:
     compile 'com.github.MKergall.osmbonuspack:OSMBonusPack:v5.7'
+    compile 'com.github.ozodrukh:CircularReveal:1.1.0'
 }

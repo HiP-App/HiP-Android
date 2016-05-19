@@ -20,4 +20,6 @@ package de.upb.hip.mobile.models.exhibit;
  * An interface for all model classes for an Exhibit Page
  */
 public interface Page {
+
+
 }
