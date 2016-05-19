@@ -29,7 +29,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -237,8 +236,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the current exhibit page */
     public void displayCurrentExhibitPage() {
-
-        Log.w(TAG, "state: " + bottomSheetBehavior.getState());
 
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
