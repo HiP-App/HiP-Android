@@ -29,6 +29,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -155,12 +156,15 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (fabAction != BottomSheetConfig.FabAction.NEXT) {
-                    if (newState == BottomSheetBehavior.STATE_EXPANDED)
-                        setFabCollapseAction();
-                    else if (newState == BottomSheetBehavior.STATE_COLLAPSED)
-                        setFabExpandAction();
-                    else { /* we don't care about any other state */}
+                // toggle between expand / collapse
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED
+                        && fabAction == BottomSheetConfig.FabAction.COLLAPSE) {
+                    setFabAction(BottomSheetConfig.FabAction.EXPAND);
+                } else {
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED
+                            && fabAction == BottomSheetConfig.FabAction.EXPAND) {
+                        setFabAction(BottomSheetConfig.FabAction.COLLAPSE);
+                    }
                 }
             }
 
@@ -233,6 +237,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the current exhibit page */
     public void displayCurrentExhibitPage() {
+
+        Log.w(TAG, "state: " + bottomSheetBehavior.getState());
+
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
@@ -258,6 +265,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
         pageFragment.setArguments(extras);
 
+        // TODO: this seems to take some time. would it help to do this in a separate thread?
         // remove old fragment and display new fragment
         if (findViewById(R.id.content_fragment_container) != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -280,11 +288,28 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             throw new RuntimeException("BottomSheetConfig cannot be null!");
 
         if (config.isDisplayBottomSheet()) {
+
+            // configure peek height and max height
+            int peekHeightInPixels = (int) PixelDpConversion.convertDpToPixel(config.getPeekHeight());
+            bottomSheetBehavior.setPeekHeight(peekHeightInPixels);
+
+            int maxHeightInPixels = (int) PixelDpConversion.convertDpToPixel(config.getMaxHeight());
+            ViewGroup.LayoutParams params = bottomSheet.getLayoutParams();
+            params.height = maxHeightInPixels;
+            bottomSheet.setLayoutParams(params);
+
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            // configure FAB (includes expanded/collapsed state)
+            setFabAction(config.getFabAction());
+
+            // set content
             BottomSheetFragment sheetFragment = config.getBottomSheetFragment();
 
             if (sheetFragment == null)
                 throw new NullPointerException("sheetFragment is null!");
 
+            // TODO: this seems to take some time. would it help to do this in a separate thread?
             // remove old fragment and display new fragment
             if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -301,18 +326,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 transaction.commit();
             }
 
-            // configure FAB
-            setFabAction(config.getFabAction());
-
-            // configure peek height and max height
-            int peekHeightInPixels = (int) PixelDpConversion.convertDpToPixel(config.getPeekHeight());
-            bottomSheetBehavior.setPeekHeight(peekHeightInPixels);
-
-            int maxHeightInPixels = (int) PixelDpConversion.convertDpToPixel(config.getMaxHeight());
-            ViewGroup.LayoutParams params = bottomSheet.getLayoutParams();
-            params.height = maxHeightInPixels;
-            bottomSheet.setLayoutParams(params);
-
+            Log.w(TAG, "visibility: " + bottomSheet.getVisibility());
+            Log.w(TAG, "peekHeight: " + bottomSheetBehavior.getPeekHeight());
+            Log.w(TAG, "height: " + bottomSheet.getLayoutParams().height);
 
         } else {    // config.displayBottomSheet == false
             bottomSheet.setVisibility(View.GONE);
@@ -332,14 +348,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public void displayPreviousExhibitPage() {
         currentPageIndex--;
         if (currentPageIndex < 0)
-            throw new IndexOutOfBoundsException("currentPageIndex < 0");
+            return;
 
         displayCurrentExhibitPage();
     }
 
     /** Sets the action of the FAB */
     public void setFabAction(BottomSheetConfig.FabAction action) {
+
+        fab.setVisibility(View.VISIBLE);
+
         switch (action) {
+            case NONE:
+                fab.setVisibility(View.GONE);
+                break;
             case NEXT:
                 setFabNextAction();
                 break;
@@ -350,12 +372,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 setFabExpandAction();
                 break;
             default:
-                throw new RuntimeException("wut?!");
+                throw new RuntimeException("Unsupported FAB action!");
         }
+
+        fabAction = action;
     }
 
+    // don't use this
     private void setFabNextAction() {
-        fabAction = BottomSheetConfig.FabAction.NEXT;
         fab.setImageResource(R.drawable.ic_arrow_forward_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,8 +389,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         });
     }
 
+    // don't use this
     private void setFabExpandAction() {
-        fabAction = BottomSheetConfig.FabAction.EXPAND;
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         fab.setImageResource(R.drawable.ic_expand_less_white_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -376,8 +401,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         });
     }
 
+    // don't use this
     private void setFabCollapseAction() {
-        fabAction = BottomSheetConfig.FabAction.COLLAPSE;
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         fab.setImageResource(R.drawable.ic_expand_more_white_48dp);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
