@@ -18,6 +18,7 @@ package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
+import de.upb.hip.mobile.models.exhibit.TextPage;
 
 /**
  * Used for the instantiation of ExhibitPageFragments.
@@ -32,14 +33,18 @@ public class ExhibitPageFragmentFactory {
      */
     public static ExhibitPageFragment getFragmentForExhibitPage(Page page, String exhibitName) {
 
-        // TODO: update this
+        // TODO: update this when new pages are available
         if (page instanceof AppetizerPage) {
             AppetizerPage appetizerPage = (AppetizerPage) page;
             AppetizerExhibitPageFragment fragment = new AppetizerExhibitPageFragment();
             fragment.setPage(appetizerPage);
             if (exhibitName != null)
                 fragment.setAppetizerTitle(exhibitName);
-
+            return fragment;
+        } else if (page instanceof TextPage) {
+            TextPage textPage = (TextPage) page;
+            TextExhibitPageFragment fragment = new TextExhibitPageFragment();
+            fragment.setPage(textPage);
             return fragment;
         } else
             return new DummyExhibitPageFragment();
