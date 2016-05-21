@@ -16,9 +16,12 @@
 
 package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
+import android.util.Log;
+
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import de.upb.hip.mobile.models.exhibit.TextPage;
+import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
 /**
  * Used for the instantiation of ExhibitPageFragments.
@@ -46,8 +49,17 @@ public class ExhibitPageFragmentFactory {
             TextExhibitPageFragment fragment = new TextExhibitPageFragment();
             fragment.setPage(textPage);
             return fragment;
-        } else
+        } else if (page instanceof TimeSliderPage) {
+            TimeSliderPage timesliderPage = (TimeSliderPage) page;
+            TimeSliderExhibitPageFragment fragment = new TimeSliderExhibitPageFragment();
+            fragment.setPage(timesliderPage);
+            return fragment;
+        } else {
+            Log.i("PageFragmentFactory", "Got unknown type of page: " + page.toString()
+                    + " for exhibit " + exhibitName);
             return new DummyExhibitPageFragment();
+
+        }
     }
 
 }
