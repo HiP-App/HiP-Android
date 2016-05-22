@@ -29,10 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.upb.hip.mobile.activities.R;
-import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
-import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.Page;
 import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
@@ -41,10 +39,10 @@ import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
  */
 public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
 
+    public static final String INSTANCE_STATE_PAGE = "insanceStatePage";
+
     private TimeSliderPage page;
 
-    private DBAdapter mDatabase;
-    private Exhibit mExhibit;
     private ImageView mFirstImageView;
     private ImageView mNextImageView;
     private TextView mThumbSlidingText;
@@ -76,10 +74,19 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_exhibitpage_timeslider, container, false);
 
+        if (savedInstanceState != null && savedInstanceState.getSerializable(INSTANCE_STATE_PAGE) != null) {
+            page = (TimeSliderPage) savedInstanceState.getSerializable(INSTANCE_STATE_PAGE);
+        }
         setData();
         init();
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putSerializable(INSTANCE_STATE_PAGE, page);
     }
 
 
