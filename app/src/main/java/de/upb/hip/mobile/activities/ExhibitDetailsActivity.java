@@ -336,6 +336,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         currentPageIndex++;
         displayCurrentExhibitPage();
     }
@@ -346,6 +347,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex < 0)
             return;
 
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         displayCurrentExhibitPage();
     }
 
