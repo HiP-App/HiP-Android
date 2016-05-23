@@ -46,6 +46,7 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
+import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -330,6 +331,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setVisibility(View.GONE);
         }
 
+        // display audio action only if it is supported by page
+        if (page instanceof AppetizerPage)
+            hideAudioAction();
+        else
+            showAudioAction(); // TODO: only if the page provides audio
+
         // TODO: handle audio
 
     }
@@ -535,6 +542,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         else
             btnPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
 
+    }
+
+    /** Hides the audio action in the toolbar */
+    private void hideAudioAction() {
+        View audioIcon = findViewById(R.id.action_audio);
+        if (audioIcon != null)
+            audioIcon.setVisibility(View.GONE);
+    }
+
+    /** Shows the audio action in the toolbar */
+    private void showAudioAction() {
+        View audioIcon = findViewById(R.id.action_audio);
+        if (audioIcon != null)
+            audioIcon.setVisibility(View.VISIBLE);
     }
 
     /** Shows the caption for the text that is currently read out */
