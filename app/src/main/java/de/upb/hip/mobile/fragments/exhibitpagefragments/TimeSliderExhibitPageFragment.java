@@ -18,6 +18,7 @@ package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
     private ImageView mFirstImageView;
     private ImageView mNextImageView;
     private TextView mThumbSlidingText;
+    private TextView mImageDescription;
     private CustomSeekBar mSeekBar;
     private boolean mFontFading = true;
 
@@ -73,6 +75,7 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_exhibitpage_timeslider, container, false);
+
 
         if (savedInstanceState != null && savedInstanceState.getSerializable(INSTANCE_STATE_PAGE) != null) {
             page = (TimeSliderPage) savedInstanceState.getSerializable(INSTANCE_STATE_PAGE);
@@ -122,6 +125,8 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
         seekBarEndText.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).mYear));
 
         mThumbSlidingText = (TextView) view.findViewById(R.id.displayImageSliderThumbSlidingText);
+
+        mImageDescription = (TextView) view.findViewById(R.id.displayImageSliderDescriptionText);
 
         addSeekBarListener();
     }
@@ -199,6 +204,9 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
 
                 // for showcase image: get the closest node to actual progress
                 nearest = findClosestNode(result, progressValue);
+
+                mImageDescription.setText("String: " + page.getImages().get(nearest).getDescription());
+                Log.i("slider", page.getImages().get(nearest).getDescription());
 
                 // set year over the thumb except first and last picture
                 if (progressValue != 0 && progressValue != 100) {
