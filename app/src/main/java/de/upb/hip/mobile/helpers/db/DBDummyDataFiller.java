@@ -77,11 +77,11 @@ public class DBDummyDataFiller {
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
         sliderImages.add(new Image(1, "image 1 desc gwegs ", "phasei.jpg", "Img1"));
-        sliderTimes.add(776l);
+        sliderTimes.add(776L);
         sliderImages.add(new Image(1, "image 2 desc gwegs ", "phaseii.jpg", "Img2"));
-        sliderTimes.add(799l);
+        sliderTimes.add(799L);
         sliderImages.add(new Image(1, "image 3 desc gwegs ", "phaseiii.jpg", "Img3"));
-        sliderTimes.add(836l);
+        sliderTimes.add(836L);
         domPages.add(new TimeSliderPage("Slidertitle", lorem, null, sliderTimes, sliderImages));
 
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
