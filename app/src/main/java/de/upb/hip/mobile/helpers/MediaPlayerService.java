@@ -16,6 +16,7 @@
 
 package de.upb.hip.mobile.helpers;
 import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.Audio;
 
 import android.app.Service;
 import android.content.Context;
@@ -45,15 +46,17 @@ public class MediaPlayerService extends Service
     public static final String ACTION_PLAY = "de.upb.hip.mobile.PLAY";  //the intentions can probably be erased
     public static final String ACTION_STOP = "de.upb.hip.mobile.STOP";
 
-
-    private int[] songList = {/*R.raw.audio_file_1embraceofsaturn, R.raw.audio_file_2gmanspeech*/};
+    Audio a1 = new Audio(R.raw.IntoChaos);
+    Audio a2 = new Audio(R.raw.OrderedChaos);
+    Audio a3 = new Audio(R.raw.FreeTillDeath);
+    private Audio[] songList = {a1, a2, a3};
     int current = 1;
     private MediaPlayer mMediaPlayer;
     private IBinder mBinder = new MediaPlayerBinder();
 
     public void onCreate(){
         try{    //the service is bound, therefore this function is used rather than onStartCommand
-            mMediaPlayer = MediaPlayer.create(this, songList[current]);
+            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.prepareAsync();
@@ -65,7 +68,7 @@ public class MediaPlayerService extends Service
 
     public int onStartCommand(Intent intent, int flags, int startId){
         try{
-            mMediaPlayer = MediaPlayer.create(this, songList[current]);
+            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.prepareAsync();
@@ -121,7 +124,7 @@ public class MediaPlayerService extends Service
 				//may be needed for handling audio files later. until know, leave this commented in here.
             current++;
             current %= songList.length;
-            mMediaPlayer = MediaPlayer.create(this, songList[current]);
+            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
         }catch(Exception e){
 //            add an exception handling
         }
