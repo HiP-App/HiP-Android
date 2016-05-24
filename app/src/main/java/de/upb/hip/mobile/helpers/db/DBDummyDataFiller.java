@@ -69,10 +69,10 @@ public class DBDummyDataFiller {
     public void insertData() {
         // Create some example pages for the Dom
         LinkedList<Page> domPages = new LinkedList<>();
-        domPages.add(new AppetizerPage("Mehr zum Dom ...",
-                new Image(1, lorem, "abdinghof.jpg", "Abdinghof")));
-        domPages.add(new TextPage(lorem, null));
+        domPages.add(new AppetizerPage("Nachfolgend erfahren Sie mehr zum Dom ...",
+                new Image(1, lorem, "dom.jpg", "Dom")));
         domPages.add(new ImagePage(new Image(1, lorem, "abdinghof.jpg", "Abdinghof"), null, null));
+        domPages.add(new TextPage(lorem, null));
 
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
