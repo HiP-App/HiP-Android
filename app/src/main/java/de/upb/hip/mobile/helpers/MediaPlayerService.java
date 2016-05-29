@@ -46,9 +46,9 @@ public class MediaPlayerService extends Service
     public static final String ACTION_PLAY = "de.upb.hip.mobile.PLAY";  //the intentions can probably be erased
     public static final String ACTION_STOP = "de.upb.hip.mobile.STOP";
 
-    Audio a1 = new Audio(R.raw.IntoChaos);
-    Audio a2 = new Audio(R.raw.OrderedChaos);
-    Audio a3 = new Audio(R.raw.FreeTillDeath);
+    Audio a1 = new Audio(R.raw.intochaos);
+    Audio a2 = new Audio(R.raw.orderedchaos);
+    Audio a3 = new Audio(R.raw.freetilldeath);
     private Audio[] songList = {a1, a2, a3};
     int current = 1;
     private MediaPlayer mMediaPlayer;

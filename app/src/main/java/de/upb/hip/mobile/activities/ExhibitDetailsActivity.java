@@ -18,9 +18,13 @@ package de.upb.hip.mobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -45,6 +49,7 @@ import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
+import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
@@ -67,6 +72,28 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
     private boolean isAudioToolbarHidden = true;
+
+    //create an object for the mediaplayerservice
+    //the booleans are states and may be obsolete later on
+    MediaPlayerService mMediaPlayerService;
+    boolean isBound = false;
+    boolean isPlaying = false;
+    //Subclass for media player binding
+    private ServiceConnection mMediaPlayerConnection = new ServiceConnection(){
+        public void onServiceConnected(ComponentName className, IBinder service){
+            MediaPlayerService.MediaPlayerBinder binder =
+                    (MediaPlayerService.MediaPlayerBinder) service;
+            mMediaPlayerService = binder.getService();
+            if(mMediaPlayerService == null){
+                //this case should not happen. add error handling
+            }
+            isBound = true;
+        }
+
+        public void onServiceDisconnected(ComponentName arg0){
+            isBound = false;
+        }
+    };
 
     /** Extras contained in the Intent that started this activity */
     private Bundle extras = null;
@@ -182,6 +209,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // if (! isAudioToolbarHidden) showAudioToolbar();
         // does not work because activity creation has not been completed?!
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
+
+        //initialize media player
+        doBindService();
 
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
@@ -338,6 +368,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public void displayNextExhibitPage() {
         currentPageIndex++;
         displayCurrentExhibitPage();
+
+        //TODO: delete this later, only for testing purposes
+        mMediaPlayerService.changeAudioFile();
+        mMediaPlayerService.startSound();
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */
@@ -515,12 +549,30 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void startAudioPlayback() {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
+        try {
+            mMediaPlayerService.startSound();
+        } catch(IllegalStateException e){
+            isPlaying = false;
+        } catch(NullPointerException e){
+            isPlaying = false;
+        } catch(Exception e){
+            isPlaying = false;
+        }
     }
 
     /** Pauses the playback of the audio. */
     private void pauseAudioPlayback() {
         Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
+        try {
+            mMediaPlayerService.pauseSound();
+        } catch(IllegalStateException e){
+            isPlaying = false;
+        } catch(NullPointerException e){
+            isPlaying = false;
+        } catch(Exception e){
+            isPlaying = false;
+        }
     }
 
     /** Updates the icon displayed in the Play/Pause button */
@@ -544,5 +596,17 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 .setMessage(lorem + " " + lorem)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
+    }
+
+    /** Initializes the service and binds it */
+    public void doBindService(){
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        isBound = bindService(intent, mMediaPlayerConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mMediaPlayerService.stopSound();    //if this isn't done, the media player will keep playing
     }
 }
