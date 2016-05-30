@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.fragments.bottomsheetfragments.SimpleBottomSheetFragment;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
 import de.upb.hip.mobile.models.exhibit.Page;
@@ -66,8 +67,10 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
 
     @Override
     public BottomSheetConfig getBottomSheetConfig() {
-        //TODO: Implement proper bottom sheet
-        return new BottomSheetConfig.Builder().displayBottomSheet(false).getBottomSheetConfig();
+        SimpleBottomSheetFragment bottomSheetFragment = new SimpleBottomSheetFragment();
+        bottomSheetFragment.setTitle(page.getTitle());
+        bottomSheetFragment.setDescription(page.getText());
+        return new BottomSheetConfig.Builder().displayBottomSheet(true).bottomSheetFragment(bottomSheetFragment).getBottomSheetConfig();
     }
 
     @Override
