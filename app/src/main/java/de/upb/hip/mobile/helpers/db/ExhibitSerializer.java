@@ -77,8 +77,13 @@ public class ExhibitSerializer {
 
         for (DBFile file : dbFileTypeAdapter.getFiles()) {
             Log.i(TAG, "Saving file " + file.getFilename() + " to document " + document.getId());
-            final int resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
+            int resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
                     "drawable", mContext.getPackageName());
+            //If it was an audio file it might be in the raw folder
+            if (resId == 0) {
+                resId = mContext.getResources().getIdentifier(file.getFilename().split("\\.")[0],
+                        "raw", mContext.getPackageName());
+            }
             if (resId != 0) {
                 InputStream ress = mContext.getResources().openRawResource(+resId);
                 //TODO: Determine MIME type

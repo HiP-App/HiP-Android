@@ -25,16 +25,13 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.UnsavedRevision;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
-import de.upb.hip.mobile.models.SliderImage;
 import de.upb.hip.mobile.models.Waypoint;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
@@ -80,11 +77,11 @@ public class DBDummyDataFiller {
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
         sliderImages.add(new Image(1, "image 1 desc gwegs ", "phasei.jpg", "Img1"));
-        sliderTimes.add(776l);
+        sliderTimes.add(776L);
         sliderImages.add(new Image(1, "image 2 desc gwegs ", "phaseii.jpg", "Img2"));
-        sliderTimes.add(799l);
+        sliderTimes.add(799L);
         sliderImages.add(new Image(1, "image 3 desc gwegs ", "phaseiii.jpg", "Img3"));
-        sliderTimes.add(836l);
+        sliderTimes.add(836L);
         domPages.add(new TimeSliderPage("Slidertitle", lorem, null, sliderTimes, sliderImages));
 
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
@@ -130,31 +127,6 @@ public class DBDummyDataFiller {
     }
 
     /**
-     * TODO: Remove this
-     *
-     * @param id
-     * @param sliderImages
-     */
-    public void insertSlider(int id, List<SliderImage> sliderImages) {
-        Document document = mDatabase.getDocument(String.valueOf(id));
-        Map<String, Object> properties = new HashMap<>();
-
-        if (sliderImages != null && !sliderImages.isEmpty()) {
-            properties.put(DBAdapter.KEY_TYPE, "slider");
-            properties.put(DBAdapter.KEY_SLIDER_IMAGES, sliderImages);
-            //ensure access for all users in the Couchbase database
-            properties.put(DBAdapter.KEY_CHANNELS, "*");
-        }
-
-        try {
-            // Save the properties to the document
-            document.putProperties(properties);
-        } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Error putting properties", e);
-        }
-    }
-
-    /**
      * insert a route in the database
      */
     public void insertRoute(Route route) {
@@ -163,14 +135,6 @@ public class DBDummyDataFiller {
         RouteSerializer.serializeRoute(document, route, mContext, this);
     }
 
-    /**
-     * adds an image from R.drawable to the document defined by document_id in local database
-     */
-    private void addImage(int image_number, int document_id, String imageName) {
-        InputStream image = mContext.getResources().openRawResource(+image_number);
-        // "+" is from: https://stackoverflow.com/questions/25572647/android-openrawresource-not-working-for-a-drawable
-        addAttachment(document_id, imageName, "image/jpeg", image);
-    }
 
     public void addAttachment(int document_id, String filename,
                               String mimeType, InputStream attachment) {

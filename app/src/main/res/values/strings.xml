@@ -91,6 +91,8 @@
     <string name="audio_playing_indicator">Playing Audio</string>
     <string name="audio_pausing_indicator">Pausing Audio</string>
 
+    <string name="after_christ">n. Chr.</string>
+
 
     <string-array name="nav_drawer_entries">
         <item>Übersicht</item>
