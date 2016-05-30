@@ -23,8 +23,19 @@ import java.io.Serializable;
  */
 public class Audio extends DBFile implements Serializable {
 
-    public Audio(int docId, String filename) {
+    private String mCaption;
+
+    public Audio(int docId, String filename, String caption) {
         super(docId, filename);
+        this.mCaption = caption;
+    }
+
+    public String getCaption() {
+        return this.mCaption;
+    }
+
+    public void setCaption(String caption) {
+        this.mCaption = caption;
     }
 
     //TODO: Add methods for getting this as a playable file from the database
