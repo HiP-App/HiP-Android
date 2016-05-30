@@ -57,8 +57,12 @@ public class DummyExhibitPageFragment extends ExhibitPageFragment {
     @Override
     public BottomSheetConfig getBottomSheetConfig() {
         SimpleBottomSheetFragment bsFragment = new SimpleBottomSheetFragment();
-        bsFragment.setTitle("SimpleBottomSheetFragment #" + count);
-        bsFragment.setDescription("you cannot use getString(id) here ...");
+//        bsFragment.setTitle("SimpleBottomSheetFragment #" + count);
+        bsFragment.setTitle("Außenansicht");
+        bsFragment.setDescription(
+                "Beschreibung zur Außenansicht (ist eigentlich der Abdinghof...). \n\n" +
+                "(c) XYZ   \n\nyou cannot use getString(id) here because the fragment is not " +
+                        "yet attached to an Activity!...");
 
         return new BottomSheetConfig.Builder()
                 .bottomSheetFragment(bsFragment)

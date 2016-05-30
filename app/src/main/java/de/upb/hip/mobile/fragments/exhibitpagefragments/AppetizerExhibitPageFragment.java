@@ -43,6 +43,9 @@ public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
     /** Stores the model instance for this page */
     private AppetizerPage page = null;
 
+    /** Height of the Bottom Sheet in dp */
+    private final int BOTTOM_SHEET_HEIGHT = 200;
+
 
     public AppetizerExhibitPageFragment() {
         // Required empty public constructor
@@ -83,8 +86,8 @@ public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
             bsFragment.setDescription(page.getText());
 
         return new BottomSheetConfig.Builder()
-                .maxHeight(200)
-                .peekHeight(200)
+                .maxHeight(BOTTOM_SHEET_HEIGHT)
+                .peekHeight(BOTTOM_SHEET_HEIGHT)
                 .fabAction(BottomSheetConfig.FabAction.NEXT)
                 .bottomSheetFragment(bsFragment)
                 .getBottomSheetConfig();

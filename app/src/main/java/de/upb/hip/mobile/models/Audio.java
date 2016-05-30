@@ -35,6 +35,7 @@ public class Audio extends DBFile implements Serializable {
 
     String mDescription;
     String mTitle;
+    private String mCaption;
 
     @JsonIgnore
     int mAudio;
@@ -44,13 +45,33 @@ public class Audio extends DBFile implements Serializable {
         mAudio = audio;
     }
 
+    public Audio(int audio, String caption){
+        super(0, "audio.mp3");
+        mAudio = audio;
+        mCaption = caption;
+    }
+
     public Audio(int docId, String filename, int audio){
         super(docId, filename);
         mAudio = audio;
     }
 
-    public Audio(int docId, String filename) {
+//    public Audio(int docId, String filename) {
+//        super(docId, filename);
+//    }
+
+
+    public Audio(int docId, String filename, String caption) {
         super(docId, filename);
+        this.mCaption = caption;
+    }
+
+    public String getCaption() {
+        return this.mCaption;
+    }
+
+    public void setCaption(String caption) {
+        this.mCaption = caption;
     }
 
     //TODO: Add methods for getting this as a playable file from the database

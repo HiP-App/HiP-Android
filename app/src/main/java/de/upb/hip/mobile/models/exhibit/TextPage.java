@@ -23,12 +23,12 @@ import de.upb.hip.mobile.models.Audio;
 /**
  * A model class representing a mText page
  */
-public class TextPage implements Page, Serializable {
+public class TextPage extends Page implements Serializable {
 
     private final String mText;
-    private final Audio mAudio;
 
-    public TextPage(String mText, Audio mAudio) {
+    public TextPage(String mText, Audio audio) {
+        super(audio);
         this.mText = mText;
         this.mAudio = mAudio;
     }
@@ -37,7 +37,4 @@ public class TextPage implements Page, Serializable {
         return mText;
     }
 
-    public Audio getAudio() {
-        return mAudio;
-    }
 }

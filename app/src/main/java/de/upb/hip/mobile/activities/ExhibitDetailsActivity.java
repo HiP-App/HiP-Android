@@ -51,6 +51,7 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFacto
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
+import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -360,12 +361,19 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setVisibility(View.GONE);
         }
 
+        // display audio action only if it is supported by page
+        if (page instanceof AppetizerPage)
+            hideAudioAction();
+        else
+            showAudioAction(); // TODO: only if the page provides audio
+
         // TODO: handle audio
 
     }
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         currentPageIndex++;
         displayCurrentExhibitPage();
 
@@ -380,6 +388,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex < 0)
             return;
 
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         displayCurrentExhibitPage();
     }
 
@@ -587,15 +596,30 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     }
 
+    /** Hides the audio action in the toolbar */
+    private void hideAudioAction() {
+        View audioIcon = findViewById(R.id.action_audio);
+        if (audioIcon != null)
+            audioIcon.setVisibility(View.GONE);
+    }
+
+    /** Shows the audio action in the toolbar */
+    private void showAudioAction() {
+        View audioIcon = findViewById(R.id.action_audio);
+        if (audioIcon != null)
+            audioIcon.setVisibility(View.VISIBLE);
+    }
+
     /** Shows the caption for the text that is currently read out */
     private void showCaptions() {
         // TODO: adapt this to retrieved data
-        String lorem = getString(R.string.lorem_100_words);
+        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
-                .setMessage(lorem + " " + lorem)
+                .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
+        //
     }
 
     /** Initializes the service and binds it */
