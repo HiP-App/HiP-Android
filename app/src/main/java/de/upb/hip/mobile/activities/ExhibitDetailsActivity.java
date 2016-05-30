@@ -260,20 +260,21 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
+        Page page = exhibitPages.get(currentPageIndex);
+
         // set previous & next button
         if (currentPageIndex == 0)
             btnPreviousPage.setVisibility(View.GONE);
         else
             btnPreviousPage.setVisibility(View.VISIBLE);
 
-        if (currentPageIndex >= exhibitPages.size() - 1)
+        if (currentPageIndex >= exhibitPages.size() - 1 || page instanceof AppetizerPage)
             btnNextPage.setVisibility(View.GONE);
         else
             btnNextPage.setVisibility(View.VISIBLE);
 
 
-        // get ExhibitPageFragment for Page
-        Page page = exhibitPages.get(currentPageIndex);
+        // set page fragment
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
