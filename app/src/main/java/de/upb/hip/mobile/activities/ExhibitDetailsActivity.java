@@ -561,11 +561,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Shows the caption for the text that is currently read out */
     private void showCaptions() {
         // TODO: adapt this to retrieved data
-        String lorem = getString(R.string.lorem_100_words);
+        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
-                .setMessage(lorem + " " + lorem)
+                .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
+        //
     }
 }
