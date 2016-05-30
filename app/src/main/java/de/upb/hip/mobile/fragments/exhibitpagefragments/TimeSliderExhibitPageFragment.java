@@ -50,7 +50,6 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
     private TextView mThumbSlidingText;
     private TextView mImageDescription;
     private CustomSeekBar mSeekBar;
-    private boolean mFontFading = true;
 
     private View view;
 
@@ -112,20 +111,18 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
         mFirstImageView.setImageDrawable(mPicDataList.get(0).mDrawable);
 
         // set the next picture
-        if (mFontFading) {
-            mNextImageView = (ImageView) view.findViewById(R.id.displayImageSliderNextImageView);
-            mNextImageView.setImageDrawable(mPicDataList.get(1).mDrawable);
-            mFirstImageView.bringToFront();
-        }
+        mNextImageView = (ImageView) view.findViewById(R.id.displayImageSliderNextImageView);
+        mNextImageView.setImageDrawable(mPicDataList.get(1).mDrawable);
+        mFirstImageView.bringToFront();
 
         // set start year on the slider
         TextView seekBarFirstText =
                 (TextView) view.findViewById(R.id.displayImageSliderSeekBarFirstText);
-        seekBarFirstText.setText(String.valueOf(mPicDataList.get(0).mYear));
+        seekBarFirstText.setText(String.valueOf(mPicDataList.get(0).mYear) + " " + getString(R.string.after_christ));
 
         // set end year on the slider
         TextView seekBarEndText = (TextView) view.findViewById(R.id.displayImageSliderSeekBarEndText);
-        seekBarEndText.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).mYear));
+        seekBarEndText.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).mYear) + " " + getString(R.string.after_christ));
 
         mThumbSlidingText = (TextView) view.findViewById(R.id.displayImageSliderThumbSlidingText);
 
@@ -176,6 +173,7 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 int startNode, nextNode;
+                int range = (mPicDataList.get(mPicDataList.size() - 1).mYear) - mPicDataList.get(0).mYear;
 
                 // decide the direction (forward or backward)
                 forward = progressStart <= progressValue;
@@ -186,24 +184,22 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
                 startNode = result[0];
                 nextNode = result[1];
 
-                if (mFontFading) {
-                    int actProgressAccordingStartNextNode = Math.abs(progressValue - mPicDataList.
-                            get(startNode).mDotPosition);
-                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).mDotPosition -
-                            mPicDataList.get(startNode).mDotPosition);
-                    float alpha =
-                            (float) actProgressAccordingStartNextNode / differenceStartNextNode;
+                int actProgressAccordingStartNextNode = Math.abs(progressValue - mPicDataList.
+                        get(startNode).mDotPosition);
+                int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).mDotPosition -
+                        mPicDataList.get(startNode).mDotPosition);
+                float alpha =
+                        (float) actProgressAccordingStartNextNode / differenceStartNextNode;
 
-                    // set current image
-                    mFirstImageView.setImageDrawable(mPicDataList.get(startNode).mDrawable);
-                    mFirstImageView.setAlpha(1 - alpha);
+                // set current image
+                mFirstImageView.setImageDrawable(mPicDataList.get(startNode).mDrawable);
+                mFirstImageView.setAlpha(1 - alpha);
 
-                    // set next image
-                    mNextImageView.setImageDrawable(mPicDataList.get(nextNode).mDrawable);
-                    mNextImageView.setAlpha(alpha);
+                // set next image
+                mNextImageView.setImageDrawable(mPicDataList.get(nextNode).mDrawable);
+                mNextImageView.setAlpha(alpha);
 
-                    mFirstImageView.bringToFront();
-                }
+                mFirstImageView.bringToFront();
 
                 // for showcase image: get the closest node to actual progress
                 nearest = findClosestNode(result, progressValue);
@@ -216,7 +212,8 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
                     int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) *
                             seekBar.getProgress();
                     mThumbSlidingText.setPadding(xPos, 0, 0, 0);
-                    mThumbSlidingText.setText(String.valueOf(mPicDataList.get(nearest).mYear));
+                    //mThumbSlidingText.setText(String.valueOf(mPicDataList.get(nearest).mYear));
+                    mThumbSlidingText.setText(String.valueOf((int) (mPicDataList.get(0).mYear + range * ((float) progressValue) / 100.0)));
                 } else {
                     // set empty text for first and last position
                     mThumbSlidingText.setText("");
@@ -238,10 +235,8 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
              */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (!mFontFading) {
-                    seekBar.setProgress(mPicDataList.get(nearest).mDotPosition);
-                    mFirstImageView.setImageDrawable(mPicDataList.get(nearest).mDrawable);
-                }
+                seekBar.setProgress(mPicDataList.get(nearest).mDotPosition);
+                mFirstImageView.setImageDrawable(mPicDataList.get(nearest).mDrawable);
             }
 
             /**

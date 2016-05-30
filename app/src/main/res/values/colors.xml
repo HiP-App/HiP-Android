@@ -31,8 +31,8 @@
     <item name="colorBottomSheetFont" type="color">@android:color/black</item>
 
 
-    <!-- text color: white -->
-    <item name="textColorPrimary" type="color">#FFFFFF</item>
+    <!-- text color: black -->
+    <item name="textColorPrimary" type="color">#DE000000</item>
     <item name="textColorSecondary" type="color">#9E9E9E</item>
     <!-- inverse text color: 87% black -->
     <item name="textColorPrimaryInverse" type="color">#DE000000</item>

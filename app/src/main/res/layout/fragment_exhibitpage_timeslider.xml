@@ -95,8 +95,7 @@
             android:paddingRight="20dp"
             android:paddingTop="10dp"
             android:scrollbars="vertical"
-            android:text="test"
-            android:textColor="#ffffff" />
+            android:text="test" />
 
     </ScrollView>
 
