@@ -49,7 +49,8 @@ public class MediaPlayerService extends Service
     Audio a1 = new Audio(R.raw.intochaos);
     Audio a2 = new Audio(R.raw.orderedchaos);
     Audio a3 = new Audio(R.raw.freetilldeath);
-    private Audio[] songList = {a1, a2, a3};
+    Audio a4 = new Audio(R.raw.sprechertext);
+    private Audio[] songList = {a1, a4, a2, a3};
     int current = 1;
     private MediaPlayer mMediaPlayer;
     private IBinder mBinder = new MediaPlayerBinder();
