@@ -18,7 +18,6 @@ package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +128,8 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
         mImageDescription = (TextView) view.findViewById(R.id.displayImageSliderDescriptionText);
 
         addSeekBarListener();
+
+        mImageDescription.setText(page.getImages().get(0).getDescription());
     }
 
     /**
@@ -204,16 +205,14 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
                 // for showcase image: get the closest node to actual progress
                 nearest = findClosestNode(result, progressValue);
 
-                mImageDescription.setText("String: " + page.getImages().get(nearest).getDescription());
-                Log.i("slider", page.getImages().get(nearest).getDescription());
+                mImageDescription.setText(page.getImages().get(nearest).getDescription());
 
                 // set year over the thumb except first and last picture
                 if (progressValue != 0 && progressValue != 100) {
                     int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) *
                             seekBar.getProgress();
                     mThumbSlidingText.setPadding(xPos, 0, 0, 0);
-                    //mThumbSlidingText.setText(String.valueOf(mPicDataList.get(nearest).mYear));
-                    mThumbSlidingText.setText(String.valueOf((int) (mPicDataList.get(0).mYear + range * ((float) progressValue) / 100.0)));
+                    mThumbSlidingText.setText(String.valueOf((int) (mPicDataList.get(0).mYear + range * ((float) progressValue) / 100.0)) + " " + getString(R.string.after_christ));
                 } else {
                     // set empty text for first and last position
                     mThumbSlidingText.setText("");
