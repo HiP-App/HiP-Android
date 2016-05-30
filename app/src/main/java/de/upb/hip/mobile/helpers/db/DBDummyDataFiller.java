@@ -28,7 +28,9 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.Image;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteTag;
@@ -55,6 +57,8 @@ public class DBDummyDataFiller {
                     "dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo " +
                     "dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem " +
                     "ipsum dolor sit amet.";
+    private static final String text1 = "Text1";
+
     private final Database mDatabase;
     private final DBAdapter mDbAdapter;
     private final Context mContext;
@@ -69,10 +73,13 @@ public class DBDummyDataFiller {
     public void insertData() {
         // Create some example pages for the Dom
         LinkedList<Page> domPages = new LinkedList<>();
-        domPages.add(new AppetizerPage("Nachfolgend erfahren Sie mehr zum Dom ...",
-                new Image(1, lorem, "dom.jpg", "Dom")));
-        domPages.add(new ImagePage(new Image(1, lorem, "abdinghof.jpg", "Abdinghof"), null, null));
-        domPages.add(new TextPage(lorem, null));
+
+        Audio dummyAudio = new Audio(R.raw.a, " ", "testcaption");
+
+        domPages.add(new AppetizerPage("missing Appetizer",
+                new Image(1, text1, "dom.jpg", "Die Paderborner Pfalz zu Zeiten Karls des Großen"), dummyAudio));
+        domPages.add(new ImagePage(new Image(1, text1, "abdinghof.jpg", "Abdinghof"), null, null, dummyAudio));
+        domPages.add(new TextPage(lorem, dummyAudio));
 
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
@@ -81,8 +88,8 @@ public class DBDummyDataFiller {
         sliderImages.add(new Image(1, "image 2 desc gwegs ", "phaseii.jpg", "Img2"));
         sliderTimes.add(799L);
         sliderImages.add(new Image(1, "image 3 desc gwegs ", "phaseiii.jpg", "Img3"));
-        sliderTimes.add(836L);
-        domPages.add(new TimeSliderPage("Slidertitle", lorem, null, sliderTimes, sliderImages));
+        sliderTimes.add(836l);
+        domPages.add(new TimeSliderPage("Slidertitle", lorem, dummyAudio, sliderTimes, sliderImages));
 
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
                 " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +

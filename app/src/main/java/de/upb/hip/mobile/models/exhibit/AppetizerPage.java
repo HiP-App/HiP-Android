@@ -18,16 +18,18 @@ package de.upb.hip.mobile.models.exhibit;
 
 import java.io.Serializable;
 
+import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.Image;
 
 /**
  * A model class fir the AppetizerPage page
  */
-public class AppetizerPage implements Page, Serializable {
+public class AppetizerPage extends Page implements Serializable {
     private final String mText;
     private final Image mImage;
 
-    public AppetizerPage(String mText, Image mImage) {
+    public AppetizerPage(String mText, Image mImage, Audio audio) {
+        super(audio);
         this.mText = mText;
         this.mImage = mImage;
     }
