@@ -54,5 +54,7 @@ public class LicensingActivity extends BaseActivity {
                 .setMovementMethod(LinkMovementMethod.getInstance());
         ((TextView) findViewById(R.id.licensingMapiconsBody))
                 .setMovementMethod(LinkMovementMethod.getInstance());
+        ((TextView) findViewById(R.id.licensingPhotoviewBody))
+                .setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
