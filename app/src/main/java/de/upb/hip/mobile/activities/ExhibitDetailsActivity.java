@@ -568,6 +568,5 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
-        //
     }
 }
