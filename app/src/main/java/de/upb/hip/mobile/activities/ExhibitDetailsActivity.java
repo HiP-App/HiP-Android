@@ -276,6 +276,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
+        if (!isAudioToolbarHidden)
+            hideAudioToolbar(); // TODO: generalize to audio playing
+
         Page page = exhibitPages.get(currentPageIndex);
 
         // set previous & next button
