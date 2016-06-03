@@ -75,25 +75,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     //create an object for the mediaplayerservice
     //the booleans are states and may be obsolete later on
-    MediaPlayerService mMediaPlayerService;
-    boolean isBound = false;
-    boolean isPlaying = false;
-    //Subclass for media player binding
-    private ServiceConnection mMediaPlayerConnection = new ServiceConnection(){
-        public void onServiceConnected(ComponentName className, IBinder service){
-            MediaPlayerService.MediaPlayerBinder binder =
-                    (MediaPlayerService.MediaPlayerBinder) service;
-            mMediaPlayerService = binder.getService();
-            if(mMediaPlayerService == null){
-                //this case should not happen. add error handling
-            }
-            isBound = true;
-        }
-
-        public void onServiceDisconnected(ComponentName arg0){
-            isBound = false;
-        }
-    };
 
     /** Extras contained in the Intent that started this activity */
     private Bundle extras = null;
@@ -211,7 +192,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
 
         //initialize media player
-        doBindService();
 
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
@@ -368,10 +348,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public void displayNextExhibitPage() {
         currentPageIndex++;
         displayCurrentExhibitPage();
-
-        //TODO: delete this later, only for testing purposes
-        mMediaPlayerService.changeAudioFile();
-        mMediaPlayerService.startSound();
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */
@@ -549,30 +525,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void startAudioPlayback() {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
-        try {
-            mMediaPlayerService.startSound();
-        } catch(IllegalStateException e){
-            isPlaying = false;
-        } catch(NullPointerException e){
-            isPlaying = false;
-        } catch(Exception e){
-            isPlaying = false;
-        }
     }
 
     /** Pauses the playback of the audio. */
     private void pauseAudioPlayback() {
         Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
-        try {
-            mMediaPlayerService.pauseSound();
-        } catch(IllegalStateException e){
-            isPlaying = false;
-        } catch(NullPointerException e){
-            isPlaying = false;
-        } catch(Exception e){
-            isPlaying = false;
-        }
     }
 
     /** Updates the icon displayed in the Play/Pause button */
@@ -598,15 +556,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         AlertDialog dialog = builder.show();
     }
 
-    /** Initializes the service and binds it */
-    public void doBindService(){
-        Intent intent = new Intent(this, MediaPlayerService.class);
-        isBound = bindService(intent, mMediaPlayerConnection, Context.BIND_AUTO_CREATE);
-    }
-
     @Override
     public void onDestroy(){
         super.onDestroy();
-        mMediaPlayerService.stopSound();    //if this isn't done, the media player will keep playing
     }
 }
