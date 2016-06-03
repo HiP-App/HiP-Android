@@ -25,7 +25,7 @@ import de.upb.hip.mobile.models.Audio;
  */
 public abstract class Page implements Serializable{
 
-    protected Audio mAudio;
+    protected Audio mAudio = null;
 
     public Page(Audio audio) {
         this.mAudio = audio;
