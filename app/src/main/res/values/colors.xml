@@ -36,4 +36,7 @@
 
     <drawable name="semitransparent_gray">#779E9E9E</drawable>
 
+    <!-- background for chevrons in the ExhibitDetailsActivity -->
+    <item name="chevronBackground" type="color">#AAFFFFFF</item>
+
 </resources>
