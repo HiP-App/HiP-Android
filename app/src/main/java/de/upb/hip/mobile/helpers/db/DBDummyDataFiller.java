@@ -77,12 +77,14 @@ public class DBDummyDataFiller {
         // Create some example pages for the Dom
         LinkedList<Page> domPages = new LinkedList<>();
 
-        Audio dummyAudio = new Audio(R.raw.sprechertext, " ", "testcaption");
+        Audio a1 = new Audio(R.raw.sprechertext, "testcaption");
+        Audio a2 = new Audio(R.raw.intochaos, "intochaos");
+        Audio a3 = new Audio(R.raw.freetilldeath, "freetilldeath");
 
         domPages.add(new AppetizerPage("missing Appetizer",
-                new Image(1, text1, "dom.jpg", "Die Paderborner Pfalz zu Zeiten Karls des Großen"), dummyAudio));
-        domPages.add(new ImagePage(new Image(1, text1, "abdinghof.jpg", "Abdinghof"), null, null, dummyAudio));
-        domPages.add(new TextPage(lorem, dummyAudio));
+                new Image(1, text1, "dom.jpg", "Die Paderborner Pfalz zu Zeiten Karls des Großen"), a1));
+        domPages.add(new ImagePage(new Image(1, text1, "abdinghof.jpg", "Abdinghof"), null, null, a2));
+        domPages.add(new TextPage(lorem, a3));
 
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
@@ -92,7 +94,7 @@ public class DBDummyDataFiller {
         sliderTimes.add(799l);
         sliderImages.add(new Image(1, "image 3 desc gwegs ", "phaseiii.jpg", "Img3"));
         sliderTimes.add(836l);
-        domPages.add(new TimeSliderPage("Slidertitle", lorem, dummyAudio, sliderTimes, sliderImages));
+        domPages.add(new TimeSliderPage("Slidertitle", lorem, a1, sliderTimes, sliderImages));
 
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
                 " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +

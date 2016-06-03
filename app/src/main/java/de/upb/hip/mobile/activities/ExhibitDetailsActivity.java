@@ -51,6 +51,7 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFacto
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
+import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
@@ -80,7 +81,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     boolean isBound = false;
     boolean isPlaying = false;
     //Subclass for media player binding
-    private ServiceConnection mMediaPlayerConnection = new ServiceConnection(){
+    private ServiceConnection mMediaPlayerConnection;/* = new ServiceConnection(){
         public void onServiceConnected(ComponentName className, IBinder service){
             MediaPlayerService.MediaPlayerBinder binder =
                     (MediaPlayerService.MediaPlayerBinder) service;
@@ -94,7 +95,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         public void onServiceDisconnected(ComponentName arg0){
             isBound = false;
         }
-    };
+    };*/
 
     /** Extras contained in the Intent that started this activity */
     private Bundle extras = null;
@@ -212,7 +213,24 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
 
         //initialize media player
-        doBindService();
+        if(mMediaPlayerService == null) {
+            mMediaPlayerConnection = new ServiceConnection(){
+                public void onServiceConnected(ComponentName className, IBinder service){
+                    MediaPlayerService.MediaPlayerBinder binder =
+                            (MediaPlayerService.MediaPlayerBinder) service;
+                    mMediaPlayerService = binder.getService();
+                    if(mMediaPlayerService == null){
+                        //this case should not happen. add error handling
+                    }
+                    isBound = true;
+                }
+
+                public void onServiceDisconnected(ComponentName arg0){
+                    isBound = false;
+                }
+            };
+            doBindService();
+        }
 
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
@@ -286,7 +304,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the current exhibit page */
     public void displayCurrentExhibitPage() {
-
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
@@ -368,18 +385,43 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             showAudioAction(); // TODO: only if the page provides audio
 
         // TODO: handle audio
+        if(mMediaPlayerService == null){
+            mMediaPlayerConnection = new ServiceConnection(){
+                public void onServiceConnected(ComponentName className, IBinder service){
+                    MediaPlayerService.MediaPlayerBinder binder =
+                            (MediaPlayerService.MediaPlayerBinder) service;
+                    mMediaPlayerService = binder.getService();
+                    if(mMediaPlayerService == null){
+                        //this case should not happen. add error handling
+                    }
+                    isBound = true;
+                }
 
+                public void onServiceDisconnected(ComponentName arg0){
+                    isBound = false;
+                }
+            };
+            doBindService();
+        }
+        Audio a = exhibitPages.get(currentPageIndex).getAudio();//.getAudioDir();
+        mMediaPlayerService.setAudioFile(a);
+        isAudioPlaying = false;
+        updatePlayPauseButtonIcon();
     }
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         currentPageIndex++;
+
         displayCurrentExhibitPage();
 
         //TODO: delete this later, only for testing purposes
-        mMediaPlayerService.changeAudioFile();
-        mMediaPlayerService.startSound();
+
+//        mMediaPlayerService.changeAudioFile();
+//        mMediaPlayerService.startSound();
+//        mMediaPlayerService.stopSound();
+
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */

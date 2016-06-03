@@ -96,7 +96,7 @@ public class Audio extends DBFile implements Serializable {
     /**
      * Sets a dersialized drawable version of this image
      *
-     * @param image
+     * @param audio sets the int value for the audio file in R.raw.*
      */
     public void setAudio(int audio) {
         mAudio = audio;

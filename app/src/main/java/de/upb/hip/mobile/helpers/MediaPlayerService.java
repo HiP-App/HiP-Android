@@ -47,17 +47,17 @@ public class MediaPlayerService extends Service
     public static final String ACTION_STOP = "de.upb.hip.mobile.STOP";
 
     Audio a1 = new Audio(R.raw.intochaos);
-    Audio a2 = new Audio(R.raw.orderedchaos);
-    Audio a3 = new Audio(R.raw.freetilldeath);
-    Audio a4 = new Audio(R.raw.sprechertext);
-    private Audio[] songList = {a1, a4, a2, a3};
-    int current = 1;
+//    Audio a2 = new Audio(R.raw.orderedchaos);
+//    Audio a3 = new Audio(R.raw.freetilldeath);
+//    Audio a4 = new Audio(R.raw.sprechertext);
+//    private Audio[] songList = {a1, a4, a2, a3};
+//    int current = 1;
     private MediaPlayer mMediaPlayer;
     private IBinder mBinder = new MediaPlayerBinder();
 
     public void onCreate(){
         try{    //the service is bound, therefore this function is used rather than onStartCommand
-            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
+            mMediaPlayer = MediaPlayer.create(this, a1.getAudioDir());
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.prepareAsync();
@@ -69,7 +69,7 @@ public class MediaPlayerService extends Service
 
     public int onStartCommand(Intent intent, int flags, int startId){
         try{
-            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
+//            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setOnPreparedListener(this);
             mMediaPlayer.prepareAsync();
@@ -123,9 +123,33 @@ public class MediaPlayerService extends Service
             mMediaPlayer.reset();
 //            AssetFileDescriptor fd = getResources().openRawResourceFd(R.raw.audio_file_3gmanwise); 
 				//may be needed for handling audio files later. until know, leave this commented in here.
-            current++;
-            current %= songList.length;
-            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
+//            current++;
+//            current %= songList.length;
+//            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
+        }catch(Exception e){
+//            add an exception handling
+        }
+    }
+
+    /** sets a specific audio file*/
+    public void setAudioFile(Audio audio){
+        try {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            //may be needed for handling audio files later. until know, leave this commented in here.
+            mMediaPlayer = MediaPlayer.create(this, audio.getAudioDir());
+        }catch(Exception e){
+//            add an exception handling
+        }
+    }
+
+    /** sets a specific audio file*/
+    public void setAudioFile(int audio){
+        try {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            //may be needed for handling audio files later. until know, leave this commented in here.
+            mMediaPlayer = MediaPlayer.create(this, audio);
         }catch(Exception e){
 //            add an exception handling
         }
