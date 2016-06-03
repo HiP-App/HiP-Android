@@ -47,7 +47,7 @@ public class ImagePage implements Page, Serializable {
         return mAreas;
     }
 
-    public static class Rectangle {
+    public static class Rectangle implements Serializable {
         private final int x1, y1; //top left corner
         private final int x2, y2; //bottom right corner
 

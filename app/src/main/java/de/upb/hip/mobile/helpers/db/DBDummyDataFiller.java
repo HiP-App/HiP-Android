@@ -72,7 +72,17 @@ public class DBDummyDataFiller {
         domPages.add(new AppetizerPage("Mehr zum Dom ...",
                 new Image(1, lorem, "abdinghof.jpg", "Abdinghof")));
         domPages.add(new TextPage(lorem, null));
-        domPages.add(new ImagePage(new Image(1, lorem, "abdinghof.jpg", "Abdinghof"), null, null));
+
+
+        List<ImagePage.Rectangle> imagePageRectangles = new LinkedList<>();
+        imagePageRectangles.add(new ImagePage.Rectangle(100, 100, 300, 300));
+        imagePageRectangles.add(new ImagePage.Rectangle(310, 310, 500, 700));
+        List<String> imagePageTexts = new LinkedList<>();
+        imagePageTexts.add("Area 1");
+        imagePageTexts.add("Area 2");
+        ImagePage imagePage = new ImagePage(new Image(1, lorem, "abdinghof.jpg", "Abdinghof"), imagePageTexts, imagePageRectangles);
+
+        domPages.add(imagePage);
 
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
