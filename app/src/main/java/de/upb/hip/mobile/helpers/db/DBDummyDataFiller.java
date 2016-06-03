@@ -42,8 +42,6 @@ import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ImagePage;
 import de.upb.hip.mobile.models.exhibit.Page;
-import de.upb.hip.mobile.models.exhibit.TextPage;
-import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
 /**
  * This class adds dummy data to the DB until we can obtain real data from team CMS
@@ -55,8 +53,6 @@ public class DBDummyDataFiller {
     public static final String TAG = "db-filler";
 
     private static final String lorem = "lorem.";
-
-    private static final  Audio dummyAudio = new Audio(R.raw.a, " ", "Hier sollte kein Audio sein!");
 
     private static final  Audio audio1 = new Audio(R.raw.a, " ", "Während des bisherigen Rundgangs haben Sie erfahren, wie wichtig das Gebiet zwischen Lippe und Pader für die Politik Karls des Großen ab den 770er Jahren war. Erinnern wir uns nur an die große Reichsversammlung im Jahre 777! Zu diesem Anlass fanden sich Franken, Sachsen, aber auch arabische Gesandte aus Spanien hier in Paderborn zusammen.\n" +
             "Aber was fanden diese Personen hier vor? Wie hat man sich das damalige Paderborn, die sogenannte „urbs Karoli“, eigentlich vorzustellen? Lange Zeit fragten sich Historiker und Archäologen, ob die „urbs Karoli“ tatsächlich in Paderborn existierte und wenn ja, wo genau?  Die karolingischen Geschichtswerke sprechen für Paderborn nicht von palatium,  \n" +
@@ -100,7 +96,7 @@ public class DBDummyDataFiller {
 
 
         domPages.add(new AppetizerPage("missing Appetizer",
-                new Image(1, text1, "dom.jpg", "Die Paderborner Pfalz zu Zeiten Karls des Großen"), dummyAudio));
+                new Image(1, text1, "dom.jpg", "Die Paderborner Pfalz zu Zeiten Karls des Großen"), null));
 
 
         domPages.add(new ImagePage(new Image(1, text1, "pfalzbefestigungnach778_plan_gai_mecke2004.jpg", "Pfalzbefestigung"), null, null, audio1));
