@@ -154,7 +154,6 @@ public class MediaPlayerService extends Service
         try {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
-            //may be needed for handling audio files later. until know, leave this commented in here.
             mMediaPlayer = MediaPlayer.create(this, audio);
             mAudioFileIsSet = true;
         }catch(Exception e){

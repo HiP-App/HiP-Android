@@ -374,27 +374,26 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public void displayNextExhibitPage() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         currentPageIndex++;
-
-        mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
+        updateAudioFile();
 
         displayCurrentExhibitPage();
-
-        //TODO: delete this later, only for testing purposes
-
-//        mMediaPlayerService.changeAudioFile();
-//        mMediaPlayerService.startSound();
-//        mMediaPlayerService.stopSound();
-
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */
     public void displayPreviousExhibitPage() {
         currentPageIndex--;
-        if (currentPageIndex < 0)
+        if (currentPageIndex < 0) {
             return;
-
+        }
+        updateAudioFile();
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         displayCurrentExhibitPage();
+    }
+
+    private void updateAudioFile(){
+        stopAudioPlayback();
+        mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
+        updatePlayPauseButtonIcon();
     }
 
     /**
@@ -584,12 +583,21 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         try {
             mMediaPlayerService.pauseSound();
         } catch(IllegalStateException e){
-            isPlaying = false;
         } catch(NullPointerException e){
-            isPlaying = false;
         } catch(Exception e){
-            isPlaying = false;
         }
+        isAudioPlaying = false;
+    }
+
+    private void stopAudioPlayback(){
+        try{
+            mMediaPlayerService.stopSound();
+        }catch(IllegalStateException e){
+        } catch(NullPointerException e){
+        } catch(Exception e) {
+        }
+        isAudioPlaying = false;
+
     }
 
     /** Updates the icon displayed in the Play/Pause button */
