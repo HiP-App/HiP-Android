@@ -37,6 +37,8 @@ import de.upb.hip.mobile.models.exhibit.Page;
  */
 public class ImagePageExhibitFragment extends ExhibitPageFragment {
 
+    public static final String INSTANCE_STATE_PAGE = "insanceStatePage";
+
     private ImagePage page;
 
     private DrawView drawView;
@@ -46,6 +48,10 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_exhibitpage_image, container, false);
+
+        if (savedInstanceState != null && savedInstanceState.getSerializable(INSTANCE_STATE_PAGE) != null) {
+            page = (ImagePage) savedInstanceState.getSerializable(INSTANCE_STATE_PAGE);
+        }
 
         drawView = (DrawView) v.findViewById(R.id.fragment_exhibitpage_image_imageview);
         drawView.setImageDrawable(this.page.getImage().getDawableImage(getContext()));
@@ -61,6 +67,12 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
         initListeners(v);
 
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putSerializable(INSTANCE_STATE_PAGE, page);
     }
 
     @Override
