@@ -46,6 +46,8 @@ public class MediaPlayerService extends Service
     public static final String ACTION_PLAY = "de.upb.hip.mobile.PLAY";  //the intentions can probably be erased
     public static final String ACTION_STOP = "de.upb.hip.mobile.STOP";
 
+    boolean mAudioFileIsSet = false;
+
     Audio a1 = new Audio(R.raw.intochaos);
 //    Audio a2 = new Audio(R.raw.orderedchaos);
 //    Audio a3 = new Audio(R.raw.freetilldeath);
@@ -101,6 +103,9 @@ public class MediaPlayerService extends Service
 
     //following are the functions for the app to use to control the media player
     public void startSound(){
+        if(!mAudioFileIsSet){
+            mMediaPlayer = MediaPlayer.create(this, a1.getAudioDir());
+        }
         mMediaPlayer.start();
     }
 
@@ -138,6 +143,7 @@ public class MediaPlayerService extends Service
             mMediaPlayer.reset();
             //may be needed for handling audio files later. until know, leave this commented in here.
             mMediaPlayer = MediaPlayer.create(this, audio.getAudioDir());
+            mAudioFileIsSet = true;
         }catch(Exception e){
 //            add an exception handling
         }
@@ -150,9 +156,20 @@ public class MediaPlayerService extends Service
             mMediaPlayer.reset();
             //may be needed for handling audio files later. until know, leave this commented in here.
             mMediaPlayer = MediaPlayer.create(this, audio);
+            mAudioFileIsSet = true;
         }catch(Exception e){
 //            add an exception handling
         }
+    }
+
+
+    public boolean getAudioFileIsSet(){
+        //since the mediaplayer is used as a service, in the beginning it can't yet be called
+        //as it is not yet created. however, as soon as the play button is used, the media player
+        //surely is existend. the first time, it is pushed, there is not yet set an audiofile
+        //because it couldn't be set before, so this needs to be checked and an audio file can then
+        //be set if necessary
+        return mAudioFileIsSet;
     }
 
     public class MediaPlayerBinder extends Binder {
