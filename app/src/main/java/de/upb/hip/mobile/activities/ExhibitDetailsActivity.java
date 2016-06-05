@@ -54,39 +54,50 @@ import io.codetail.animation.ViewAnimationUtils;
 /** Coordinates subpages with details for an exhibit. */
 public class ExhibitDetailsActivity extends AppCompatActivity {
 
+    /** Stores the name of the current exhibit */
+    private String exhibitName = "";
+
+    /** Stores the pages for the current exhibit */
+    private List<Page> exhibitPages = new LinkedList<>();
+
+    /** Index of the page in the exhibitPages list that is currently displayed */
+    private int currentPageIndex = 0;
+
+    /** Menu for the toolbar, created in onCreateOptionsMenu */
+    private Menu toolbarMenu;
+
+    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
+    private boolean showAudioAction = false;
+
+    /** Indicates whether audio is currently played (true) or not (false) */
+    private boolean isAudioPlaying = false;
+
+    /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
+    private boolean isAudioToolbarHidden = true;
+
+    /** Extras contained in the Intent that started this activity */
+    private Bundle extras = null;
+
+    /** Stores the current action associated with the FAB */
+    private BottomSheetConfig.FabAction fabAction;
+
+    /** Reference to the BottomSheetFragment currently displayed */
+    private BottomSheetFragment bottomSheetFragment = null;
+
     //logging
     public static final String TAG = "ExhibitDetailsActivity";
+
     // keys for saving/accessing the state
     public static final String INTENT_EXTRA_EXHIBIT_PAGES = "de.upb.hip.mobile.extra.exhibit_pages";
     public static final String INTENT_EXTRA_EXHIBIT_NAME = "de.upb.hip.mobile.extra.exhibit_name";
+
     private static final String KEY_EXHIBIT_NAME = "ExhibitDetailsActivity.exhibitName";
     private static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
     private static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
     private static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
     private static final String KEY_AUDIO_TOOLBAR_HIDDEN = "ExhibitDetailsActivity.isAudioToolbarHidden";
     private static final String KEY_EXTRAS = "ExhibitDetailsActivity.extras";
-    /** Stores the name of the current exhibit */
-    private String exhibitName = "";
-    /** Stores the pages for the current exhibit */
-    private List<Page> exhibitPages = new LinkedList<>();
-    /** Index of the page in the exhibitPages list that is currently displayed */
-    private int currentPageIndex = 0;
-    /**
-     * Menu for the toolbar, created in onCreateOptionsMenu
-     */
-    private Menu toolbarMenu;
-    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
-    private boolean showAudioAction = false;
-    /** Indicates whether audio is currently played (true) or not (false) */
-    private boolean isAudioPlaying = false;
-    /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
-    private boolean isAudioToolbarHidden = true;
-    /** Extras contained in the Intent that started this activity */
-    private Bundle extras = null;
-    /** Stores the current action associated with the FAB */
-    private BottomSheetConfig.FabAction fabAction;
-    /** Reference to the BottomSheetFragment currently displayed */
-    private BottomSheetFragment bottomSheetFragment = null;
+
     // ui elements
     private FloatingActionButton fab;
     private View bottomSheet;
@@ -254,6 +265,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
+
+        if (!isAudioToolbarHidden)
+            hideAudioToolbar(); // TODO: generalize to audio playing
 
         Page page = exhibitPages.get(currentPageIndex);
 
