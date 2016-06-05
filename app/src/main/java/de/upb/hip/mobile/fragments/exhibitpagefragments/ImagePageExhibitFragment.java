@@ -16,8 +16,9 @@
 
 package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -81,16 +82,29 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
         drawView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if (!(event.getAction() == MotionEvent.ACTION_DOWN)) {
+                    //Only do something when the user actually pressed down
+                    return false;
+                }
                 int x = (int) (((double) event.getX()) * getImageScalingFactor()[0]);
                 int y = (int) (((double) event.getY()) * getImageScalingFactor()[1]);
                 for (int i = 0; i < page.getAreas().size(); i++) {
                     ImagePage.Rectangle rect = page.getAreas().get(i);
                     if (x >= rect.getX1() && x <= rect.getX2() && y >= rect.getY1() && y <= rect.getY2()) {
-                        Log.i("image", page.getTexts().get(i));
+                        //We hit an rectangle, display further information about it
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(getString(R.string.information))
+                                .setMessage(page.getTexts().get(i))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //Do nothing, dialogue will just close
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_info)
+                                .show();
                         return true;
                     }
                 }
-                //TODO: Check if touch is inside image bounds and display additional info if it is
                 return false;
             }
         });
