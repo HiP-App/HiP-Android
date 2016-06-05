@@ -17,6 +17,7 @@
 package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -80,6 +81,15 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
         drawView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                int x = (int) (((double) event.getX()) * getImageScalingFactor()[0]);
+                int y = (int) (((double) event.getY()) * getImageScalingFactor()[1]);
+                for (int i = 0; i < page.getAreas().size(); i++) {
+                    ImagePage.Rectangle rect = page.getAreas().get(i);
+                    if (x >= rect.getX1() && x <= rect.getX2() && y >= rect.getY1() && y <= rect.getY2()) {
+                        Log.i("image", page.getTexts().get(i));
+                        return true;
+                    }
+                }
                 //TODO: Check if touch is inside image bounds and display additional info if it is
                 return false;
             }
