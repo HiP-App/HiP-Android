@@ -23,7 +23,7 @@
 
     <de.upb.hip.mobile.helpers.DrawView
         android:id="@+id/fragment_exhibitpage_image_imageview"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="true"
