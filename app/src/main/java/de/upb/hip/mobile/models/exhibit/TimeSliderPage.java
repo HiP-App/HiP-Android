@@ -25,14 +25,14 @@ import de.upb.hip.mobile.models.Image;
 /**
  * A model class for the TimeSliderPage page
  */
-public class TimeSliderPage implements Page, Serializable {
+public class TimeSliderPage extends Page implements Serializable {
     private final String mTitle;
     private final String mText;
-    private final Audio mAudio;
     private final List<Long> mDates;
     private final List<Image> mImages;
 
-    public TimeSliderPage(String mTitle, String mText, Audio mAudio, List<Long> mDates, List<Image> mImages) {
+    public TimeSliderPage(String mTitle, String mText, Audio audio, List<Long> mDates, List<Image> mImages) {
+        super(audio);
         this.mTitle = mTitle;
         this.mText = mText;
         this.mAudio = mAudio;
@@ -46,10 +46,6 @@ public class TimeSliderPage implements Page, Serializable {
 
     public String getText() {
         return mText;
-    }
-
-    public Audio getAudio() {
-        return mAudio;
     }
 
     public List<Long> getDates() {

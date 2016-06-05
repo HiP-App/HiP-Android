@@ -39,8 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_chevron_left_white_48dp" />
+        android:padding="0dp"
+        android:background="@color/chevronBackground"
+        android:src="@drawable/ic_chevron_left_black_48dp"/>
 
     <ImageButton
         android:id="@+id/buttonNext"
@@ -48,7 +49,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_chevron_right_white_48dp" />
+        android:padding="0dp"
+        android:background="@color/chevronBackground"
+        android:src="@drawable/ic_chevron_right_black_48dp"/>
 
 </RelativeLayout>
