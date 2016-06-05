@@ -17,16 +17,8 @@
 package de.upb.hip.mobile.models;
 
 //imports will be used, once the audio files will be read from the database
-import android.content.Context;
-import android.util.Log;
-
-import com.couchbase.lite.Attachment;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
-
-import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
  * A model class representing an audio file

@@ -39,12 +39,12 @@ import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ImagePage;
 import de.upb.hip.mobile.models.exhibit.Page;
+import de.upb.hip.mobile.models.exhibit.TextPage;
 
 /**
  * This class adds dummy data to the DB until we can obtain real data from team CMS
  */
 public class DBDummyDataFiller {
-
 
 
     public static final String TAG = "db-filler";
@@ -91,7 +91,6 @@ public class DBDummyDataFiller {
         LinkedList<Page> domPages = new LinkedList<>();
 
 
-
         domPages.add(new AppetizerPage("missing Appetizer",
                 new Image(1, text1, "dom.jpg", "Die Paderborner Pfalz zu Zeiten Karls des Großen"), null));
 
@@ -106,6 +105,17 @@ public class DBDummyDataFiller {
         domPages.add(new ImagePage(new Image(1, text1, "pfalzbefestigungnach778_plan_gai_mecke2004.jpg", "Pfalzbefestigung"), null, null, audio8));
         domPages.add(new ImagePage(new Image(1, text1, "pfalzbefestigungnach778_plan_gai_mecke2004.jpg", "Pfalzbefestigung"), null, null, audio9));
 
+        domPages.add(new TextPage(lorem, null));
+
+        List<ImagePage.Rectangle> imagePageRectangles = new LinkedList<>();
+        imagePageRectangles.add(new ImagePage.Rectangle(100, 100, 300, 300));
+        imagePageRectangles.add(new ImagePage.Rectangle(310, 310, 500, 700));
+        List<String> imagePageTexts = new LinkedList<>();
+        imagePageTexts.add("Area 1");
+        imagePageTexts.add("Area 2");
+        ImagePage imagePage = new ImagePage(new Image(1, lorem, "abdinghof.jpg", "Abdinghof"), imagePageTexts, imagePageRectangles, audio1);
+
+        domPages.add(imagePage);
 
         List<Image> sliderImages = new LinkedList<>();
         List<Long> sliderTimes = new LinkedList<>();
@@ -115,7 +125,7 @@ public class DBDummyDataFiller {
         sliderTimes.add(799L);
         sliderImages.add(new Image(1, "image 3 desc gwegs ", "phaseiii.jpg", "Img3"));
         sliderTimes.add(836l);
-       // domPages.add(new TimeSliderPage("Slidertitle", lorem, audio3, sliderTimes, sliderImages));
+        // domPages.add(new TimeSliderPage("Slidertitle", lorem, audio3, sliderTimes, sliderImages));
 
         Exhibit e1 = new Exhibit(1, "Paderborner Dom", "Der Hohe Dom Ss. Maria, Liborius und Kilian ist" +
                 " die Kathedralkirche des Erzbistums Paderborn und liegt im Zentrum der " +

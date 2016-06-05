@@ -18,13 +18,9 @@ package de.upb.hip.mobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -49,7 +45,6 @@ import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
-import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
@@ -79,9 +74,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
     private boolean isAudioToolbarHidden = true;
-
-    //create an object for the mediaplayerservice
-    //the booleans are states and may be obsolete later on
 
     /** Extras contained in the Intent that started this activity */
     private Bundle extras = null;
@@ -197,8 +189,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // if (! isAudioToolbarHidden) showAudioToolbar();
         // does not work because activity creation has not been completed?!
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
-
-        //initialize media player
 
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
@@ -591,10 +581,5 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
     }
 }

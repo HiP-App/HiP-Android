@@ -38,6 +38,10 @@ public class Image extends DBFile implements Serializable {
     private final String mDescription;
     private final String mTitle; //Called "name" in DB diagram
 
+    //Cache the original image dimensions
+    @JsonIgnore
+    transient private int[] dimensions = null;
+
     //Do not try to serialize the image
     @JsonIgnore
     transient private Drawable mImage;
@@ -60,6 +64,27 @@ public class Image extends DBFile implements Serializable {
             }
         }
         return mImage;
+    }
+
+    /**
+     * A method for getting the dimensions of an image
+     *
+     * @return An int array, the first entry contains the width and the second entry the height
+     */
+    public int[] getImageDimensions() {
+        if (dimensions == null) {
+            Attachment attachment = DBAdapter.getAttachment(getDocumentId(), getFilename());
+            try {
+                Bitmap bmp = BitmapFactory.decodeStream(attachment.getContent());
+                dimensions = new int[]{bmp.getWidth(), bmp.getHeight()};
+                return dimensions;
+            } catch (CouchbaseLiteException e) {
+                Log.e("image", e.toString());
+                return new int[]{0, 0};
+            }
+        } else {
+            return dimensions;
+        }
     }
 
     /**
