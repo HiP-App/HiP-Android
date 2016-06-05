@@ -17,7 +17,6 @@
 package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,6 +48,7 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
         drawView = (DrawView) v.findViewById(R.id.fragment_exhibitpage_image_imageview);
         drawView.setImageDrawable(this.page.getImage().getDawableImage(getContext()));
         drawView.getRectangles().addAll(page.getAreas());
+        drawView.setOriginalImageDimensions(page.getImage().getImageDimensions());
 
         initListeners(v);
 
@@ -89,7 +89,6 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("Invalidating", "inv");
                 drawView.setDrawOnImage(!drawView.isDrawOnImage());
                 drawView.invalidate();
 

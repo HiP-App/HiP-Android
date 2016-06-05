@@ -20,6 +20,9 @@ public class DrawView extends ImageView {
     private boolean drawOnImage = true;
     private List<ImagePage.Rectangle> rectangles = new LinkedList<>();
 
+    //Needed for scaling the drawed rectangles to the correct size
+    private int[] originalImageDimensions = new int[]{1, 1};
+
 
     public DrawView(Context context) {
         super(context);
@@ -45,6 +48,10 @@ public class DrawView extends ImageView {
         return rectangles;
     }
 
+    public void setOriginalImageDimensions(int[] originalImageDimensions) {
+        this.originalImageDimensions = originalImageDimensions;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -54,12 +61,19 @@ public class DrawView extends ImageView {
         }
 
         Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(10);
         for (ImagePage.Rectangle rect : rectangles) {
-            //TODO: Take into account the scaling
-            canvas.drawRect(rect.getX1(), rect.getY1(), rect.getX2(), rect.getY2(), paint);
+            double widthScalingFactor = (double) getWidth() / (double) originalImageDimensions[0];
+            double heightScalingFactor = (double) getHeight() / (double) originalImageDimensions[1];
+
+            canvas.drawRect((int) (rect.getX1() * widthScalingFactor),
+                    (int) (rect.getY1() * heightScalingFactor),
+                    (int) (rect.getX2() * widthScalingFactor),
+                    (int) (rect.getY2() * heightScalingFactor),
+                    paint);
+            ;
         }
     }
 }
