@@ -63,9 +63,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
     private static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
     private static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
-
-    //create an object for the mediaplayerservice
-    //the booleans are states and may be obsolete later on
     private static final String KEY_AUDIO_TOOLBAR_HIDDEN = "ExhibitDetailsActivity.isAudioToolbarHidden";
     private static final String KEY_EXTRAS = "ExhibitDetailsActivity.extras";
     /** Stores the name of the current exhibit */
@@ -78,9 +75,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
      * Menu for the toolbar, created in onCreateOptionsMenu
      */
     private Menu toolbarMenu;
-    /**
-     * Indicates whether the audio action in the toolbar should be shown (true) or not (false)
-     */
+    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
     private boolean showAudioAction = false;
     /** Indicates whether audio is currently played (true) or not (false) */
     private boolean isAudioPlaying = false;
@@ -183,8 +178,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // if (! isAudioToolbarHidden) showAudioToolbar();
         // does not work because activity creation has not been completed?!
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
-
-        //initialize media player
 
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
@@ -577,10 +570,5 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
     }
 }
