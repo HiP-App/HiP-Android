@@ -51,6 +51,7 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFacto
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
+import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -66,6 +67,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Index of the page in the exhibitPages list that is currently displayed */
     private int currentPageIndex = 0;
+
+    /** Menu for the toolbar, created in onCreateOptionsMenu */
+    private Menu toolbarMenu;
+
+    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
+    private boolean showAudioAction = false;
 
     /** Indicates whether audio is currently played (true) or not (false) */
     private boolean isAudioPlaying = false;
@@ -269,20 +276,24 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
+        if (!isAudioToolbarHidden)
+            hideAudioToolbar(); // TODO: generalize to audio playing
+
+        Page page = exhibitPages.get(currentPageIndex);
+
         // set previous & next button
         if (currentPageIndex == 0)
             btnPreviousPage.setVisibility(View.GONE);
         else
             btnPreviousPage.setVisibility(View.VISIBLE);
 
-        if (currentPageIndex >= exhibitPages.size() - 1)
+        if (currentPageIndex >= exhibitPages.size() - 1 || page instanceof AppetizerPage)
             btnNextPage.setVisibility(View.GONE);
         else
             btnNextPage.setVisibility(View.VISIBLE);
 
 
-        // get ExhibitPageFragment for Page
-        Page page = exhibitPages.get(currentPageIndex);
+        // set page fragment
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
@@ -340,12 +351,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setVisibility(View.GONE);
         }
 
-        // TODO: handle audio
+        // display audio action only if the page provides audio
+        if (page.getAudio() == null)
+            displayAudioAction(false);
+        else {
+            displayAudioAction(true);
+
+            // TODO: continue with handling the audio
+        }
 
     }
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         currentPageIndex++;
         displayCurrentExhibitPage();
     }
@@ -356,6 +375,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex < 0)
             return;
 
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         displayCurrentExhibitPage();
     }
 
@@ -499,7 +519,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_exhibit_details_menu_main, menu);
+        this.toolbarMenu = menu;
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_audio).setVisible(showAudioAction);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -545,13 +572,23 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Modifies the visibility of the audio action in the toolbar.
+     *
+     * @param visible True indicates the audio action should be visible.
+     */
+    private void displayAudioAction(boolean visible) {
+        showAudioAction = visible;
+        invalidateOptionsMenu();
+    }
+
     /** Shows the caption for the text that is currently read out */
     private void showCaptions() {
         // TODO: adapt this to retrieved data
-        String lorem = getString(R.string.lorem_100_words);
+        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
-                .setMessage(lorem + " " + lorem)
+                .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
     }

@@ -33,44 +33,24 @@ import de.upb.hip.mobile.adapters.DBAdapter;
  */
 public class Audio extends DBFile implements Serializable {
 
-    String mDescription;
-    String mTitle;
+    private String mCaption;
+    private String mTitle;
+    private int mAudio;
 
-    @JsonIgnore
-    int mAudio;
-
-    public Audio(int audio){
-        super(0, "audio.mp3");
-        mAudio = audio;
+    public Audio(int docId, String filename, String caption, int audio) {
+        super(docId, filename);
+        this.mCaption = caption;
     }
 
-    public Audio(int docId, String filename, int audio){
-        super(docId, filename);
-        mAudio = audio;
+    public String getCaption() {
+        return this.mCaption;
     }
 
-    public Audio(int docId, String filename) {
-        super(docId, filename);
+    public void setCaption(String caption) {
+        this.mCaption = caption;
     }
 
     //TODO: Add methods for getting this as a playable file from the database
-
-    //implment some way to get an audio file from the database
-//    public void getAudioFile(Context ctx){
-//        if(mAudio == null) {
-//            Attachment attachment = DBAdapter.getAttachment(getDocumentId(), getFilename());
-//
-//            try{
-////                Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
-////                mImage = new BitmapDrawable(ctx.getResources(), bitmap);
-//                ctx.getResources();
-//            }catch(CouchbaseLiteException e){
-//                Log.e("routes", e.toString());
-//            }
-//        }
-//        //return mAudio;
-//    }
-
 
     /**
      * Sets a dersialized drawable version of this image
@@ -79,10 +59,6 @@ public class Audio extends DBFile implements Serializable {
      */
     public void setAudio(int audio) {
         mAudio = audio;
-    }
-
-    public String getDescription() {
-        return mDescription;
     }
 
     public String getTitle() {

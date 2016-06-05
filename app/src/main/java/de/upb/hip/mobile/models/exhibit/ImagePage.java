@@ -19,17 +19,19 @@ package de.upb.hip.mobile.models.exhibit;
 import java.io.Serializable;
 import java.util.List;
 
+import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.Image;
 
 /**
  * A model class for a page containing a single mImage
  */
-public class ImagePage implements Page, Serializable {
+public class ImagePage extends Page implements Serializable {
     private final Image mImage;
     private final List<String> mTexts;
     private final List<Rectangle> mAreas;
 
-    public ImagePage(Image mImage, List<String> mTexts, List<Rectangle> mAreas) {
+    public ImagePage(Image mImage, List<String> mTexts, List<Rectangle> mAreas, Audio audio) {
+        super(audio);
         this.mImage = mImage;
         this.mTexts = mTexts;
         this.mAreas = mAreas;

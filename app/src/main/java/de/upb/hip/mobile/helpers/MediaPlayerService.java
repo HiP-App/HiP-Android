@@ -15,21 +15,19 @@
  */
 
 package de.upb.hip.mobile.helpers;
-import de.upb.hip.mobile.activities.R;
-import de.upb.hip.mobile.models.Audio;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-//import android.content.res.AssetFileDescriptor;   //only use if necessary in the end
-//                                                      (remains to be seen)
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.Audio;
+
+//import android.content.res.AssetFileDescriptor;   //only use if necessary in the end
+//                                                      (remains to be seen)
 
 /**
  * Created by Lobner on 18.04.2016.
@@ -46,11 +44,11 @@ public class MediaPlayerService extends Service
     public static final String ACTION_PLAY = "de.upb.hip.mobile.PLAY";  //the intentions can probably be erased
     public static final String ACTION_STOP = "de.upb.hip.mobile.STOP";
 
-    Audio a1 = new Audio(R.raw.intochaos);
-    Audio a2 = new Audio(R.raw.orderedchaos);
-    Audio a3 = new Audio(R.raw.freetilldeath);
-    private Audio[] songList = {a1, a2, a3};
+    Audio a1 = new Audio(0, "intochaos.mp3", "", R.raw.intochaos);
+    Audio a2 = new Audio(0, "intochaos.mp3", "", R.raw.orderedchaos);
+    Audio a3 = new Audio(0, "intochaos.mp3", "", R.raw.freetilldeath);
     int current = 1;
+    private Audio[] songList = {a1, a2, a3};
     private MediaPlayer mMediaPlayer;
     private IBinder mBinder = new MediaPlayerBinder();
 
