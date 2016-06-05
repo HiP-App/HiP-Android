@@ -49,7 +49,13 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
 
         drawView = (DrawView) v.findViewById(R.id.fragment_exhibitpage_image_imageview);
         drawView.setImageDrawable(this.page.getImage().getDawableImage(getContext()));
-        drawView.getRectangles().addAll(page.getAreas());
+        if (page.getAreas() != null) {
+            drawView.getRectangles().addAll(page.getAreas());
+        } else {
+            //There are no areas to highlight, don't show button
+            Button button = (Button) v.findViewById(R.id.fragment_exhibitpage_image_button);
+            button.setVisibility(View.INVISIBLE);
+        }
         drawView.setOriginalImageDimensions(page.getImage().getImageDimensions());
 
         initListeners(v);
@@ -82,8 +88,9 @@ public class ImagePageExhibitFragment extends ExhibitPageFragment {
         drawView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (!(event.getAction() == MotionEvent.ACTION_DOWN)) {
-                    //Only do something when the user actually pressed down
+                if (!(event.getAction() == MotionEvent.ACTION_DOWN) || page.getAreas() == null) {
+                    //Only do something when the user actually pressed down and there are actually
+                    //areas that the user can press
                     return false;
                 }
                 int x = (int) (((double) event.getX()) * getImageScalingFactor()[0]);

@@ -37,14 +37,14 @@ import de.upb.hip.mobile.models.exhibit.Page;
  */
 public class AppetizerExhibitPageFragment extends ExhibitPageFragment {
 
+    /**
+     * Height of the Bottom Sheet in dp
+     */
+    private final int BOTTOM_SHEET_HEIGHT = 200;
     /** Title for the appetizer bottom sheet */
     private String appetizerTitle = "Default Appetizer Title";
-
     /** Stores the model instance for this page */
     private AppetizerPage page = null;
-
-    /** Height of the Bottom Sheet in dp */
-    private final int BOTTOM_SHEET_HEIGHT = 200;
 
 
     public AppetizerExhibitPageFragment() {
