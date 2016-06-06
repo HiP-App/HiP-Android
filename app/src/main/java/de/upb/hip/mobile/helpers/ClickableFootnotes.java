@@ -18,6 +18,7 @@ package de.upb.hip.mobile.helpers;
 
 
 import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -25,7 +26,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -140,7 +140,6 @@ public class ClickableFootnotes {
     /**
      * Converts a {@link Footnote} instance into a {@link ClickableSpan} instance that can be added
      * to a {@link SpannableString}. On click, the footnote text is displayed in a Toast message.
-     * TODO: change to SnackBar
      *
      * @param fn Footnote to convert.
      *
@@ -155,7 +154,7 @@ public class ClickableFootnotes {
         return new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                Toast.makeText(textView.getContext(), fn.text, Toast.LENGTH_LONG).show();
+                Snackbar.make(textView, fn.text, Snackbar.LENGTH_LONG).show();
             }
 
             @Override
