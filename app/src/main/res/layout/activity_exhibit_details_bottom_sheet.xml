@@ -24,6 +24,12 @@
     android:background="@android:color/transparent"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="27dp"
+        android:background="@android:color/darker_gray"/>
+
     <FrameLayout
         android:id="@+id/bottom_sheet_fragment_container"
         android:layout_width="match_parent"
