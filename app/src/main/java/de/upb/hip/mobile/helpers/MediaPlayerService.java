@@ -43,17 +43,11 @@ public class MediaPlayerService extends Service
 	 *	and also while the screen is off, this needs to be a service. The service should be started from one activity
 	 *	and then be given to the other activities in which it is used, otherwise a good control is impossible.
 	 */
-    public static final String ACTION_PLAY = "de.upb.hip.mobile.PLAY";  //the intentions can probably be erased
-    public static final String ACTION_STOP = "de.upb.hip.mobile.STOP";
 
     boolean mAudioFileIsSet = false;
 
-    Audio a1 = new Audio(R.raw.intochaos);
-//    Audio a2 = new Audio(R.raw.orderedchaos);
-//    Audio a3 = new Audio(R.raw.freetilldeath);
-//    Audio a4 = new Audio(R.raw.sprechertext);
-//    private Audio[] songList = {a1, a4, a2, a3};
-//    int current = 1;
+    Audio a1 = new Audio(R.raw.intochaos); // this is only used as a dummy in the initialization
+
     private MediaPlayer mMediaPlayer;
     private IBinder mBinder = new MediaPlayerBinder();
 
@@ -115,25 +109,6 @@ public class MediaPlayerService extends Service
 
     public void pauseSound(){
         mMediaPlayer.pause();
-    }
-
-	/**
-	 *	Statically change the audio file that is played.
-	 */
-    public void changeAudioFile(){
-        //as soon as the audio files are there, this needs to be changed
-        //1. selection of audio file needs to be possible
-        //2. load tracks from database
-        try {
-            mMediaPlayer.reset();
-//            AssetFileDescriptor fd = getResources().openRawResourceFd(R.raw.audio_file_3gmanwise); 
-				//may be needed for handling audio files later. until know, leave this commented in here.
-//            current++;
-//            current %= songList.length;
-//            mMediaPlayer = MediaPlayer.create(this, songList[current].getAudioDir());
-        }catch(Exception e){
-//            add an exception handling
-        }
     }
 
     /** sets a specific audio file*/
