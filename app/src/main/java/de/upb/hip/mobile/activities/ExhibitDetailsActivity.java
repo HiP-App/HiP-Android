@@ -599,7 +599,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void stopAudioPlayback(){
         try{
             mMediaPlayerService.stopSound();
-        }catch(IllegalStateException e){
+        } catch(IllegalStateException e){
         } catch(NullPointerException e){
         } catch(Exception e) {
         }
