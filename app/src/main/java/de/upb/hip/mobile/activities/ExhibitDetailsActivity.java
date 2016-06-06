@@ -91,12 +91,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Reference to the BottomSheetFragment currently displayed */
     private BottomSheetFragment bottomSheetFragment = null;
 
-    /** Custom view used in the AlertDialog displaying the audio captions */
-    private AlertDialog.Builder alertDialog = null;
-
-    /** TextView displayed in the alertDialog */
-    private TextView alertDialogTextView = null;
-
     //logging
     public static final String TAG = "ExhibitDetailsActivity";
 
@@ -269,20 +263,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             }
         });
 
-        // setup alert dialog
-        int padding = (int) PixelDpConversion.convertDpToPixel(16);
-        NestedScrollView scrollView = new NestedScrollView(this);
-        alertDialogTextView = new TextView(this);
-        alertDialogTextView.setLinkTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-        alertDialogTextView.setPadding(padding, padding, padding, padding);
-        scrollView.addView(alertDialogTextView);
-
-        alertDialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.audio_toolbar_cc)
-                .setView(scrollView)
-                .setNegativeButton(getString(R.string.close), null);
-
-        // display the first exhibit page
         displayCurrentExhibitPage();
 
     }
@@ -397,7 +377,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
     }
 
-    private void updateAudioFile(){
+    private void updateAudioFile() {
         stopAudioPlayback();
         mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
         updatePlayPauseButtonIcon();
@@ -577,15 +557,15 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
         try {
-            if(!mMediaPlayerService.getAudioFileIsSet()) {
+            if (!mMediaPlayerService.getAudioFileIsSet()) {
                 mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
             }
             mMediaPlayerService.startSound();
-        } catch(IllegalStateException e){
+        } catch (IllegalStateException e) {
             isAudioPlaying = false;
-        } catch(NullPointerException e){
+        } catch (NullPointerException e) {
             isAudioPlaying = false;
-        } catch(Exception e){
+        } catch (Exception e) {
             isAudioPlaying = false;
         }
     }
@@ -596,19 +576,19 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // TODO: integrate media player
         try {
             mMediaPlayerService.pauseSound();
-        } catch(IllegalStateException e){
-        } catch(NullPointerException e){
-        } catch(Exception e){
+        } catch (IllegalStateException e) {
+        } catch (NullPointerException e) {
+        } catch (Exception e) {
         }
         isAudioPlaying = false;
     }
 
-    private void stopAudioPlayback(){
-        try{
+    private void stopAudioPlayback() {
+        try {
             mMediaPlayerService.stopSound();
-        }catch(IllegalStateException e){
-        } catch(NullPointerException e){
-        } catch(Exception e) {
+        } catch (IllegalStateException e) {
+        } catch (NullPointerException e) {
+        } catch (Exception e) {
         }
         isAudioPlaying = false;
 
@@ -636,7 +616,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         invalidateOptionsMenu();
     }
 
-    /** Shows the caption for the text that is currently read out */
+    /** Shows the caption for the text that is currently read out using an AlertDialog */
     private void showCaptions() {
         // TODO: adapt this to retrieved data
 //        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
@@ -644,9 +624,24 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
                 "Dies ist ein dritter Satz.";
 
-        alertDialogTextView.setText(caption);
-        ClickableFootnotes.createFootnotes(alertDialogTextView);
+        // create nested scrollview with a TextView containing the caption with clickable footnotes
+        // IMPORTANT: the dialog and custom view creation has to be repeated every time, reusing
+        // the view or the dialog will result in an error ("child already has a parent")
 
-        alertDialog.show();
+        NestedScrollView scrollView = new NestedScrollView(this);
+        TextView tv = new TextView(this);
+        tv.setText(caption);
+        int padding = (int) PixelDpConversion.convertDpToPixel(16); // for the TextView
+        tv.setPadding(padding, padding, padding, padding);
+        tv.setLinkTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+        ClickableFootnotes.createFootnotes(tv);
+        scrollView.addView(tv);
+
+        // create and show the AlertDialog
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.audio_toolbar_cc)
+                .setView(scrollView)
+                .setNegativeButton(getString(R.string.close), null)
+                .show();
     }
 }
