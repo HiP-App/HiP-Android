@@ -86,7 +86,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
                 List pageList = exhibit.getPages();
                 if (pageList == null || pageList.isEmpty()) {
                     Toast.makeText(mMainActivity,
-                            mMainActivity.getString(R.string.no_further_exhibit_info) + exhibitName,
+                            mMainActivity.getString(R.string.currently_no_further_info),
                             Toast.LENGTH_SHORT)
                             .show();
                     return false;

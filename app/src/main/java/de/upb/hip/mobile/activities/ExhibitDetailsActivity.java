@@ -352,11 +352,19 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        currentPageIndex++;
-        updateAudioFile();
 
-        displayCurrentExhibitPage();
+        currentPageIndex++;
+
+        if (currentPageIndex >= exhibitPages.size()) {
+            Toast.makeText(getApplicationContext(),
+                    R.string.currently_no_further_info, Toast.LENGTH_LONG).show();
+            currentPageIndex--;
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            updateAudioFile();
+
+            displayCurrentExhibitPage();
+        }
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */
