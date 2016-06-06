@@ -46,6 +46,7 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
+import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
@@ -262,7 +263,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the current exhibit page */
     public void displayCurrentExhibitPage() {
-
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
@@ -349,24 +349,32 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
             // TODO: continue with handling the audio
         }
-
     }
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         currentPageIndex++;
+        updateAudioFile();
+
         displayCurrentExhibitPage();
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */
     public void displayPreviousExhibitPage() {
         currentPageIndex--;
-        if (currentPageIndex < 0)
+        if (currentPageIndex < 0) {
             return;
-
+        }
+        updateAudioFile();
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         displayCurrentExhibitPage();
+    }
+
+    private void updateAudioFile(){
+        stopAudioPlayback();
+        mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
+        updatePlayPauseButtonIcon();
     }
 
     /**
@@ -542,12 +550,42 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void startAudioPlayback() {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
+        try {
+            if(!mMediaPlayerService.getAudioFileIsSet()) {
+                mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
+            }
+            mMediaPlayerService.startSound();
+        } catch(IllegalStateException e){
+            isPlaying = false;
+        } catch(NullPointerException e){
+            isPlaying = false;
+        } catch(Exception e){
+            isPlaying = false;
+        }
     }
 
     /** Pauses the playback of the audio. */
     private void pauseAudioPlayback() {
         Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
         // TODO: integrate media player
+        try {
+            mMediaPlayerService.pauseSound();
+        } catch(IllegalStateException e){
+        } catch(NullPointerException e){
+        } catch(Exception e){
+        }
+        isAudioPlaying = false;
+    }
+
+    private void stopAudioPlayback(){
+        try{
+            mMediaPlayerService.stopSound();
+        }catch(IllegalStateException e){
+        } catch(NullPointerException e){
+        } catch(Exception e) {
+        }
+        isAudioPlaying = false;
+
     }
 
     /** Updates the icon displayed in the Play/Pause button */

@@ -25,11 +25,35 @@ import java.io.Serializable;
  */
 public class Audio extends DBFile implements Serializable {
 
+    String mDescription;
+    String mTitle;
     private String mCaption;
-    private String mTitle;
-    private int mAudio;
 
-    public Audio(int docId, String filename, String caption, int audio) {
+    @JsonIgnore
+    int mAudio;
+
+    public Audio(int audio){
+        super(0, "audio.mp3");
+        mAudio = audio;
+    }
+
+    public Audio(int audio, String caption){
+        super(0, "audio.mp3");
+        mAudio = audio;
+        mCaption = caption;
+    }
+
+    public Audio(int docId, String filename, int audio){
+        super(docId, filename);
+        mAudio = audio;
+    }
+
+//    public Audio(int docId, String filename) {
+//        super(docId, filename);
+//    }
+
+
+    public Audio(int docId, String filename, String caption) {
         super(docId, filename);
         this.mCaption = caption;
     }
@@ -47,7 +71,7 @@ public class Audio extends DBFile implements Serializable {
     /**
      * Sets a dersialized drawable version of this image
      *
-     * @param image
+     * @param audio sets the int value for the audio file in R.raw.*
      */
     public void setAudio(int audio) {
         mAudio = audio;
