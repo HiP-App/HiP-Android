@@ -18,6 +18,8 @@ package de.upb.hip.mobile.models;
 
 //imports will be used, once the audio files will be read from the database
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**

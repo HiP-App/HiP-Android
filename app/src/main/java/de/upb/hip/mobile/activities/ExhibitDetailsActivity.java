@@ -45,6 +45,7 @@ import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
+import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
 import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
@@ -69,6 +70,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
     private boolean showAudioAction = false;
+
+    private MediaPlayerService mMediaPlayerService = new MediaPlayerService();
 
     /** Indicates whether audio is currently played (true) or not (false) */
     private boolean isAudioPlaying = false;
@@ -556,11 +559,11 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             }
             mMediaPlayerService.startSound();
         } catch(IllegalStateException e){
-            isPlaying = false;
+            isAudioPlaying = false;
         } catch(NullPointerException e){
-            isPlaying = false;
+            isAudioPlaying = false;
         } catch(Exception e){
-            isPlaying = false;
+            isAudioPlaying = false;
         }
     }
 
