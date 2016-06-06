@@ -32,6 +32,7 @@ public class CustomSeekBar extends SeekBar {
     private static final int HALF_SIZE = 15;
 
     private Paint mSelectedColor, mUnselectedColor;
+    private Paint mTextPaint;
     private RectF mPosition;
     private List<Integer> mDotList = new ArrayList<>();
 
@@ -87,6 +88,10 @@ public class CustomSeekBar extends SeekBar {
 
         mSelectedColor.setStyle(Paint.Style.FILL);
         mPosition = new RectF();
+
+        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setColor(getResources().getColor(R.color.textColorSecondary));
+        mTextPaint.setTextSize(48);
     }
 
     /**
@@ -111,6 +116,7 @@ public class CustomSeekBar extends SeekBar {
                     mPosition,
                     (progress < getProgress()) ? mSelectedColor : mUnselectedColor
             );
+//            canvas.drawText("653", paddingLeft + pos - HALF_SIZE * 2, halfHeight + HALF_SIZE * 4, mTextPaint);
         }
 
         super.onDraw(canvas);

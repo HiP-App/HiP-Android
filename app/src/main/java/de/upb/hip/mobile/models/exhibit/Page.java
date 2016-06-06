@@ -23,9 +23,9 @@ import de.upb.hip.mobile.models.Audio;
 /**
  * An interface for all model classes for an Exhibit Page
  */
-public abstract class Page implements Serializable{
+public abstract class Page implements Serializable {
 
-    protected Audio mAudio;
+    protected Audio mAudio = null;
 
     public Page(Audio audio) {
         this.mAudio = audio;

@@ -15,21 +15,19 @@
  */
 
 package de.upb.hip.mobile.helpers;
-import de.upb.hip.mobile.activities.R;
-import de.upb.hip.mobile.models.Audio;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-//import android.content.res.AssetFileDescriptor;   //only use if necessary in the end
-//                                                      (remains to be seen)
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 
-import java.io.FileDescriptor;
-import java.io.IOException;
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.Audio;
+
+//import android.content.res.AssetFileDescriptor;   //only use if necessary in the end
+//                                                      (remains to be seen)
 
 /**
  * Created by Lobner on 18.04.2016.

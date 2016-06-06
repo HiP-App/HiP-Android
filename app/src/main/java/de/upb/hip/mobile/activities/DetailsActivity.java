@@ -201,17 +201,10 @@ public class DetailsActivity extends ActionBarActivity {
      * @param view
      */
     public void onClick_detailsImageView(View view) {
-        if (mIsSlider) {
-            Intent intent = new Intent(this, DisplayImageSliderActivity.class);
-            intent.putExtra(DisplayImageSliderActivity.INTENT_EXHIBIT_ID, mExhibitId);
-            intent.putExtra(DisplayImageSliderActivity.INTENT_IMAGE_NAME, mImageName);
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(this, DisplaySingleImageActivity.class);
-            intent.putExtra(DisplaySingleImageActivity.INTENT_EXHIBIT_ID, mExhibitId);
-            intent.putExtra(DisplaySingleImageActivity.INTENT_IMAGE_NAME, mImageName);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, DisplaySingleImageActivity.class);
+        intent.putExtra(DisplaySingleImageActivity.INTENT_EXHIBIT_ID, mExhibitId);
+        intent.putExtra(DisplaySingleImageActivity.INTENT_IMAGE_NAME, mImageName);
+        startActivity(intent);
     }
 
     @Override
