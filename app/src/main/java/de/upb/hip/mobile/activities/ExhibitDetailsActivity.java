@@ -69,6 +69,11 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Index of the page in the exhibitPages list that is currently displayed */
     private int currentPageIndex = 0;
 
+    /** Menu for the toolbar, created in onCreateOptionsMenu */
+    private Menu toolbarMenu;
+
+    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
+    private boolean showAudioAction = false;
     /** Indicates whether audio is currently played (true) or not (false) */
     private boolean isAudioPlaying = false;
 
