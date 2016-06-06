@@ -94,6 +94,9 @@
     <string name="audio_pausing_indicator">Pausing Audio</string>
 
     <string name="after_christ">n. Chr.</string>
+    <string name="fragment_exhibitpage_image_button_text">Zeige Umrisse</string>
+
+    <string name="information">Informationen</string>
 
 
     <string-array name="nav_drawer_entries">

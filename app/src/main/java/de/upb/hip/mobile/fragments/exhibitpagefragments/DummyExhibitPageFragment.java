@@ -66,7 +66,7 @@ public class DummyExhibitPageFragment extends ExhibitPageFragment {
         bsFragment.setTitle("Außenansicht");
         bsFragment.setDescription(
                 "Beschreibung zur Außenansicht (ist eigentlich der Abdinghof...). \n\n" +
-                "(c) XYZ   \n\nyou cannot use getString(id) here because the fragment is not " +
+                        "(c) XYZ   \n\nyou cannot use getString(id) here because the fragment is not " +
                         "yet attached to an Activity!...");
 
         return new BottomSheetConfig.Builder()

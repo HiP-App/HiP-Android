@@ -17,16 +17,8 @@
 package de.upb.hip.mobile.models;
 
 //imports will be used, once the audio files will be read from the database
-import android.content.Context;
-import android.util.Log;
-
-import com.couchbase.lite.Attachment;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
-
-import de.upb.hip.mobile.adapters.DBAdapter;
 
 /**
  * A model class representing an audio file
@@ -76,23 +68,6 @@ public class Audio extends DBFile implements Serializable {
 
     //TODO: Add methods for getting this as a playable file from the database
 
-    //implment some way to get an audio file from the database
-//    public void getAudioFile(Context ctx){
-//        if(mAudio == null) {
-//            Attachment attachment = DBAdapter.getAttachment(getDocumentId(), getFilename());
-//
-//            try{
-////                Bitmap bitmap = BitmapFactory.decodeStream(attachment.getContent());
-////                mImage = new BitmapDrawable(ctx.getResources(), bitmap);
-//                ctx.getResources();
-//            }catch(CouchbaseLiteException e){
-//                Log.e("routes", e.toString());
-//            }
-//        }
-//        //return mAudio;
-//    }
-
-
     /**
      * Sets a dersialized drawable version of this image
      *
@@ -100,10 +75,6 @@ public class Audio extends DBFile implements Serializable {
      */
     public void setAudio(int audio) {
         mAudio = audio;
-    }
-
-    public String getDescription() {
-        return mDescription;
     }
 
     public String getTitle() {

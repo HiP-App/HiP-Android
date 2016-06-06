@@ -18,13 +18,9 @@ package de.upb.hip.mobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -49,7 +45,6 @@ import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
-import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
 import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
@@ -69,14 +64,17 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Index of the page in the exhibitPages list that is currently displayed */
     private int currentPageIndex = 0;
 
+    /** Menu for the toolbar, created in onCreateOptionsMenu */
+    private Menu toolbarMenu;
+
+    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
+    private boolean showAudioAction = false;
+
     /** Indicates whether audio is currently played (true) or not (false) */
     private boolean isAudioPlaying = false;
 
     /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
     private boolean isAudioToolbarHidden = true;
-
-    //create an object for the mediaplayerservice
-    //the booleans are states and may be obsolete later on
 
     /** Extras contained in the Intent that started this activity */
     private Bundle extras = null;
@@ -193,8 +191,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // does not work because activity creation has not been completed?!
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
 
-        //initialize media player
-
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
         btnPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -270,20 +266,24 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         if (currentPageIndex >= exhibitPages.size())
             throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
 
+        if (!isAudioToolbarHidden)
+            hideAudioToolbar(); // TODO: generalize to audio playing
+
+        Page page = exhibitPages.get(currentPageIndex);
+
         // set previous & next button
         if (currentPageIndex == 0)
             btnPreviousPage.setVisibility(View.GONE);
         else
             btnPreviousPage.setVisibility(View.VISIBLE);
 
-        if (currentPageIndex >= exhibitPages.size() - 1)
+        if (currentPageIndex >= exhibitPages.size() - 1 || page instanceof AppetizerPage)
             btnNextPage.setVisibility(View.GONE);
         else
             btnNextPage.setVisibility(View.VISIBLE);
 
 
-        // get ExhibitPageFragment for Page
-        Page page = exhibitPages.get(currentPageIndex);
+        // set page fragment
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
@@ -341,13 +341,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setVisibility(View.GONE);
         }
 
-        // display audio action only if it is supported by page
-        if (page instanceof AppetizerPage)
-            hideAudioAction();
-        else
-            showAudioAction(); // TODO: only if the page provides audio
+        // display audio action only if the page provides audio
+        if (page.getAudio() == null)
+            displayAudioAction(false);
+        else {
+            displayAudioAction(true);
 
-        // TODO: handle audio
+            // TODO: continue with handling the audio
+        }
     }
 
     /** Displays the next exhibit page */
@@ -516,7 +517,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_exhibit_details_menu_main, menu);
+        this.toolbarMenu = menu;
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_audio).setVisible(showAudioAction);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -592,18 +600,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     }
 
-    /** Hides the audio action in the toolbar */
-    private void hideAudioAction() {
-        View audioIcon = findViewById(R.id.action_audio);
-        if (audioIcon != null)
-            audioIcon.setVisibility(View.GONE);
-    }
-
-    /** Shows the audio action in the toolbar */
-    private void showAudioAction() {
-        View audioIcon = findViewById(R.id.action_audio);
-        if (audioIcon != null)
-            audioIcon.setVisibility(View.VISIBLE);
+    /**
+     * Modifies the visibility of the audio action in the toolbar.
+     *
+     * @param visible True indicates the audio action should be visible.
+     */
+    private void displayAudioAction(boolean visible) {
+        showAudioAction = visible;
+        invalidateOptionsMenu();
     }
 
     /** Shows the caption for the text that is currently read out */
@@ -615,11 +619,5 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
-        //
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
     }
 }

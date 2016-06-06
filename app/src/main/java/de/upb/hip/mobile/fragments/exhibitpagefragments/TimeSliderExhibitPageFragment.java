@@ -68,7 +68,8 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
         SimpleBottomSheetFragment bottomSheetFragment = new SimpleBottomSheetFragment();
         bottomSheetFragment.setTitle(page.getTitle());
         bottomSheetFragment.setDescription(page.getText());
-        return new BottomSheetConfig.Builder().displayBottomSheet(true).bottomSheetFragment(bottomSheetFragment).getBottomSheetConfig();
+        return new BottomSheetConfig.Builder().displayBottomSheet(true)
+                .bottomSheetFragment(bottomSheetFragment).getBottomSheetConfig();
     }
 
     @Override

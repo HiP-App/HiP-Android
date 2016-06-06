@@ -19,6 +19,7 @@ package de.upb.hip.mobile.fragments.exhibitpagefragments;
 import android.util.Log;
 
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
+import de.upb.hip.mobile.models.exhibit.ImagePage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import de.upb.hip.mobile.models.exhibit.TextPage;
 import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
@@ -53,6 +54,11 @@ public class ExhibitPageFragmentFactory {
             TimeSliderPage timesliderPage = (TimeSliderPage) page;
             TimeSliderExhibitPageFragment fragment = new TimeSliderExhibitPageFragment();
             fragment.setPage(timesliderPage);
+            return fragment;
+        } else if (page instanceof ImagePage) {
+            ImagePage imagePage = (ImagePage) page;
+            ImagePageExhibitFragment fragment = new ImagePageExhibitFragment();
+            fragment.setPage(page);
             return fragment;
         } else {
             Log.i("PageFragmentFactory", "Got unknown type of page: " + page.toString()
