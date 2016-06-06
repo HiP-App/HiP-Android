@@ -47,7 +47,6 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFacto
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
-import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
@@ -64,9 +63,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Index of the page in the exhibitPages list that is currently displayed */
     private int currentPageIndex = 0;
-
-    /** Menu for the toolbar, created in onCreateOptionsMenu */
-    private Menu toolbarMenu;
 
     /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
     private boolean showAudioAction = false;
@@ -520,7 +516,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_exhibit_details_menu_main, menu);
-        this.toolbarMenu = menu;
         return true;
     }
 
