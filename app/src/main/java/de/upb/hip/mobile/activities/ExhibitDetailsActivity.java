@@ -25,6 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -47,7 +49,6 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFacto
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
-import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
@@ -617,10 +618,19 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void showCaptions() {
         // TODO: adapt this to retrieved data
         String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
+        int padding = (int) PixelDpConversion.convertDpToPixel(16);
+
+        // create nested scrollview with a TextView
+        NestedScrollView scrollView = new NestedScrollView(this);
+        TextView tv = new TextView(this);
+        tv.setText(caption);
+        tv.setPadding(padding, padding, padding, padding);
+        scrollView.addView(tv);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
-                .setMessage(caption)
+                .setView(scrollView)
                 .setNegativeButton(getString(R.string.close), null);
-        AlertDialog dialog = builder.show();
+        builder.show();
     }
 }
