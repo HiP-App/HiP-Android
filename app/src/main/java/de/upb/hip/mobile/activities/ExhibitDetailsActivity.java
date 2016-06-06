@@ -79,7 +79,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     //the booleans are states and may be obsolete later on
     MediaPlayerService mMediaPlayerService;
     boolean isBound = false;
-    boolean isPlaying = false;
+
     //Subclass for media player binding
     private ServiceConnection mMediaPlayerConnection = new ServiceConnection(){
         public void onServiceConnected(ComponentName className, IBinder service){
@@ -390,6 +390,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
     }
 
+    /** Everytime the page is changed, the audio file needs to be updated to the new page */
     private void updateAudioFile(){
         stopAudioPlayback();
         mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
@@ -561,25 +562,23 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Starts the playback of the audio associated with the page. */
     private void startAudioPlayback() {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
-        // TODO: integrate media player
         try {
             if(!mMediaPlayerService.getAudioFileIsSet()) {
                 mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
             }
             mMediaPlayerService.startSound();
         } catch(IllegalStateException e){
-            isPlaying = false;
+            isAudioPlaying = false;
         } catch(NullPointerException e){
-            isPlaying = false;
+            isAudioPlaying = false;
         } catch(Exception e){
-            isPlaying = false;
+            isAudioPlaying = false;
         }
     }
 
     /** Pauses the playback of the audio. */
     private void pauseAudioPlayback() {
         Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
-        // TODO: integrate media player
         try {
             mMediaPlayerService.pauseSound();
         } catch(IllegalStateException e){
@@ -589,6 +588,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         isAudioPlaying = false;
     }
 
+    /** Stops the playback of audio. this is needed, when changing the page and therefore the
+     *  audio file
+     */
     private void stopAudioPlayback(){
         try{
             mMediaPlayerService.stopSound();
