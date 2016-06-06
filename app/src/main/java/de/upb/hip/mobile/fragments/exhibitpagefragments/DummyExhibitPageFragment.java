@@ -21,11 +21,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.fragments.bottomsheetfragments.SimpleBottomSheetFragment;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.models.exhibit.Page;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * A simple {@link ExhibitPageFragment} subclass for testing purposes.
@@ -51,7 +53,10 @@ public class DummyExhibitPageFragment extends ExhibitPageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_exhibitpage_dummy, container, false);
+        View view = inflater.inflate(R.layout.fragment_exhibitpage_dummy, container, false);
+        ImageView mImageView = (ImageView) view.findViewById(R.id.imageView2);
+        new PhotoViewAttacher(mImageView);
+        return view;
     }
 
     @Override

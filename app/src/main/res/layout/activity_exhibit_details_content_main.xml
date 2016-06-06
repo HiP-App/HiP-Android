@@ -21,10 +21,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorExhibitBackground"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ExhibitDetailsActivity"
-    tools:showIn="@layout/activity_exhibit_details"
-    android:background="@android:color/black">
+    tools:showIn="@layout/activity_exhibit_details">
 
     <RelativeLayout
         android:id="@+id/content_fragment_container"

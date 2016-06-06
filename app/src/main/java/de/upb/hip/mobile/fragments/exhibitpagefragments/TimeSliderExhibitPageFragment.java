@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 History in Paderborn App - Universität Paderborn
+ * Copyright (c) 2016 History in Paderborn App - Universität Paderborn
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package de.upb.hip.mobile.activities;
+package de.upb.hip.mobile.fragments.exhibitpagefragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -28,74 +28,71 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.fragments.bottomsheetfragments.SimpleBottomSheetFragment;
+import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.CustomSeekBar;
-import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
-import de.upb.hip.mobile.models.exhibit.Exhibit;
+import de.upb.hip.mobile.models.exhibit.Page;
+import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
 /**
- * Activity Class for the Image-Slider View, where a picture at the top can be changed with a fading
- * effect through a slider at the bottom
+ * A {@link ExhibitPageFragment} subclass for the {@link TimeSliderPage}.
  */
-public class DisplayImageSliderActivity extends ActionBarActivity {
-    public static final String INTENT_EXHIBIT_ID = "exhibit-id";
-    public static final String INTENT_IMAGE_NAME = "imageName";
+public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
 
-    private DBAdapter mDatabase;
-    private Exhibit mExhibit;
+    public static final String INSTANCE_STATE_PAGE = "insanceStatePage";
+
+    private TimeSliderPage page;
+
     private ImageView mFirstImageView;
     private ImageView mNextImageView;
     private TextView mThumbSlidingText;
+    private TextView mImageDescription;
     private CustomSeekBar mSeekBar;
-    private boolean mFontFading = true;
+
+    private View view;
 
     private List<PictureData> mPicDataList = new ArrayList<>();
 
+    public TimeSliderExhibitPageFragment() {
 
-    /**
-     * Called when the activity is created, get the exhibit information of the database and
-     * initializes the view with that data
-     *
-     * @param savedInstanceState savedInstanceState
-     */
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_image_slider);
+    public void setPage(Page page) {
+        this.page = (TimeSliderPage) page;
+    }
 
-        // read mExhibit with given exhibit-id from Database
-        mDatabase = new DBAdapter(this);
-        int exhibitId = getIntent().getIntExtra(INTENT_EXHIBIT_ID, 0);
-        mExhibit = ExhibitDeserializer.deserializeExhibit(mDatabase.getDocument(exhibitId));
+    @Override
+    public BottomSheetConfig getBottomSheetConfig() {
+        SimpleBottomSheetFragment bottomSheetFragment = new SimpleBottomSheetFragment();
+        bottomSheetFragment.setTitle(page.getTitle());
+        bottomSheetFragment.setDescription(page.getText());
+        return new BottomSheetConfig.Builder().displayBottomSheet(true).bottomSheetFragment(bottomSheetFragment).getBottomSheetConfig();
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.fragment_exhibitpage_timeslider, container, false);
+
+
+        if (savedInstanceState != null && savedInstanceState.getSerializable(INSTANCE_STATE_PAGE) != null) {
+            page = (TimeSliderPage) savedInstanceState.getSerializable(INSTANCE_STATE_PAGE);
+        }
         setData();
-
         init();
 
-        // set picture description in view
-        TextView mDescriptionTextView =
-                (TextView) findViewById(R.id.displayImageSliderDescriptionText);
-        //TODO: Reimplement this?!
-        //mDescriptionTextView.setText(mExhibit.getPictureDescriptions().get(getIntent().
-        //        getStringExtra(INTENT_IMAGE_NAME)));
-
-        // modify action bar with back button and title
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setTitle(mExhibit.getName());
+        return view;
     }
 
-    /**
-     * Implement the onSupportNavigateUp() method of the interface, closes the activity
-     *
-     * @return always true
-     */
     @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putSerializable(INSTANCE_STATE_PAGE, page);
     }
+
 
     /**
      * initializes the activity, calculates and sets the dots on the slider
@@ -104,35 +101,35 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         calcDotPositions(mPicDataList);
 
         // set the dots
-        mSeekBar = (CustomSeekBar) findViewById(R.id.seekBar);
+        mSeekBar = (CustomSeekBar) view.findViewById(R.id.seekBar);
         mSeekBar.setDots(getListOfDotPositions(mPicDataList));
-        mSeekBar.setProgressDrawable(ContextCompat.getDrawable(this.getBaseContext(),
-                R.drawable.customseekbar));
+        mSeekBar.setProgressDrawable(view.getResources().getDrawable(R.drawable.customseekbar));
 
         // set the first picture
-        mFirstImageView = (ImageView) findViewById(R.id.displayImageSliderFirstImageView);
+        mFirstImageView = (ImageView) view.findViewById(R.id.displayImageSliderFirstImageView);
         mFirstImageView.setImageDrawable(mPicDataList.get(0).mDrawable);
 
         // set the next picture
-        if (mFontFading) {
-            mNextImageView = (ImageView) findViewById(R.id.displayImageSliderNextImageView);
-            mNextImageView.setImageDrawable(mPicDataList.get(1).mDrawable);
-            mFirstImageView.bringToFront();
-        }
+        mNextImageView = (ImageView) view.findViewById(R.id.displayImageSliderNextImageView);
+        mNextImageView.setImageDrawable(mPicDataList.get(1).mDrawable);
+        mFirstImageView.bringToFront();
 
         // set start year on the slider
         TextView seekBarFirstText =
-                (TextView) findViewById(R.id.displayImageSliderSeekBarFirstText);
-        seekBarFirstText.setText(String.valueOf(mPicDataList.get(0).mYear));
+                (TextView) view.findViewById(R.id.displayImageSliderSeekBarFirstText);
+        seekBarFirstText.setText(String.valueOf(mPicDataList.get(0).mYear) + " " + getString(R.string.after_christ));
 
         // set end year on the slider
-        TextView seekBarEndText = (TextView) findViewById(R.id.displayImageSliderSeekBarEndText);
-        seekBarEndText.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).mYear));
+        TextView seekBarEndText = (TextView) view.findViewById(R.id.displayImageSliderSeekBarEndText);
+        seekBarEndText.setText(String.valueOf(mPicDataList.get(mPicDataList.size() - 1).mYear) + " " + getString(R.string.after_christ));
 
-        mThumbSlidingText = (TextView) findViewById(R.id.displayImageSliderThumbSlidingText);
+        mThumbSlidingText = (TextView) view.findViewById(R.id.displayImageSliderThumbSlidingText);
+
+        mImageDescription = (TextView) view.findViewById(R.id.displayImageSliderDescriptionText);
 
         addSeekBarListener();
-        openDatabase();
+
+        mImageDescription.setText(page.getImages().get(0).getDescription());
     }
 
     /**
@@ -177,6 +174,7 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
                 int startNode, nextNode;
+                int range = (mPicDataList.get(mPicDataList.size() - 1).mYear) - mPicDataList.get(0).mYear;
 
                 // decide the direction (forward or backward)
                 forward = progressStart <= progressValue;
@@ -187,34 +185,34 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
                 startNode = result[0];
                 nextNode = result[1];
 
-                if (mFontFading) {
-                    int actProgressAccordingStartNextNode = Math.abs(progressValue - mPicDataList.
-                            get(startNode).mDotPosition);
-                    int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).mDotPosition -
-                            mPicDataList.get(startNode).mDotPosition);
-                    float alpha =
-                            (float) actProgressAccordingStartNextNode / differenceStartNextNode;
+                int actProgressAccordingStartNextNode = Math.abs(progressValue - mPicDataList.
+                        get(startNode).mDotPosition);
+                int differenceStartNextNode = Math.abs(mPicDataList.get(nextNode).mDotPosition -
+                        mPicDataList.get(startNode).mDotPosition);
+                float alpha =
+                        (float) actProgressAccordingStartNextNode / differenceStartNextNode;
 
-                    // set current image
-                    mFirstImageView.setImageDrawable(mPicDataList.get(startNode).mDrawable);
-                    mFirstImageView.setAlpha(1 - alpha);
+                // set current image
+                mFirstImageView.setImageDrawable(mPicDataList.get(startNode).mDrawable);
+                mFirstImageView.setAlpha(1 - alpha);
 
-                    // set next image
-                    mNextImageView.setImageDrawable(mPicDataList.get(nextNode).mDrawable);
-                    mNextImageView.setAlpha(alpha);
+                // set next image
+                mNextImageView.setImageDrawable(mPicDataList.get(nextNode).mDrawable);
+                mNextImageView.setAlpha(alpha);
 
-                    mFirstImageView.bringToFront();
-                }
+                mFirstImageView.bringToFront();
 
                 // for showcase image: get the closest node to actual progress
                 nearest = findClosestNode(result, progressValue);
+
+                mImageDescription.setText(page.getImages().get(nearest).getDescription());
 
                 // set year over the thumb except first and last picture
                 if (progressValue != 0 && progressValue != 100) {
                     int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) *
                             seekBar.getProgress();
                     mThumbSlidingText.setPadding(xPos, 0, 0, 0);
-                    mThumbSlidingText.setText(String.valueOf(mPicDataList.get(nearest).mYear));
+                    mThumbSlidingText.setText(String.valueOf((int) (mPicDataList.get(0).mYear + range * ((float) progressValue) / 100.0)) + " " + getString(R.string.after_christ));
                 } else {
                     // set empty text for first and last position
                     mThumbSlidingText.setText("");
@@ -236,10 +234,8 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
              */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (!mFontFading) {
-                    seekBar.setProgress(mPicDataList.get(nearest).mDotPosition);
-                    mFirstImageView.setImageDrawable(mPicDataList.get(nearest).mDrawable);
-                }
+                seekBar.setProgress(mPicDataList.get(nearest).mDotPosition);
+                mFirstImageView.setImageDrawable(mPicDataList.get(nearest).mDrawable);
             }
 
             /**
@@ -310,40 +306,15 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    /**
-     * open the database connection
-     */
-    private void openDatabase() {
-        mDatabase = new DBAdapter(this);
-    }
-
     /**
      * Set the mPicDataList Array with data of the database
      */
     private void setData() {
-        //TODO: Reimplement this
-        /*int sliderID = mExhibit.getSliderId();
-        @SuppressWarnings("unchecked") // getProperty returns always Maps with String and Object
-                ArrayList<Map<String, Object>> images = (ArrayList<Map<String, Object>>)
-                mDatabase.getDocument(sliderID).getProperty(DBAdapter.KEY_SLIDER_IMAGES);
-
-        // add all pictures to the mPicDataList
-        for (int i = 0; i < images.size(); i++) {
-            Map<String, Object> properties = images.get(i);
-            mPicDataList.add(new PictureData(DBAdapter.getDawableImage(sliderID,
-                    (String) properties.get(DBAdapter.KEY_SLIDER_IMAGE_NAME)),
-                    (int) properties.get(DBAdapter.KEY_SLIDER_IMAGE_YEAR)));
-        }*/
+        for (int i = 0; i < page.getImages().size(); i++) {
+            PictureData picture = new PictureData(page.getImages().get(i).
+                    getDawableImage(view.getContext()), page.getDates().get(i).intValue());
+            mPicDataList.add(picture);
+        }
     }
 
     /**
@@ -381,4 +352,6 @@ public class DisplayImageSliderActivity extends ActionBarActivity {
             mDotPosition = 0;
         }
     }
+
+
 }

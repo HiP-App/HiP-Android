@@ -74,6 +74,8 @@
     <string name="licensing_couchbase_body_text">Von <a href="https://github.com/couchbase/couchbase-lite-android">Couchbase</a>, lizensiert unter <a href="https://raw.githubusercontent.com/couchbase/couchbase-lite-android/master/LICENSE.TXT">Apache License 2.0</a>. Es wurden keine Änderungen vorgenommen.</string>
     <string name="licensing_mapicons_title_text">Map Icons</string>
     <string name="licensing_mapicons_body_text">Von <a href="https://mapicons.mapsmarker.com/">Maps Icons Collection</a>, lizensiert unter <a href="http://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA 3.0</a>. Es wurden keine Änderungen vorgenommen.</string>
+    <string name="licensing_photoview_title_text">PhotoView</string>
+    <string name="licensing_photoview_body_text">Von <a href="https://github.com/chrisbanes/PhotoView">ChrisBanes</a>, lizensiert unter <a href="https://raw.githubusercontent.com/chrisbanes/PhotoView/master/LICENSE">Apache License 2.0</a>. Es wurden keine Änderungen vorgenommen.</string>
 
     <string name="action_audio">Audio</string>
 
@@ -90,6 +92,8 @@
     <string name="no_further_exhibit_info">"Keine weiteren Informationen vorhanden für "</string>
     <string name="audio_playing_indicator">Playing Audio</string>
     <string name="audio_pausing_indicator">Pausing Audio</string>
+
+    <string name="after_christ">n. Chr.</string>
 
 
     <string-array name="nav_drawer_entries">
