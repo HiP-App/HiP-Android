@@ -18,6 +18,7 @@ package de.upb.hip.mobile.helpers;
 
 
 import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -72,7 +73,7 @@ public class ClickableFootnotes {
      *
      * @param tv TextView where Footnote markdown should be converted to clickable footnotes.
      */
-    public static void createFootnotes(TextView tv) {
+    public static void createFootnotes(TextView tv, CoordinatorLayout coordinatorLayout) {
         if (tv == null || tv.getText().length() == 0)
             return;
 
@@ -105,7 +106,7 @@ public class ClickableFootnotes {
         }
 
         SpannableString str = new SpannableString(text);
-        addClickableFootnotes(str, footnotes);
+        addClickableFootnotes(str, footnotes, coordinatorLayout);
 
         tv.setText(str);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
@@ -120,14 +121,15 @@ public class ClickableFootnotes {
      * @param text      Where the footnotes are added
      * @param footnotes footnotes to add
      */
-    private static void addClickableFootnotes(SpannableString text, List<Footnote> footnotes) {
+    private static void addClickableFootnotes(SpannableString text, List<Footnote> footnotes,
+                                              CoordinatorLayout coordinatorLayout) {
 
         for (Footnote fn : footnotes) {
             if (fn == null)
                 continue;
 
             text.setSpan(
-                    convertFootnoteToClickableSpan(fn),
+                    convertFootnoteToClickableSpan(fn, coordinatorLayout),
                     fn.startIndex,
                     fn.startIndex + Integer.toString(fn.number).length() + 2, // +2 for brackets
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -146,7 +148,8 @@ public class ClickableFootnotes {
      * @return The ClickableSpan instance corresponding to the footnote (null, if the specified
      * Footnote instance is null))
      */
-    private static ClickableSpan convertFootnoteToClickableSpan(final Footnote fn) {
+    private static ClickableSpan convertFootnoteToClickableSpan(
+            final Footnote fn, final CoordinatorLayout coordinatorLayout) {
 
         if (fn == null)
             return null;
@@ -154,7 +157,7 @@ public class ClickableFootnotes {
         return new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                Snackbar.make(textView, fn.text, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout, fn.text, Snackbar.LENGTH_LONG).show();
             }
 
             @Override

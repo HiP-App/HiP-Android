@@ -23,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -634,7 +635,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         int padding = (int) PixelDpConversion.convertDpToPixel(16); // for the TextView
         tv.setPadding(padding, padding, padding, padding);
         tv.setLinkTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-        ClickableFootnotes.createFootnotes(tv);
+        ClickableFootnotes.createFootnotes(tv,
+                (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
         scrollView.addView(tv);
 
         // create and show the AlertDialog
