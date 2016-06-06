@@ -25,6 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -89,6 +90,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Reference to the BottomSheetFragment currently displayed */
     private BottomSheetFragment bottomSheetFragment = null;
+
+    /** Custom view used in the AlertDialog displaying the audio captions */
+    private AlertDialog.Builder alertDialog = null;
+
+    /** TextView displayed in the alertDialog */
+    private TextView alertDialogTextView = null;
 
     //logging
     public static final String TAG = "ExhibitDetailsActivity";
@@ -262,6 +269,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             }
         });
 
+        // setup alert dialog
+        int padding = (int) PixelDpConversion.convertDpToPixel(16);
+        NestedScrollView scrollView = new NestedScrollView(this);
+        alertDialogTextView = new TextView(this);
+        alertDialogTextView.setLinkTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+        alertDialogTextView.setPadding(padding, padding, padding, padding);
+        scrollView.addView(alertDialogTextView);
+
+        alertDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.audio_toolbar_cc)
+                .setView(scrollView)
+                .setNegativeButton(getString(R.string.close), null);
+
+        // display the first exhibit page
         displayCurrentExhibitPage();
 
     }
@@ -623,19 +644,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
                 "Dies ist ein dritter Satz.";
 
-        // create nested scrollview with a TextView
-        int padding = (int) PixelDpConversion.convertDpToPixel(16);
-        NestedScrollView scrollView = new NestedScrollView(this);
-        TextView tv = new TextView(this);
-        tv.setText(caption);
-        tv.setPadding(padding, padding, padding, padding);
-        scrollView.addView(tv);
-        ClickableFootnotes.createFootnotes(tv);
+        alertDialogTextView.setText(caption);
+        ClickableFootnotes.createFootnotes(alertDialogTextView);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setTitle(R.string.audio_toolbar_cc)
-                .setView(scrollView)
-                .setNegativeButton(getString(R.string.close), null);
-        builder.show();
+        alertDialog.show();
     }
 }

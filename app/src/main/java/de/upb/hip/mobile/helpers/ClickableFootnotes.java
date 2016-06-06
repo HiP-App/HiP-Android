@@ -71,7 +71,7 @@ public class ClickableFootnotes {
         if (tv == null || tv.getText().length() == 0)
             return;
 
-        String text = (String) tv.getText();
+        String text = tv.getText().toString();
 
         Pattern pattern = Pattern.compile(FOOTNOTE_START + ".+?" + FOOTNOTE_END);
         Matcher matcher = pattern.matcher(text);
@@ -101,7 +101,6 @@ public class ClickableFootnotes {
         addClickableFootnotes(str, footnotes);
 
         tv.setText(str);
-        tv.setLinkTextColor(Color.BLUE);
         tv.setMovementMethod(LinkMovementMethod.getInstance());
         tv.setHighlightColor(Color.TRANSPARENT);
     }
