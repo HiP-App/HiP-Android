@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -262,8 +263,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the current exhibit page */
     public void displayCurrentExhibitPage() {
-        if (currentPageIndex >= exhibitPages.size())
-            throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
+        if (currentPageIndex >= exhibitPages.size()) {
+            Log.w(TAG, "currentPageIndex >= exhibitPages.size() !");
+            return;
+        }
 
         if (!isAudioToolbarHidden)
             hideAudioToolbar(); // TODO: generalize to audio playing
@@ -286,8 +289,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
-        if (pageFragment == null)
-            throw new NullPointerException("pageFragment is null!");
+        if (pageFragment == null) {
+            Log.e(TAG, "pageFragment is null!");
+            return;
+        }
 
         pageFragment.setArguments(extras);
 
@@ -302,8 +307,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // configure bottom sheet
         BottomSheetConfig config = pageFragment.getBottomSheetConfig();
 
-        if (config == null)
-            throw new RuntimeException("BottomSheetConfig cannot be null!");
+        if (config == null) {
+            Log.e(TAG, "BottomSheetConfig cannot be null!");
+            return;
+        }
 
         if (config.isDisplayBottomSheet()) {
 
@@ -321,16 +328,17 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             // set content
             bottomSheetFragment = config.getBottomSheetFragment();
 
-            if (bottomSheetFragment == null)
-                throw new NullPointerException("sheetFragment is null!");
-
-            // FIXME: adding the new fragment somehow fails if the BottomSheet is expanded
-            // TODO: this seems to take some time. would it help to do this in a separate thread?
-            // remove old fragment and display new fragment
-            if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.bottom_sheet_fragment_container, bottomSheetFragment);
-                transaction.commit();
+            if (bottomSheetFragment == null) {
+                Log.e(TAG, "bottomSheetFragment is null!");
+            } else {
+                // FIXME: adding the new fragment somehow fails if the BottomSheet is expanded
+                // TODO: this seems to take some time. would it help to do this in a separate thread?
+                // remove old fragment and display new fragment
+                if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.bottom_sheet_fragment_container, bottomSheetFragment);
+                    transaction.commit();
+                }
             }
 
             // configure FAB (includes expanded/collapsed state)
@@ -359,6 +367,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),
                     R.string.currently_no_further_info, Toast.LENGTH_LONG).show();
             currentPageIndex--;
+            Log.w(TAG, "currentPageIndex >= exhibitPages.size()");
         } else {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             updateAudioFile();
@@ -371,6 +380,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     public void displayPreviousExhibitPage() {
         currentPageIndex--;
         if (currentPageIndex < 0) {
+            Log.w(TAG, "currentPageIndex < 0");
+            currentPageIndex++;
             return;
         }
         updateAudioFile();
