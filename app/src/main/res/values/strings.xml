@@ -89,7 +89,6 @@
 
     <string name="close">Schließen</string>
 
-    <string name="no_further_exhibit_info">"Keine weiteren Informationen vorhanden für "</string>
     <string name="audio_playing_indicator">Playing Audio</string>
     <string name="audio_pausing_indicator">Pausing Audio</string>
 
@@ -97,6 +96,8 @@
     <string name="fragment_exhibitpage_image_button_text">Zeige Umrisse</string>
 
     <string name="information">Informationen</string>
+
+    <string name="currently_no_further_info">Zurzeit sind keine weiteren Informationen verfügbar!</string>
 
 
     <string-array name="nav_drawer_entries">
