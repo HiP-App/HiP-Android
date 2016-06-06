@@ -47,6 +47,7 @@ import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
+import de.upb.hip.mobile.helpers.ClickableFootnotes;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
@@ -617,15 +618,19 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Shows the caption for the text that is currently read out */
     private void showCaptions() {
         // TODO: adapt this to retrieved data
-        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
-        int padding = (int) PixelDpConversion.convertDpToPixel(16);
+//        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
+        String caption = "Dies ist ein Satz.<fn>Dies ist eine Fußnote</fn> " +
+                "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
+                "Dies ist ein dritter Satz.";
 
         // create nested scrollview with a TextView
+        int padding = (int) PixelDpConversion.convertDpToPixel(16);
         NestedScrollView scrollView = new NestedScrollView(this);
         TextView tv = new TextView(this);
         tv.setText(caption);
         tv.setPadding(padding, padding, padding, padding);
         scrollView.addView(tv);
+        ClickableFootnotes.createFootnotes(tv);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
