@@ -33,17 +33,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Makes footnotes of a string clickable. // TODO: more concrete
- * see: http://stackoverflow.com/questions/10696986/how-to-set-the-part-of-the-text-view-is-clickable/10697453#10697453
+ * Provides functionality to parse a {@link TextView} for footnote markdown and replace the
+ * markdown with clickable numbers which show the footnote text on click using a SnackBar.
+ *
+ * Footnotes are defined using {@code <fn>...</fn>}, where "..." is replaced by the footnote text
  */
 public class ClickableFootnotes {
 
-    /** Represents a footnote */
+    /** Helper class to represent footnote */
     static class Footnote {
-        int number = -1;
-        String text = "default";
-        int startIndex = -1;
+        /** The number of the footnote */
+        private int number = -1;
 
+        /** The footnote text */
+        private String text = "default";
+
+        /** The position of the footnote in the text */
+        private int startIndex = -1;
+
+        /** Sets the attributes */
         public Footnote(int number, String text, int startIndex) {
             this.number = number;
             this.text = text;
@@ -57,15 +65,12 @@ public class ClickableFootnotes {
     /** Text that indicates the end of a footnote. */
     public static final String FOOTNOTE_END = "</fn>";
 
-    /** for logging */
-    public static final String TAG = "ClickableFootnotes";
-
 
     /**
-     * Parses the text of the specified TextView and replaces footnotes (format see above) with
-     * clickable footnotes.  TODO: more concrete
+     * Parses the text of the specified TextView and replaces footnote markup (format see above)
+     * with clickable footnotes which display the footnote text as a Toast message on click.
      *
-     * @param tv
+     * @param tv TextView where Footnote markdown should be converted to clickable footnotes.
      */
     public static void createFootnotes(TextView tv) {
         if (tv == null || tv.getText().length() == 0)
@@ -84,8 +89,10 @@ public class ClickableFootnotes {
         while (matcher.find()) {
             number++;
 
+            String match = matcher.group();
+
             // get footnote text
-            String footnote = matcher.group();
+            String footnote = match;
             footnote = footnote.replace(FOOTNOTE_START, "");
             footnote = footnote.replace(FOOTNOTE_END, "");
 
@@ -93,7 +100,7 @@ public class ClickableFootnotes {
             footnotes.add(new Footnote(number, footnote, matcher.start()));
 
             // replace footnote markup with consecutive number
-            text = text.replace(matcher.group(), "[" + number + "]"); // TODO: only 1st is clickable
+            text = text.replace(match, "[" + number + "]"); // TODO: only 1st is clickable
             matcher = pattern.matcher(text);  // working with new text to get correct start indices
         }
 
@@ -105,9 +112,20 @@ public class ClickableFootnotes {
         tv.setHighlightColor(Color.TRANSPARENT);
     }
 
+
+    /**
+     * Adds the list of clickable {@link Footnote} instances to the specified
+     * {@link SpannableString} in form of {@link ClickableSpan}s.
+     *
+     * @param text      Where the footnotes are added
+     * @param footnotes footnotes to add
+     */
     private static void addClickableFootnotes(SpannableString text, List<Footnote> footnotes) {
 
         for (Footnote fn : footnotes) {
+            if (fn == null)
+                continue;
+
             text.setSpan(
                     convertFootnoteToClickableSpan(fn),
                     fn.startIndex,
@@ -118,7 +136,21 @@ public class ClickableFootnotes {
 
     }
 
+
+    /**
+     * Converts a {@link Footnote} instance into a {@link ClickableSpan} instance that can be added
+     * to a {@link SpannableString}. On click, the footnote text is displayed in a Toast message.
+     * TODO: change to SnackBar
+     *
+     * @param fn Footnote to convert.
+     *
+     * @return The ClickableSpan instance corresponding to the footnote (null, if the specified
+     * Footnote instance is null))
+     */
     private static ClickableSpan convertFootnoteToClickableSpan(final Footnote fn) {
+
+        if (fn == null)
+            return null;
 
         return new ClickableSpan() {
             @Override
