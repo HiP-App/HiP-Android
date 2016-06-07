@@ -62,7 +62,6 @@ import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
 import de.upb.hip.mobile.models.Route;
 import de.upb.hip.mobile.models.RouteSet;
-import de.upb.hip.mobile.models.RouteTag;
 import de.upb.hip.mobile.models.SetMarker;
 import de.upb.hip.mobile.models.Waypoint;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
@@ -207,18 +206,18 @@ public class MainActivity extends BaseActivity {
         checkForUpdates();
     }
 
-    private void showRouteOnMap(){
+    private void showRouteOnMap() {
         RouteSet routeSet = new RouteSet(mDatabase.getView("routes"));
         Route route = null;
 
         // start with every tag allowed
         for (Route routeIt : routeSet.getRoutes()) {
-            if(routeIt.getId() == KARLSROUTE_DB_ID){
+            if (routeIt.getId() == KARLSROUTE_DB_ID) {
                 route = routeIt;
             }
         }
 
-        if(route != null){
+        if (route != null) {
             //We found the route, show it on the map
             drawPathOnMap(route);
         }
