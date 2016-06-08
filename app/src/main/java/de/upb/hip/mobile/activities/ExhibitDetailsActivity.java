@@ -18,6 +18,7 @@ package de.upb.hip.mobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,11 +27,9 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -625,25 +624,31 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
                 "Dies ist ein dritter Satz.";
 
-        // create nested scrollview with a TextView containing the caption with clickable footnotes
         // IMPORTANT: the dialog and custom view creation has to be repeated every time, reusing
         // the view or the dialog will result in an error ("child already has a parent")
-
-        NestedScrollView scrollView = new NestedScrollView(this);
-        TextView tv = new TextView(this);
-        tv.setText(caption);
-        int padding = (int) PixelDpConversion.convertDpToPixel(16); // for the TextView
-        tv.setPadding(padding, padding, padding, padding);
-        tv.setLinkTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-        ClickableFootnotes.createFootnotes(tv,
-                (CoordinatorLayout) findViewById(R.id.coordinatorLayout));
-        scrollView.addView(tv);
-
+/*
         // create and show the AlertDialog
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
-                .setView(scrollView)
                 .setNegativeButton(getString(R.string.close), null)
-                .show();
+                .create();
+*/
+
+        Dialog dialog = new Dialog(this);
+        dialog.setTitle(R.string.audio_toolbar_cc);
+        dialog.setContentView(R.layout.activity_exhibit_details_caption_dialog);
+
+        TextView tv = (TextView) dialog.findViewById(R.id.captionTextView);
+        if (tv != null) {
+            tv.setText(caption);
+            CoordinatorLayout coordinatorLayout =
+                    (CoordinatorLayout) dialog.findViewById(R.id.captionDialogCoordinatorLayout);
+            ClickableFootnotes.createFootnotes(tv, coordinatorLayout);
+        } else {
+            Log.e(TAG, "cannot access TextView in caption dialog!");
+            return;
+        }
+
+        dialog.show();
     }
 }
