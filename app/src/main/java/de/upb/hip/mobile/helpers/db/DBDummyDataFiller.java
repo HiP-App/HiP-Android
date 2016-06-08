@@ -133,9 +133,15 @@ public class DBDummyDataFiller {
                 new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "dom.jpg", ""), domPages);
         insertExhibit(e1);
 
+
+        LinkedList<Page> uniPages = new LinkedList<>();
+        uniPages.add(new AppetizerPage("This exhibit has only an appetizer page",
+                new Image(2, "", "uni.jpg", "Universität Paderborn"),
+                null));
+
         Exhibit e2 = new Exhibit(2, "Universität Paderborn", "Die Universität Paderborn in Paderborn, " +
                 "Deutschland, ist eine 1972 gegründete Universität in Nordrhein-Westfalen.",
-                51.706768, 8.771104, new String[]{"Uni"}, new String[]{"Universität"}, new Image(2, "", "uni.jpg", ""), new LinkedList<Page>());
+                51.706768, 8.771104, new String[]{"Uni"}, new String[]{"Universität"}, new Image(2, "", "uni.jpg", ""), uniPages);
         insertExhibit(e2);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();

@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,7 +52,6 @@ import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFacto
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
-import de.upb.hip.mobile.models.Audio;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
@@ -68,9 +68,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Index of the page in the exhibitPages list that is currently displayed */
     private int currentPageIndex = 0;
-
-    /** Menu for the toolbar, created in onCreateOptionsMenu */
-    private Menu toolbarMenu;
 
     /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
     private boolean showAudioAction = false;
@@ -292,8 +289,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the current exhibit page */
     public void displayCurrentExhibitPage() {
-        if (currentPageIndex >= exhibitPages.size())
-            throw new IndexOutOfBoundsException("currentPageIndex >= exhibitPages.size() !");
+        if (currentPageIndex >= exhibitPages.size()) {
+            Log.w(TAG, "currentPageIndex >= exhibitPages.size() !");
+            return;
+        }
 
         // set previous & next button
         if (currentPageIndex == 0)
@@ -312,8 +311,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
-        if (pageFragment == null)
-            throw new NullPointerException("pageFragment is null!");
+        if (pageFragment == null) {
+            Log.e(TAG, "pageFragment is null!");
+            return;
+        }
 
         pageFragment.setArguments(extras);
 
@@ -328,8 +329,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // configure bottom sheet
         BottomSheetConfig config = pageFragment.getBottomSheetConfig();
 
-        if (config == null)
-            throw new RuntimeException("BottomSheetConfig cannot be null!");
+        if (config == null) {
+            Log.e(TAG, "BottomSheetConfig cannot be null!");
+            return;
+        }
 
         if (config.isDisplayBottomSheet()) {
 
@@ -347,16 +350,17 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             // set content
             bottomSheetFragment = config.getBottomSheetFragment();
 
-            if (bottomSheetFragment == null)
-                throw new NullPointerException("sheetFragment is null!");
-
-            // FIXME: adding the new fragment somehow fails if the BottomSheet is expanded
-            // TODO: this seems to take some time. would it help to do this in a separate thread?
-            // remove old fragment and display new fragment
-            if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.bottom_sheet_fragment_container, bottomSheetFragment);
-                transaction.commit();
+            if (bottomSheetFragment == null) {
+                Log.e(TAG, "bottomSheetFragment is null!");
+            } else {
+                // FIXME: adding the new fragment somehow fails if the BottomSheet is expanded
+                // TODO: this seems to take some time. would it help to do this in a separate thread?
+                // remove old fragment and display new fragment
+                if (findViewById(R.id.bottom_sheet_fragment_container) != null) {
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.bottom_sheet_fragment_container, bottomSheetFragment);
+                    transaction.commit();
+                }
             }
 
             // configure FAB (includes expanded/collapsed state)
@@ -377,17 +381,28 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Displays the next exhibit page */
     public void displayNextExhibitPage() {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        currentPageIndex++;
-        updateAudioFile();
 
-        displayCurrentExhibitPage();
+        currentPageIndex++;
+
+        if (currentPageIndex >= exhibitPages.size()) {
+            Toast.makeText(getApplicationContext(),
+                    R.string.currently_no_further_info, Toast.LENGTH_LONG).show();
+            currentPageIndex--;
+            Log.w(TAG, "currentPageIndex >= exhibitPages.size()");
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            updateAudioFile();
+
+            displayCurrentExhibitPage();
+        }
     }
 
     /** Displays the previous exhibit page (for currentPageIndex > 0) */
     public void displayPreviousExhibitPage() {
         currentPageIndex--;
         if (currentPageIndex < 0) {
+            Log.w(TAG, "currentPageIndex < 0");
+            currentPageIndex++;
             return;
         }
         updateAudioFile();
