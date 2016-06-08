@@ -18,7 +18,6 @@ package de.upb.hip.mobile.activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,9 +48,7 @@ import org.osmdroid.views.overlay.PathOverlay;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.upb.hip.mobile.adapters.DBAdapter;
 import de.upb.hip.mobile.adapters.MainRecyclerAdapter;
@@ -221,27 +218,6 @@ public class MainActivity extends BaseActivity {
             //We found the route, show it on the map
             drawPathOnMap(route);
         }
-    }
-
-    /**
-     * Adds the marker with the data of t and put on the map.
-     *
-     * @param geoLocation GeoPoint of the created  marker
-     * @param drawable    Drawable, image of the exhibit
-     * @param markerImage int, id from drawable
-     * @param title       String, title of the exhibit
-     * @param description String, description of the exhibit
-     * @param exhibitId   int, exhibit id
-     */
-    private void addMarker(GeoPoint geoLocation, Drawable drawable, int markerImage, String title,
-                           String description, int exhibitId) {
-
-        Drawable icon = ContextCompat.getDrawable(this, markerImage);
-
-        Map<String, Integer> data = new HashMap<>();
-        data.put(title, exhibitId);
-
-        mMarker.addMarker(null, title, description, geoLocation, drawable, icon, data);
     }
 
     /**
