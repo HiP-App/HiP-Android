@@ -294,20 +294,25 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             return;
         }
 
+        if (!isAudioToolbarHidden) {
+            hideAudioToolbar(); // TODO: generalize to audio playing
+        }
+
+        Page page = exhibitPages.get(currentPageIndex);
+
         // set previous & next button
         if (currentPageIndex == 0)
             btnPreviousPage.setVisibility(View.GONE);
         else
             btnPreviousPage.setVisibility(View.VISIBLE);
 
-        if (currentPageIndex >= exhibitPages.size() - 1)
+        if (currentPageIndex >= exhibitPages.size() - 1 || page instanceof AppetizerPage)
             btnNextPage.setVisibility(View.GONE);
         else
             btnNextPage.setVisibility(View.VISIBLE);
 
 
         // get ExhibitPageFragment for Page
-        Page page = exhibitPages.get(currentPageIndex);
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
@@ -370,12 +375,13 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setVisibility(View.GONE);
         }
 
-        // display audio action only if it is supported by page
-        if (page instanceof AppetizerPage)
-            hideAudioAction();
-        else
-            showAudioAction(); // TODO: only if the page provides audio
-
+        // display audio action only if page provides audio
+        if (page.getAudio() == null) {
+            displayAudioAction(false);
+        }
+        else {
+            displayAudioAction(true);
+        }
         // TODO: handle audio
     }
 
@@ -561,6 +567,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_audio).setVisible(showAudioAction);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
@@ -646,6 +658,16 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         View audioIcon = findViewById(R.id.action_audio);
         if (audioIcon != null)
             audioIcon.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Modifies the visibility of the audio action in the toolbar.
+     *
+     * @param visible True indicates the audio action should be visible.
+     */
+    private void displayAudioAction(boolean visible) {
+        showAudioAction = visible;
+        invalidateOptionsMenu();
     }
 
     /** Shows the caption for the text that is currently read out */
