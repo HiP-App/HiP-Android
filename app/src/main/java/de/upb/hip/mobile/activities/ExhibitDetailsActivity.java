@@ -622,8 +622,8 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
         String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
 
-        /*** Use this instead of the above declaration to test the footnote support ***/
-//        String caption = "Dies ist ein Satz.<fn>Dies ist eine Fußnote</fn> " +
+        /*** Uncomment this to test the footnote support ***/
+//        caption = "Dies ist ein Satz.<fn>Dies ist eine Fußnote</fn> " +
 //                "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
 //                "Dies ist ein dritter Satz.";
 
