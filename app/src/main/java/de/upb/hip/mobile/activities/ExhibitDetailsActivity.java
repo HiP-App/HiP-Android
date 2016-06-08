@@ -18,9 +18,13 @@ package de.upb.hip.mobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -67,14 +71,33 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
     private boolean showAudioAction = false;
-
-    private MediaPlayerService mMediaPlayerService = new MediaPlayerService();
-
     /** Indicates whether audio is currently played (true) or not (false) */
     private boolean isAudioPlaying = false;
 
     /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
     private boolean isAudioToolbarHidden = true;
+
+    //create an object for the mediaplayerservice
+    //the booleans are states and may be obsolete later on
+    MediaPlayerService mMediaPlayerService;
+    boolean isBound = false;
+
+    //Subclass for media player binding
+    private ServiceConnection mMediaPlayerConnection = new ServiceConnection(){
+        public void onServiceConnected(ComponentName className, IBinder service){
+            MediaPlayerService.MediaPlayerBinder binder =
+                    (MediaPlayerService.MediaPlayerBinder) service;
+            mMediaPlayerService = binder.getService();
+            if(mMediaPlayerService == null){
+                //this case should not happen. add error handling
+            }
+            isBound = true;
+        }
+
+        public void onServiceDisconnected(ComponentName arg0){
+            isBound = false;
+        }
+    };
 
     /** Extras contained in the Intent that started this activity */
     private Bundle extras = null;
@@ -191,6 +214,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // does not work because activity creation has not been completed?!
         // see also: http://stackoverflow.com/questions/7289827/how-to-start-animation-immediately-after-oncreate
 
+        //initialize media player
+        doBindService();
+
         // set up play / pause toggle
         btnPlayPause = (ImageButton) findViewById(R.id.btnPlayPause);
         btnPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -268,24 +294,20 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             return;
         }
 
-        if (!isAudioToolbarHidden)
-            hideAudioToolbar(); // TODO: generalize to audio playing
-
-        Page page = exhibitPages.get(currentPageIndex);
-
         // set previous & next button
         if (currentPageIndex == 0)
             btnPreviousPage.setVisibility(View.GONE);
         else
             btnPreviousPage.setVisibility(View.VISIBLE);
 
-        if (currentPageIndex >= exhibitPages.size() - 1 || page instanceof AppetizerPage)
+        if (currentPageIndex >= exhibitPages.size() - 1)
             btnNextPage.setVisibility(View.GONE);
         else
             btnNextPage.setVisibility(View.VISIBLE);
 
 
-        // set page fragment
+        // get ExhibitPageFragment for Page
+        Page page = exhibitPages.get(currentPageIndex);
         ExhibitPageFragment pageFragment =
                 ExhibitPageFragmentFactory.getFragmentForExhibitPage(page, exhibitName);
 
@@ -348,14 +370,13 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             bottomSheet.setVisibility(View.GONE);
         }
 
-        // display audio action only if the page provides audio
-        if (page.getAudio() == null)
-            displayAudioAction(false);
-        else {
-            displayAudioAction(true);
+        // display audio action only if it is supported by page
+        if (page instanceof AppetizerPage)
+            hideAudioAction();
+        else
+            showAudioAction(); // TODO: only if the page provides audio
 
-            // TODO: continue with handling the audio
-        }
+        // TODO: handle audio
     }
 
     /** Displays the next exhibit page */
@@ -389,6 +410,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
     }
 
+    /** Everytime the page is changed, the audio file needs to be updated to the new page */
     private void updateAudioFile(){
         stopAudioPlayback();
         mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
@@ -539,12 +561,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_audio).setVisible(showAudioAction);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
@@ -566,7 +582,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Starts the playback of the audio associated with the page. */
     private void startAudioPlayback() {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
-        // TODO: integrate media player
         try {
             if(!mMediaPlayerService.getAudioFileIsSet()) {
                 mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
@@ -584,7 +599,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     /** Pauses the playback of the audio. */
     private void pauseAudioPlayback() {
         Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
-        // TODO: integrate media player
         try {
             mMediaPlayerService.pauseSound();
         } catch(IllegalStateException e){
@@ -594,10 +608,13 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         isAudioPlaying = false;
     }
 
+    /** Stops the playback of audio. this is needed, when changing the page and therefore the
+     *  audio file
+     */
     private void stopAudioPlayback(){
         try{
             mMediaPlayerService.stopSound();
-        }catch(IllegalStateException e){
+        } catch(IllegalStateException e){
         } catch(NullPointerException e){
         } catch(Exception e) {
         }
@@ -617,14 +634,18 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * Modifies the visibility of the audio action in the toolbar.
-     *
-     * @param visible True indicates the audio action should be visible.
-     */
-    private void displayAudioAction(boolean visible) {
-        showAudioAction = visible;
-        invalidateOptionsMenu();
+    /** Hides the audio action in the toolbar */
+    private void hideAudioAction() {
+        View audioIcon = findViewById(R.id.action_audio);
+        if (audioIcon != null)
+            audioIcon.setVisibility(View.GONE);
+    }
+
+    /** Shows the audio action in the toolbar */
+    private void showAudioAction() {
+        View audioIcon = findViewById(R.id.action_audio);
+        if (audioIcon != null)
+            audioIcon.setVisibility(View.VISIBLE);
     }
 
     /** Shows the caption for the text that is currently read out */
@@ -636,5 +657,18 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 .setMessage(caption)
                 .setNegativeButton(getString(R.string.close), null);
         AlertDialog dialog = builder.show();
+        //
+    }
+
+    /** Initializes the service and binds it */
+    public void doBindService(){
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        isBound = bindService(intent, mMediaPlayerConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mMediaPlayerService.stopSound();    //if this isn't done, the media player will keep playing
     }
 }
