@@ -382,7 +382,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         else {
             displayAudioAction(true);
         }
-        // TODO: handle audio
     }
 
     /** Displays the next exhibit page */
@@ -644,20 +643,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         else
             btnPlayPause.setImageResource(R.drawable.ic_play_arrow_black_36dp);
 
-    }
-
-    /** Hides the audio action in the toolbar */
-    private void hideAudioAction() {
-        View audioIcon = findViewById(R.id.action_audio);
-        if (audioIcon != null)
-            audioIcon.setVisibility(View.GONE);
-    }
-
-    /** Shows the audio action in the toolbar */
-    private void showAudioAction() {
-        View audioIcon = findViewById(R.id.action_audio);
-        if (audioIcon != null)
-            audioIcon.setVisibility(View.VISIBLE);
     }
 
     /**
