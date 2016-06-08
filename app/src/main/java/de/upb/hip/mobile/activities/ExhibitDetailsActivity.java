@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -627,10 +628,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // IMPORTANT: the dialog and custom view creation has to be repeated every time, reusing
         // the view or the dialog will result in an error ("child already has a parent")
 
-        Dialog dialog = new Dialog(this);
+        // create dialog
+        final Dialog dialog = new Dialog(this);
         dialog.setTitle(R.string.audio_toolbar_cc);
         dialog.setContentView(R.layout.activity_exhibit_details_caption_dialog);
 
+        // setup text view for captions with clickable footnotes
         TextView tv = (TextView) dialog.findViewById(R.id.captionTextView);
         if (tv != null) {
             tv.setText(caption);
@@ -641,6 +644,16 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             Log.e(TAG, "cannot access TextView in caption dialog!");
             return;
         }
+
+        // add click listener to close button that dismisses the dialog
+        Button closeBtn = (Button) dialog.findViewById(R.id.captionDialogCloseButton);
+        if (closeBtn != null)
+            closeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
 
         dialog.show();
     }
