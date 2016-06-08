@@ -25,11 +25,14 @@ import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.overlays.MarkerInfoWindow;
 import org.osmdroid.views.MapView;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import de.upb.hip.mobile.activities.DetailsActivity;
+import de.upb.hip.mobile.activities.ExhibitDetailsActivity;
 import de.upb.hip.mobile.activities.R;
+import de.upb.hip.mobile.models.exhibit.Page;
 
 /**
  * A customized InfoWindow handling "itinerary" points (start, destination and via-points).
@@ -37,7 +40,10 @@ import de.upb.hip.mobile.activities.R;
  */
 public class ViaPointInfoWindow extends MarkerInfoWindow {
 
-    private Map<String, Integer> mViaPointData = new HashMap<>();
+    public static final String KEY_MARKER_EXHIBIT_NAME = "exhibitname";
+    public static final String KEY_MARKER_EXHIBIT_PAGES = "exhibitpages";
+
+    private Map<String, Object> mViaPointData = new HashMap<>();
     private String mTitle;
 
     /**
@@ -53,9 +59,13 @@ public class ViaPointInfoWindow extends MarkerInfoWindow {
         Button btnInfo = (Button) (mView.findViewById(R.id.bubble_info));
         btnInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (mViaPointData.containsKey(mTitle) && mViaPointData.get(mTitle) != -1) {
-                    Intent intent = new Intent(context, DetailsActivity.class);
-                    intent.putExtra("exhibit-id", mViaPointData.get(mTitle));
+                if (mViaPointData.containsKey(KEY_MARKER_EXHIBIT_NAME)) {
+                    Intent intent = new Intent(context, ExhibitDetailsActivity.class);
+                    intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_NAME,
+                            (String) mViaPointData.get(KEY_MARKER_EXHIBIT_NAME));
+
+                    intent.putExtra(ExhibitDetailsActivity.INTENT_EXTRA_EXHIBIT_PAGES,
+                            (Serializable) (List<Page>) mViaPointData.get(KEY_MARKER_EXHIBIT_PAGES));
                     context.startActivity(intent);
                 }
                 close();
@@ -73,7 +83,7 @@ public class ViaPointInfoWindow extends MarkerInfoWindow {
         Marker marker = (Marker) item;
         mTitle = marker.getTitle();
         try {
-            mViaPointData = (Map<String, Integer>) marker.getRelatedObject();
+            mViaPointData = (Map<String, Object>) marker.getRelatedObject();
         } catch (ClassCastException e) {
             e.printStackTrace();
         }

@@ -31,6 +31,7 @@ import java.util.Map;
 
 import de.upb.hip.mobile.activities.R;
 import de.upb.hip.mobile.adapters.DBAdapter;
+import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.helpers.db.ExhibitDeserializer;
 import de.upb.hip.mobile.models.SetMarker;
 
@@ -149,8 +150,9 @@ public class ExhibitSet {
         for (Exhibit exhibit : mActiveSet) {
             Drawable d = DBAdapter.getImage(exhibit.getId(), "image.jpg", 32);
 
-            Map<String, Integer> data = new HashMap<>();
-            data.put(exhibit.getName(), exhibit.getId());
+            Map<String, Object> data = new HashMap<>();
+            data.put(ViaPointInfoWindow.KEY_MARKER_EXHIBIT_NAME, exhibit.getName());
+            data.put(ViaPointInfoWindow.KEY_MARKER_EXHIBIT_PAGES, exhibit.getPages());
 
             Drawable icon = ContextCompat.getDrawable(ctx, R.drawable.marker_via);
 
