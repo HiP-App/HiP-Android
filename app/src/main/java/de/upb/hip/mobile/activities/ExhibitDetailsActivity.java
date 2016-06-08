@@ -619,11 +619,13 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     /** Shows the caption for the text that is currently read out using an AlertDialog */
     private void showCaptions() {
-        // TODO: adapt this to retrieved data
-//        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
-        String caption = "Dies ist ein Satz.<fn>Dies ist eine Fußnote</fn> " +
-                "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
-                "Dies ist ein dritter Satz.";
+
+        String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
+
+        /*** Use this instead of the above declaration to test the footnote support ***/
+//        String caption = "Dies ist ein Satz.<fn>Dies ist eine Fußnote</fn> " +
+//                "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
+//                "Dies ist ein dritter Satz.";
 
         // IMPORTANT: the dialog and custom view creation has to be repeated every time, reusing
         // the view or the dialog will result in an error ("child already has a parent")
