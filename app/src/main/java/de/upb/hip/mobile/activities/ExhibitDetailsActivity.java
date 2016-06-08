@@ -626,13 +626,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
         // IMPORTANT: the dialog and custom view creation has to be repeated every time, reusing
         // the view or the dialog will result in an error ("child already has a parent")
-/*
-        // create and show the AlertDialog
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.audio_toolbar_cc)
-                .setNegativeButton(getString(R.string.close), null)
-                .create();
-*/
 
         Dialog dialog = new Dialog(this);
         dialog.setTitle(R.string.audio_toolbar_cc);
