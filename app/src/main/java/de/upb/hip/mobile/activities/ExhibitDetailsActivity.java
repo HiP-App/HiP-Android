@@ -18,8 +18,6 @@ package de.upb.hip.mobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
@@ -27,9 +25,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,8 +36,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -50,6 +50,7 @@ import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragmentFactory;
 import de.upb.hip.mobile.helpers.BottomSheetConfig;
+import de.upb.hip.mobile.helpers.ClickableFootnotes;
 import de.upb.hip.mobile.helpers.MediaPlayerService;
 import de.upb.hip.mobile.helpers.PixelDpConversion;
 import de.upb.hip.mobile.models.exhibit.AppetizerPage;
@@ -659,6 +660,43 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void showCaptions() {
         // TODO: adapt this to retrieved data
         String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
+
+        /*** Uncomment this to test the footnote support ***/
+//        caption = "Dies ist ein Satz.<fn>Dies ist eine Fußnote</fn> " +
+//                "Dies ist ein zweiter Satz.<fn>Dies ist eine zweite Fußnote</fn> " +
+//                "Dies ist ein dritter Satz.";
+
+        // IMPORTANT: the dialog and custom view creation has to be repeated every time, reusing
+        // the view or the dialog will result in an error ("child already has a parent")
+
+        // create dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setTitle(R.string.audio_toolbar_cc);
+        dialog.setContentView(R.layout.activity_exhibit_details_caption_dialog);
+
+        // setup text view for captions with clickable footnotes
+        TextView tv = (TextView) dialog.findViewById(R.id.captionTextView);
+        if (tv != null) {
+            tv.setText(caption);
+            CoordinatorLayout coordinatorLayout =
+                    (CoordinatorLayout) dialog.findViewById(R.id.captionDialogCoordinatorLayout);
+            ClickableFootnotes.createFootnotes(tv, coordinatorLayout);
+        } else {
+            Log.e(TAG, "cannot access TextView in caption dialog!");
+            return;
+        }
+
+        // add click listener to close button that dismisses the dialog
+        Button closeBtn = (Button) dialog.findViewById(R.id.captionDialogCloseButton);
+        if (closeBtn != null)
+            closeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+        dialog.show();
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setTitle(R.string.audio_toolbar_cc)
                 .setMessage(caption)

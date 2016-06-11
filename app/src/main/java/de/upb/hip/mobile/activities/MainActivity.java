@@ -16,9 +16,13 @@
 
 package de.upb.hip.mobile.activities;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +44,7 @@ import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.PathOverlay;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
 
 import java.util.ArrayList;
@@ -52,7 +57,10 @@ import de.upb.hip.mobile.helpers.GenericMapView;
 import de.upb.hip.mobile.helpers.ViaPointInfoWindow;
 import de.upb.hip.mobile.listeners.ExtendedLocationListener;
 import de.upb.hip.mobile.listeners.RecyclerItemClickListener;
+import de.upb.hip.mobile.models.Route;
+import de.upb.hip.mobile.models.RouteSet;
 import de.upb.hip.mobile.models.SetMarker;
+import de.upb.hip.mobile.models.Waypoint;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ExhibitSet;
 
@@ -61,6 +69,9 @@ import de.upb.hip.mobile.models.exhibit.ExhibitSet;
  * Main Activity for the App
  */
 public class MainActivity extends BaseActivity {
+
+    //Required since the MainActivity should statically display the Karlsroute
+    public static final int KARLSROUTE_DB_ID = 101;
 
     private DBAdapter mDatabase;
     private ExhibitSet mExhibitSet;
@@ -92,6 +103,21 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Check if we have the necessary permissions and request them if we don't
+        // Note that the app will still fail on first launch and needs to be restarted
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    0);
+        }
 
         mGpsTracker = new ExtendedLocationListener(MainActivity.this);
 
@@ -171,8 +197,51 @@ public class MainActivity extends BaseActivity {
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainSwipeContainer);
         mSwipeLayout.setEnabled(false);
 
+        showRouteOnMap();
+
         //HockeyApp Code
         checkForUpdates();
+    }
+
+    private void showRouteOnMap() {
+        RouteSet routeSet = new RouteSet(mDatabase.getView("routes"));
+        Route route = null;
+
+        // start with every tag allowed
+        for (Route routeIt : routeSet.getRoutes()) {
+            if (routeIt.getId() == KARLSROUTE_DB_ID) {
+                route = routeIt;
+            }
+        }
+
+        if (route != null) {
+            //We found the route, show it on the map
+            drawPathOnMap(route);
+        }
+    }
+
+    /**
+     * Paint simple road lines with blue color. PathOverlay is deprecated, but for drawing simple
+     * path is perfect.
+     * The new, not deprecated class Polylines is more complex and needs a road from RoadManager
+     */
+    @SuppressWarnings("deprecation")
+    private void drawPathOnMap(Route mRoute) {
+        PathOverlay myPath = new PathOverlay(getResources().getColor(R.color.colorPrimaryDark),
+                10, new DefaultResourceProxyImpl(this));
+
+        if (mGeoLocation != null) {
+            myPath.addPoint(mGeoLocation);
+        }
+
+        if (mRoute != null && mRoute.getWayPoints() != null) {
+            for (Waypoint waypoint : mRoute.getWayPoints()) {
+                myPath.addPoint(new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude()));
+            }
+        }
+
+        mMap.getOverlays().add(myPath);
+        mMap.invalidate();
     }
 
 
