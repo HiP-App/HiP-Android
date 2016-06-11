@@ -43,7 +43,7 @@ public class ExtendedLocationListener extends Service implements LocationListene
     public static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 2; // 2 meters
     // The minimum time between updates in milliseconds
     public static final long MIN_TIME_BW_UPDATES = 2000; // 2 sec
-    public static final LatLng PADERBORN_HBF = new LatLng(51.71352, 8.74021);
+    public static final LatLng PADERBORN_HBF = new LatLng(51.718952, 8.75584);
     private final Context mContext;
     // Declaring a Location Manager
     protected LocationManager mLocationManager;
@@ -221,7 +221,8 @@ public class ExtendedLocationListener extends Service implements LocationListene
         Activity activity = (Activity) this.mContext;
         if (activity.getClass().equals(MainActivity.class)) {
             MainActivity mainActivity = (MainActivity) activity;
-            mainActivity.updatePosition(location);
+            //Disabled for the wissenschaftstage
+            //mainActivity.updatePosition(location);
         }
     }
 
