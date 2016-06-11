@@ -36,23 +36,33 @@ import java.util.regex.Pattern;
 /**
  * Provides functionality to parse a {@link TextView} for footnote markdown and replace the
  * markdown with clickable numbers which show the footnote text on click using a SnackBar.
- *
+ * <p/>
  * Footnotes are defined using {@code <fn>...</fn>}, where "..." is replaced by the footnote text
  */
 public class ClickableFootnotes {
 
-    /** Helper class to represent footnote */
+    /**
+     * Helper class to represent footnote
+     */
     static class Footnote {
-        /** The number of the footnote */
+        /**
+         * The number of the footnote
+         */
         private int number = -1;
 
-        /** The footnote text */
+        /**
+         * The footnote text
+         */
         private String text = "default";
 
-        /** The position of the footnote in the text */
+        /**
+         * The position of the footnote in the text
+         */
         private int startIndex = -1;
 
-        /** Sets the attributes */
+        /**
+         * Sets the attributes
+         */
         public Footnote(int number, String text, int startIndex) {
             this.number = number;
             this.text = text;
@@ -60,10 +70,14 @@ public class ClickableFootnotes {
         }
     }
 
-    /** Text that indicates the start of a footnote. */
+    /**
+     * Text that indicates the start of a footnote.
+     */
     public static final String FOOTNOTE_START = "<fn>";
 
-    /** Text that indicates the end of a footnote. */
+    /**
+     * Text that indicates the end of a footnote.
+     */
     public static final String FOOTNOTE_END = "</fn>";
 
 
@@ -144,7 +158,6 @@ public class ClickableFootnotes {
      * to a {@link SpannableString}. On click, the footnote text is displayed in a Toast message.
      *
      * @param fn Footnote to convert.
-     *
      * @return The ClickableSpan instance corresponding to the footnote (null, if the specified
      * Footnote instance is null))
      */
