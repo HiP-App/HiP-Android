@@ -40,6 +40,7 @@ import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ImagePage;
 import de.upb.hip.mobile.models.exhibit.Page;
 import de.upb.hip.mobile.models.exhibit.TextPage;
+import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
 /**
  * This class adds dummy data to the DB until we can obtain real data from team CMS
@@ -111,8 +112,24 @@ public class DBDummyDataFiller {
                 new Image(1, text1, "kaiserpfalz_teaser.jpg", "Die Kaiserpfalz"), null));
 
 
+        kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_teaser.jpg", "Kaiserpfalz"), null, null, audio1));
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_teaser.jpg", "Kaiserpfalz"), null, null, audio2_1));
-        kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_slider_1_1.jpg", "Kaiserpfalz"), null, null, audio2_2)); //TODO: Make slider here
+
+        List<Image> slider1 = new LinkedList<>();
+        List<Long> sliderTimes1 = new LinkedList<>();
+        slider1.add(new Image(1, "Blick von Norden auf die Paderquellen_vor 1945", "kaiserpfalz_slider_1_1.jpg", "Img1"));
+        sliderTimes1.add(0L);
+        slider1.add(new Image(1, "Blick von Norden über die Treppe_vor 1945 ", "kaiserpfalz_slider_1_2.jpg", "Img1"));
+        sliderTimes1.add(1L);
+        slider1.add(new Image(1, "Blick von Südwesten_vor 1935", "kaiserpfalz_slider_1_3.jpg", "Img1"));
+        sliderTimes1.add(2L);
+        slider1.add(new Image(1, "Blick von Norden_vor 1945", "kaiserpfalz_slider_1_4.jpg", "Img1"));
+        sliderTimes1.add(3L);
+        slider1.add(new Image(1, "Blick von Norden_nach 1945", "kaiserpfalz_slider_1_5.jpg", "Img1"));
+        sliderTimes1.add(4L);
+        kaiserpfalzPages.add(new TimeSliderPage("Slidertitle", text1, audio2_2, sliderTimes1, slider1));
+
+
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_image_3_1.jpg", "Kaiserpfalz"), null, null, audio3_1));
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_image_3_2.jpg", "Kaiserpfalz"), null, null, audio3_2));
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_image_4.jpg", "Kaiserpfalz"), null, null, audio4_1));
@@ -122,7 +139,19 @@ public class DBDummyDataFiller {
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_image_5_3.jpg", "Kaiserpfalz"), null, null, audio5_3));
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_teaser.jpg", "Kaiserpfalz"), null, null, audio6));
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_image_7_1.jpg", "Kaiserpfalz"), null, null, audio7_1));
-        kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_slider_7_2.jpg", "Kaiserpfalz"), null, null, audio7_2)); //TODO: Make slider here
+
+
+        List<Image> slider2 = new LinkedList<>();
+        List<Long> sliderTimes2 = new LinkedList<>();
+        slider2.add(new Image(1, "Pfalzanlage Phase II 799", "kaiserpfalz_slider_7_1.jpg", "Img1"));
+        sliderTimes2.add(0L);
+        slider2.add(new Image(1, "Aachen_Kaiserpfalz_Grundriß_Keller", "kaiserpfalz_slider_7_2.jpg", "Img1"));
+        sliderTimes2.add(1L);
+        slider2.add(new Image(1, "Ingelheim_Kaiserpfalz_Schematischer Gesamtplan", "kaiserpfalz_slider_7_3.jpg", "Img1"));
+        sliderTimes2.add(2L);
+        kaiserpfalzPages.add(new TimeSliderPage("Slidertitle", text1, audio7_2, sliderTimes2, slider2));
+
+
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_teaser.jpg", "Kaiserpfalz"), null, null, audio8));
 
 
@@ -132,7 +161,6 @@ public class DBDummyDataFiller {
                 "Paderborner Innenstadt, oberhalb der Paderquellen.", 51.718953, 8.75583,
                 new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "kaiserpfalz_teaser.jpg", ""), kaiserpfalzPages);
         insertExhibit(kaiserpfalz);
-
 
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
