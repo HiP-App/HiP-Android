@@ -45,20 +45,20 @@ public class Audio extends DBFile implements Serializable {
         mCaption = caption;
     }
 
-    public Audio(int docId, String filename, int audio){
-        super(docId, filename);
-        mAudio = audio;
-    }
+//    public Audio(int docId, String filename, int audio){
+//        super(docId, filename);
+//        mAudio = audio;
+//    }
 
 //    public Audio(int docId, String filename) {
 //        super(docId, filename);
 //    }
 
 
-    public Audio(int docId, String filename, String caption) {
-        super(docId, filename);
-        this.mCaption = caption;
-    }
+//    public Audio(int docId, String filename, String caption) {
+//        super(docId, filename);
+//        this.mCaption = caption;
+//    }
 
     public String getCaption() {
         return this.mCaption;
