@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -41,12 +42,14 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
@@ -88,6 +91,21 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
      * Indicates whether audio is currently played (true) or not (false)
      */
     private boolean isAudioPlaying = false;
+
+    /**
+     * Handler is needed for UI updates (especially media player - audio progress bar
+     */
+    private Handler mHandler = new Handler();
+
+    /**
+     * The prograss bar in the audio menu
+     */
+    private SeekBar mAudioProgressBar;
+
+    /**
+     * mStartTime is used for the audio playing only
+     */
+    private double mStartTime = 0;
 
     /**
      * Indicates whether the audio toolbar is currently displayed (true) or not (false)
@@ -175,6 +193,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         setSupportActionBar(toolbar);
+        mAudioProgressBar = (SeekBar)findViewById(R.id.audio_progress_bar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -309,6 +328,22 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
 
     }
+
+
+    private Runnable mUpdateSongTime = new Runnable() {
+        public void run() {
+            mStartTime = mMediaPlayerService.getTimeCurrent();
+//            tx1.setText(String.format("%d min, %d sec",
+//
+//                    TimeUnit.MILLISECONDS.toMinutes((long) mStartTime),
+//                    TimeUnit.MILLISECONDS.toSeconds((long) mStartTime) -
+//                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+//                                    toMinutes((long) mStartTime)))
+//            );
+            mAudioProgressBar.setProgress((int)mStartTime);
+            mHandler.postDelayed(this, 100);
+        }
+    };
 
     /**
      * Displays the current exhibit page
@@ -558,7 +593,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationRepeat() {
-
                     }
                 });
                 animator_reverse.start();
@@ -624,12 +658,13 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
      * Starts the playback of the audio associated with the page.
      */
     private void startAudioPlayback() {
-        Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         try {
             if (!mMediaPlayerService.getAudioFileIsSet()) {
                 mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
             }
             mMediaPlayerService.startSound();
+            mAudioProgressBar.setMax((int)mMediaPlayerService.getTimeTotal());
+            mHandler.postDelayed(mUpdateSongTime, 100);
         } catch (IllegalStateException e) {
             isAudioPlaying = false;
         } catch (NullPointerException e) {
@@ -643,7 +678,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
      * Pauses the playback of the audio.
      */
     private void pauseAudioPlayback() {
-        Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
         try {
             mMediaPlayerService.pauseSound();
         } catch (IllegalStateException e) {

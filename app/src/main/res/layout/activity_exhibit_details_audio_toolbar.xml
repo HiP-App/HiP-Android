@@ -62,6 +62,7 @@
                 android:orientation="vertical">
 
                 <SeekBar
+                    android:id="@+id/audio_progress_bar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

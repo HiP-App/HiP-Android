@@ -144,6 +144,14 @@ public class MediaPlayerService extends Service
         return mAudioFileIsSet;
     }
 
+    public long getTimeTotal(){
+        return mMediaPlayer.getDuration();
+    }
+
+    public long getTimeCurrent(){
+        return mMediaPlayer.getCurrentPosition();
+    }
+
     public class MediaPlayerBinder extends Binder {
         public MediaPlayerService getService(){
             return MediaPlayerService.this;
