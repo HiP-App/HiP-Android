@@ -1,9 +1,9 @@
 // incompatible API changes
 def versionMajor = 1
 // added functionality in a backwards-compatible manner, must be <=99
-def versionMinor = 0
+def versionMinor = 1
 // backwards-compatible bug fixes, must be <=99
-def versionPatch = 1
+def versionPatch = 0
 
 apply plugin: 'com.android.application'
 
