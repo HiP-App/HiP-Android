@@ -33,6 +33,17 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tvPageIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="3dp"
+        android:textColor="@color/textColorPrimary"
+        android:background="@color/chevronBackground"
+        android:text="@string/page" />
+
     <ImageButton
         android:id="@+id/buttonPrevious"
         android:layout_width="wrap_content"
