@@ -20,13 +20,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
@@ -62,24 +60,38 @@ import de.upb.hip.mobile.models.exhibit.Page;
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
 
-/** Coordinates subpages with details for an exhibit. */
+/**
+ * Coordinates subpages with details for an exhibit.
+ */
 public class ExhibitDetailsActivity extends AppCompatActivity {
 
-    /** Stores the name of the current exhibit */
+    /**
+     * Stores the name of the current exhibit
+     */
     private String exhibitName = "";
 
-    /** Stores the pages for the current exhibit */
+    /**
+     * Stores the pages for the current exhibit
+     */
     private List<Page> exhibitPages = new LinkedList<>();
 
-    /** Index of the page in the exhibitPages list that is currently displayed */
+    /**
+     * Index of the page in the exhibitPages list that is currently displayed
+     */
     private int currentPageIndex = 0;
 
-    /** Indicates whether the audio action in the toolbar should be shown (true) or not (false) */
+    /**
+     * Indicates whether the audio action in the toolbar should be shown (true) or not (false)
+     */
     private boolean showAudioAction = false;
-    /** Indicates whether audio is currently played (true) or not (false) */
+    /**
+     * Indicates whether audio is currently played (true) or not (false)
+     */
     private boolean isAudioPlaying = false;
 
-    /** Indicates whether the audio toolbar is currently displayed (true) or not (false) */
+    /**
+     * Indicates whether the audio toolbar is currently displayed (true) or not (false)
+     */
     private boolean isAudioToolbarHidden = true;
 
     //create an object for the mediaplayerservice
@@ -88,29 +100,35 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     boolean isBound = false;
 
     //Subclass for media player binding
-    private ServiceConnection mMediaPlayerConnection = new ServiceConnection(){
-        public void onServiceConnected(ComponentName className, IBinder service){
+    private ServiceConnection mMediaPlayerConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
             MediaPlayerService.MediaPlayerBinder binder =
                     (MediaPlayerService.MediaPlayerBinder) service;
             mMediaPlayerService = binder.getService();
-            if(mMediaPlayerService == null){
+            if (mMediaPlayerService == null) {
                 //this case should not happen. add error handling
             }
             isBound = true;
         }
 
-        public void onServiceDisconnected(ComponentName arg0){
+        public void onServiceDisconnected(ComponentName arg0) {
             isBound = false;
         }
     };
 
-    /** Extras contained in the Intent that started this activity */
+    /**
+     * Extras contained in the Intent that started this activity
+     */
     private Bundle extras = null;
 
-    /** Stores the current action associated with the FAB */
+    /**
+     * Stores the current action associated with the FAB
+     */
     private BottomSheetConfig.FabAction fabAction;
 
-    /** Reference to the BottomSheetFragment currently displayed */
+    /**
+     * Reference to the BottomSheetFragment currently displayed
+     */
     private BottomSheetFragment bottomSheetFragment = null;
 
     //logging
@@ -292,7 +310,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     }
 
-    /** Displays the current exhibit page */
+    /**
+     * Displays the current exhibit page
+     */
     public void displayCurrentExhibitPage() {
         if (currentPageIndex >= exhibitPages.size()) {
             Log.w(TAG, "currentPageIndex >= exhibitPages.size() !");
@@ -383,13 +403,14 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         // display audio action only if page provides audio
         if (page.getAudio() == null) {
             displayAudioAction(false);
-        }
-        else {
+        } else {
             displayAudioAction(true);
         }
     }
 
-    /** Displays the next exhibit page */
+    /**
+     * Displays the next exhibit page
+     */
     public void displayNextExhibitPage() {
 
         currentPageIndex++;
@@ -407,7 +428,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         }
     }
 
-    /** Displays the previous exhibit page (for currentPageIndex > 0) */
+    /**
+     * Displays the previous exhibit page (for currentPageIndex > 0)
+     */
     public void displayPreviousExhibitPage() {
         currentPageIndex--;
         if (currentPageIndex < 0) {
@@ -420,8 +443,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
     }
 
-    /** Everytime the page is changed, the audio file needs to be updated to the new page */
-    private void updateAudioFile(){
+    /**
+     * Everytime the page is changed, the audio file needs to be updated to the new page
+     */
+    private void updateAudioFile() {
         stopAudioPlayback();
         mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
         updatePlayPauseButtonIcon();
@@ -595,7 +620,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /** Starts the playback of the audio associated with the page. */
+    /**
+     * Starts the playback of the audio associated with the page.
+     */
     private void startAudioPlayback() {
         Toast.makeText(this, R.string.audio_playing_indicator, Toast.LENGTH_SHORT).show();
         try {
@@ -612,7 +639,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         }
     }
 
-    /** Pauses the playback of the audio. */
+    /**
+     * Pauses the playback of the audio.
+     */
     private void pauseAudioPlayback() {
         Toast.makeText(this, R.string.audio_pausing_indicator, Toast.LENGTH_SHORT).show();
         try {
@@ -624,11 +653,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         isAudioPlaying = false;
     }
 
-    /** Stops the playback of audio. this is needed, when changing the page and therefore the
-     *  audio file
+    /**
+     * Stops the playback of audio. this is needed, when changing the page and therefore the
+     * audio file
      */
-    private void stopAudioPlayback(){
-        try{
+    private void stopAudioPlayback() {
+        try {
             mMediaPlayerService.stopSound();
         } catch(IllegalStateException e){
         } catch(NullPointerException e){
@@ -638,7 +668,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
 
     }
 
-    /** Updates the icon displayed in the Play/Pause button */
+    /**
+     * Updates the icon displayed in the Play/Pause button
+     */
     private void updatePlayPauseButtonIcon() {
         // remove old image first
         btnPlayPause.setImageResource(android.R.color.transparent);
@@ -660,9 +692,11 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         invalidateOptionsMenu();
     }
 
-    /** Shows the caption for the text that is currently read out using an AlertDialog */
+    /**
+     * Shows the caption for the text that is currently read out
+     */
     private void showCaptions() {
-
+        // TODO: adapt this to retrieved data
         String caption = this.exhibitPages.get(this.currentPageIndex).getAudio().getCaption();
 
         /*** Uncomment this to test the footnote support ***/
@@ -704,15 +738,28 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         //
     }
 
-    /** Initializes the service and binds it */
-    public void doBindService(){
+    /**
+     * Initializes the service and binds it
+     */
+    public void doBindService() {
         Intent intent = new Intent(this, MediaPlayerService.class);
-        isBound = bindService(intent, mMediaPlayerConnection, Context.BIND_AUTO_CREATE);
+        startService(new Intent(this, MediaPlayerService.class));
+        isBound = bindService(intent, mMediaPlayerConnection, 0);
     }
 
     @Override
-    public void onDestroy(){
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
-        mMediaPlayerService.stopSound();    //if this isn't done, the media player will keep playing
+        if (isFinishing()) {
+            //Only stop sound when activity is getting killed, not when rotated
+            mMediaPlayerService.stopSound();    //if this isn't done, the media player will keep playing
+            stopService(new Intent(this, MediaPlayerService.class));
+        }
+        unbindService(mMediaPlayerConnection);
     }
 }
