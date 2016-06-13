@@ -112,11 +112,7 @@ public class MediaPlayerService extends Service
     /** sets a specific audio file*/
     public void setAudioFile(Audio audio){
         try {
-            mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            //may be needed for handling audio files later. until know, leave this commented in here.
-            mMediaPlayer = MediaPlayer.create(this, audio.getAudioDir());
-            mAudioFileIsSet = true;
+            setToNewAudioFile(audio.getAudioDir());
         }catch(Exception e){
 //            add an exception handling
         }
@@ -125,13 +121,17 @@ public class MediaPlayerService extends Service
     /** sets a specific audio file*/
     public void setAudioFile(int audio){
         try {
-            mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            mMediaPlayer = MediaPlayer.create(this, audio);
-            mAudioFileIsSet = true;
+            setToNewAudioFile(audio);
         }catch(Exception e){
 //            add an exception handling
         }
+    }
+
+    private void setToNewAudioFile(int audio){
+        mMediaPlayer.stop();
+        mMediaPlayer.reset();
+        mMediaPlayer = MediaPlayer.create(this, audio);
+        mAudioFileIsSet = true;
     }
 
 
