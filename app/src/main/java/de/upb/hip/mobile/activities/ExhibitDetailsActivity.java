@@ -32,6 +32,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,21 +66,33 @@ import io.codetail.animation.ViewAnimationUtils;
  */
 public class ExhibitDetailsActivity extends AppCompatActivity {
 
+    //logging
+    public static final String TAG = "ExhibitDetailsActivity";
+    // keys for saving/accessing the state
+    public static final String INTENT_EXTRA_EXHIBIT_PAGES = "de.upb.hip.mobile.extra.exhibit_pages";
+    public static final String INTENT_EXTRA_EXHIBIT_NAME = "de.upb.hip.mobile.extra.exhibit_name";
+    private static final String KEY_EXHIBIT_NAME = "ExhibitDetailsActivity.exhibitName";
+    private static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
+    private static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
+    private static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
+    private static final String KEY_AUDIO_TOOLBAR_HIDDEN = "ExhibitDetailsActivity.isAudioToolbarHidden";
+    private static final String KEY_EXTRAS = "ExhibitDetailsActivity.extras";
+    //create an object for the mediaplayerservice
+    //the booleans are states and may be obsolete later on
+    MediaPlayerService mMediaPlayerService;
+    boolean isBound = false;
     /**
      * Stores the name of the current exhibit
      */
     private String exhibitName = "";
-
     /**
      * Stores the pages for the current exhibit
      */
     private List<Page> exhibitPages = new LinkedList<>();
-
     /**
      * Index of the page in the exhibitPages list that is currently displayed
      */
     private int currentPageIndex = 0;
-
     /**
      * Indicates whether the audio action in the toolbar should be shown (true) or not (false)
      */
@@ -88,17 +101,10 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
      * Indicates whether audio is currently played (true) or not (false)
      */
     private boolean isAudioPlaying = false;
-
     /**
      * Indicates whether the audio toolbar is currently displayed (true) or not (false)
      */
     private boolean isAudioToolbarHidden = true;
-
-    //create an object for the mediaplayerservice
-    //the booleans are states and may be obsolete later on
-    MediaPlayerService mMediaPlayerService;
-    boolean isBound = false;
-
     //Subclass for media player binding
     private ServiceConnection mMediaPlayerConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -115,36 +121,18 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             isBound = false;
         }
     };
-
     /**
      * Extras contained in the Intent that started this activity
      */
     private Bundle extras = null;
-
     /**
      * Stores the current action associated with the FAB
      */
     private BottomSheetConfig.FabAction fabAction;
-
     /**
      * Reference to the BottomSheetFragment currently displayed
      */
     private BottomSheetFragment bottomSheetFragment = null;
-
-    //logging
-    public static final String TAG = "ExhibitDetailsActivity";
-
-    // keys for saving/accessing the state
-    public static final String INTENT_EXTRA_EXHIBIT_PAGES = "de.upb.hip.mobile.extra.exhibit_pages";
-    public static final String INTENT_EXTRA_EXHIBIT_NAME = "de.upb.hip.mobile.extra.exhibit_name";
-
-    private static final String KEY_EXHIBIT_NAME = "ExhibitDetailsActivity.exhibitName";
-    private static final String KEY_EXHIBIT_PAGES = "ExhibitDetailsActivity.exhibitPages";
-    private static final String KEY_CURRENT_PAGE_INDEX = "ExhibitDetailsActivity.currentPageIndex";
-    private static final String KEY_AUDIO_PLAYING = "ExhibitDetailsActivity.isAudioPlaying";
-    private static final String KEY_AUDIO_TOOLBAR_HIDDEN = "ExhibitDetailsActivity.isAudioToolbarHidden";
-    private static final String KEY_EXTRAS = "ExhibitDetailsActivity.extras";
-
     // ui elements
     private FloatingActionButton fab;
     private View bottomSheet;
@@ -660,9 +648,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void stopAudioPlayback() {
         try {
             mMediaPlayerService.stopSound();
-        } catch(IllegalStateException e){
-        } catch(NullPointerException e){
-        } catch(Exception e) {
+        } catch (IllegalStateException e) {
+        } catch (NullPointerException e) {
+        } catch (Exception e) {
         }
         isAudioPlaying = false;
 
@@ -711,6 +699,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         final Dialog dialog = new Dialog(this);
         dialog.setTitle(R.string.audio_toolbar_cc);
         dialog.setContentView(R.layout.activity_exhibit_details_caption_dialog);
+
+        //Prevent dialogue from being too small
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        dialog.getWindow().setLayout((6 * width) / 7, (4 * height) / 5);
 
         // setup text view for captions with clickable footnotes
         TextView tv = (TextView) dialog.findViewById(R.id.captionTextView);
