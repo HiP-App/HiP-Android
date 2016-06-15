@@ -39,7 +39,6 @@ import de.upb.hip.mobile.models.exhibit.AppetizerPage;
 import de.upb.hip.mobile.models.exhibit.Exhibit;
 import de.upb.hip.mobile.models.exhibit.ImagePage;
 import de.upb.hip.mobile.models.exhibit.Page;
-import de.upb.hip.mobile.models.exhibit.TextPage;
 import de.upb.hip.mobile.models.exhibit.TimeSliderPage;
 
 /**
@@ -170,7 +169,7 @@ public class DBDummyDataFiller {
         waypoints.add(new Waypoint(51.722710, 8.758365, -1));
         waypoints.add(new Waypoint(51.718789, 8.762699, -1));
         waypoints.add(new Waypoint(51.715745, 8.757796, -1));
-        waypoints.add(new Waypoint(51.715207, 8.752142, 2));
+        waypoints.add(new Waypoint(51.715207, 8.752142, -1));
         waypoints.add(new Waypoint(51.715606, 8.746552, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();

@@ -39,17 +39,20 @@ public class DrawView extends ImageView {
     //Needed for scaling the drawed rectangles to the correct size
     private int[] originalImageDimensions = new int[]{1, 1};
 
-
     public DrawView(Context context) {
         super(context);
     }
 
-    DrawView(Context context, AttributeSet attrs) {
+    public DrawView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    DrawView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public DrawView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    public DrawView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public boolean isDrawOnImage() {
