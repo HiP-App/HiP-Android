@@ -30,14 +30,16 @@ public class TimeSliderPage extends Page implements Serializable {
     private final String mText;
     private final List<Long> mDates;
     private final List<Image> mImages;
+    private final boolean hideYearNumbers;
 
-    public TimeSliderPage(String mTitle, String mText, Audio audio, List<Long> mDates, List<Image> mImages) {
-        super(audio);
+    public TimeSliderPage(String mTitle, String mText, Audio mAudio, List<Long> mDates, List<Image> mImages, boolean mHideYearNumbers) {
+        super(mAudio);
         this.mTitle = mTitle;
         this.mText = mText;
         this.mAudio = mAudio;
         this.mDates = mDates;
         this.mImages = mImages;
+        this.hideYearNumbers = mHideYearNumbers;
     }
 
     public String getTitle() {
@@ -55,4 +57,9 @@ public class TimeSliderPage extends Page implements Serializable {
     public List<Image> getImages() {
         return mImages;
     }
+
+    public boolean isHideYearNumbers() {
+        return hideYearNumbers;
+    }
+    
 }

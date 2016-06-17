@@ -85,6 +85,11 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
         setData();
         init();
 
+        if (page.isHideYearNumbers()) {
+            view.findViewById(R.id.displayImageSliderSeekBarFirstText).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.displayImageSliderSeekBarEndText).setVisibility(View.INVISIBLE);
+        }
+
         return view;
     }
 
@@ -213,7 +218,11 @@ public class TimeSliderExhibitPageFragment extends ExhibitPageFragment {
                     int xPos = ((seekBar.getRight() - seekBar.getLeft()) / seekBar.getMax()) *
                             seekBar.getProgress();
                     mThumbSlidingText.setPadding(xPos, 0, 0, 0);
-                    mThumbSlidingText.setText(String.valueOf((int) (mPicDataList.get(0).mYear + range * ((float) progressValue) / 100.0)) + " " + getString(R.string.after_christ));
+                    if (!page.isHideYearNumbers()) {
+                        mThumbSlidingText.setText(String.valueOf((int) (mPicDataList.get(0).mYear
+                                + range * ((float) progressValue) / 100.0)) + " "
+                                + getString(R.string.after_christ));
+                    }
                 } else {
                     // set empty text for first and last position
                     mThumbSlidingText.setText("");

@@ -126,7 +126,7 @@ public class DBDummyDataFiller {
         sliderTimes1.add(3L);
         slider1.add(new Image(1, "Blick von Norden_nach 1945", "kaiserpfalz_slider_1_5.jpg", "Img1"));
         sliderTimes1.add(4L);
-        kaiserpfalzPages.add(new TimeSliderPage("Slidertitle", text1, audio2_2, sliderTimes1, slider1));
+        kaiserpfalzPages.add(new TimeSliderPage("Slidertitle", text1, audio2_2, sliderTimes1, slider1, false));
 
 
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_image_3_1.jpg", "Kaiserpfalz"), null, null, audio3_1));
@@ -148,7 +148,7 @@ public class DBDummyDataFiller {
         sliderTimes2.add(1L);
         slider2.add(new Image(1, "Ingelheim_Kaiserpfalz_Schematischer Gesamtplan", "kaiserpfalz_slider_7_3.jpg", "Img1"));
         sliderTimes2.add(2L);
-        kaiserpfalzPages.add(new TimeSliderPage("Slidertitle", text1, audio7_2, sliderTimes2, slider2));
+        kaiserpfalzPages.add(new TimeSliderPage("Slidertitle", text1, audio7_2, sliderTimes2, slider2, true));
 
 
         kaiserpfalzPages.add(new ImagePage(new Image(1, text1, "kaiserpfalz_teaser.jpg", "Kaiserpfalz"), null, null, audio8));
