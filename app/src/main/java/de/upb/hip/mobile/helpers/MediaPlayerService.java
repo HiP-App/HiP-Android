@@ -145,7 +145,6 @@ public class MediaPlayerService extends Service
     }
 
     public long getTimeTotal(){
-        long time = mMediaPlayer.getDuration();
         return mMediaPlayer.getDuration();
     }
 

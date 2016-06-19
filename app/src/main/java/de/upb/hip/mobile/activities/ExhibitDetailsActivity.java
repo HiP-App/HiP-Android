@@ -115,13 +115,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private Runnable mUpdateSongTime = new Runnable() {
         public void run() {
             mStartTime = mMediaPlayerService.getTimeCurrent();
-//            tx1.setText(String.format("%d min, %d sec",
-//
-//                    TimeUnit.MILLISECONDS.toMinutes((long) mStartTime),
-//                    TimeUnit.MILLISECONDS.toSeconds((long) mStartTime) -
-//                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
-//                                    toMinutes((long) mStartTime)))
-//            );
             mAudioProgressBar.setProgress((int)mStartTime);
             mHandler.postDelayed(this, 100);
         }
