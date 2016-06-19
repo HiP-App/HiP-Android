@@ -51,11 +51,9 @@ public class DBDummyDataFiller {
 
 
     private static final Audio audio1 = new Audio(R.raw.sprechertext_1, "Während des bisherigen Rundgangs haben Sie erfahren, wie wichtig das Gebiet zwischen Lippe und Pader für die Politik Karls des Großen ab den 770er Jahren war. Erinnern wir uns nur an die große Reichsversammlung im Jahre 777! Zu diesem Anlass fanden sich Franken, Sachsen, aber auch arabische Gesandte aus Spanien hier in Paderborn zusammen.\n" +
-            "Aber was fanden diese Personen hier vor? Wie hat man sich das damalige Paderborn, die sogenannte „urbs Karoli“, eigentlich vorzustellen? Lange Zeit fragten sich Historiker und Archäologen, ob die „urbs Karoli“ tatsächlich in Paderborn existierte und wenn ja, wo genau? <fn> Einen Überblick über die hierzu geäußerten Vermutungen bietet Birgit Mecke: Der Stand der Forschungen vor den Grabungskampagnen Winkelmanns, in: Sveva Gai / Birgit Mecke: Est locus insignis…: Die Pfalz Karls des Großen in Paderborn und ihre bauliche Entwicklung bis zum Jahr 1002. Die Neuauswertung der Ausgrabungen Wilhelm Winkelmanns in den Jahren 1964-1978 (Denkmalpflege und Forschung in Westfalen 40,2), Mainz 2004, Bd. 1, S. 1-8.\n" +
-            "  </fn> Die karolingischen Geschichtswerke sprechen für Paderborn nicht von palatium,  \n" +
+            "Aber was fanden diese Personen hier vor? Wie hat man sich das damalige Paderborn, die sogenannte „urbs Karoli“, eigentlich vorzustellen? Lange Zeit fragten sich Historiker und Archäologen, ob die „urbs Karoli“ tatsächlich in Paderborn existierte und wenn ja, wo genau? <fn> Einen Überblick über die hierzu geäußerten Vermutungen bietet Birgit Mecke: Der Stand der Forschungen vor den Grabungskampagnen Winkelmanns, in: Sveva Gai / Birgit Mecke: Est locus insignis…: Die Pfalz Karls des Großen in Paderborn und ihre bauliche Entwicklung bis zum Jahr 1002. Die Neuauswertung der Ausgrabungen Wilhelm Winkelmanns in den Jahren 1964-1978 (Denkmalpflege und Forschung in Westfalen 40,2), Mainz 2004, Bd. 1, S. 1-8. </fn> Die karolingischen Geschichtswerke sprechen für Paderborn nicht von palatium,  \n" +
             "dem  \n" +
-            "lateinischen Wort für „Pfalz“. Und es gab auch keine archäologischen Anhaltspunkte für die Pfalz Karls des Großen in Paderborn. Noch Mitte des 20. Jahrhunderts schrieb der Akademieprofessor und Domkapitular Alois Fuchs, dass „für eine [karolingische] Pfalz in Paderborn nicht nur alle urkundlichen Bezeugungen fehlen, sondern auch alle Baureste, die für die charakteristischen Pfalzgebäude, den Reichssaal und die Pfalzkapelle, sprechen könnten <fn>Alois A. Fuchs: Zur Frage der Bautätigkeit des Bischofs Badurad am Paderborner Dom, in: Westfälische Zeitschrift 97 (1947), S. 3-34, hier S. 5.\n" +
-            "  </fn>.“  Sichtbar waren einzig verbaute Überreste der Domburg Bischof Meinwerks aus dem 11. Jahrhundert. Diese Überreste hatten bereits Mitte des 19. Jahrhunderts das Interesse von Lokalforschern geweckt <fn>Vgl. J. B. Johann Bernhard Greve: Der kaiserliche und bischöfliche Palast in Paderborn, in: Blätter zur näheren Kunde Westfalens 6/4 (1868), S. 33-38.</fn>. \n" +
+            "lateinischen Wort für „Pfalz“. Und es gab auch keine archäologischen Anhaltspunkte für die Pfalz Karls des Großen in Paderborn. Noch Mitte des 20. Jahrhunderts schrieb der Akademieprofessor und Domkapitular Alois Fuchs, dass „für eine [karolingische] Pfalz in Paderborn nicht nur alle urkundlichen Bezeugungen fehlen, sondern auch alle Baureste, die für die charakteristischen Pfalzgebäude, den Reichssaal und die Pfalzkapelle, sprechen könnten <fn>Alois A. Fuchs: Zur Frage der Bautätigkeit des Bischofs Badurad am Paderborner Dom, in: Westfälische Zeitschrift 97 (1947), S. 3-34, hier S. 5. </fn>.“  Sichtbar waren einzig verbaute Überreste der Domburg Bischof Meinwerks aus dem 11. Jahrhundert. Diese Überreste hatten bereits Mitte des 19. Jahrhunderts das Interesse von Lokalforschern geweckt <fn>Vgl. J. B. Johann Bernhard Greve: Der kaiserliche und bischöfliche Palast in Paderborn, in: Blätter zur näheren Kunde Westfalens 6/4 (1868), S. 33-38.</fn>. \n" +
             "Jetzt stehen Sie zwischen dem Dom und dem Museum in der Kaiserpfalz. Dieses große und repräsentative Gebäude mit den Rundbogenfenstern sieht so aus, wie man sich eine Kaiserpfalz vorstellt. Doch handelt es sich dabei um die Pfalz Karls des Großen? Nein! Es ist die archäologische Rekonstruktion der Pfalz Bischof Meinwerks aus dem frühen 11. Jahrhundert. \n Aber wo befand sich nun die karolingische Kaiserpfalz? Sehen Sie die etwa 31 mal 10 m große, rechteckige Fläche zwischen Ihnen und dem Museum? Sie ist durch Bruchsteinmauern abgegrenzt. Das sind die aus konservatorischen Gründen aufgemauerten Fundamente der sog. aula regia, der Königshalle Karls des Großen. Wenn Sie genau hinschauen, sehen Sie ein rotes Ziegelband. Dieses trennt das originale Bruchsteinmauerwerk von später, im Zuge der Rekonstruktion ergänzten Steinen.");
 
     private static final Audio audio2_1 = new Audio(R.raw.sprechertext_2_1, "Falls Sie Schwierigkeiten haben sollten, sich in diesem Mauergewirr zurechtzufinden, blicken Sie auf Ihr Display. Hier werden die Mauern der aula regia rot hervorgehoben.");
@@ -109,8 +107,8 @@ public class DBDummyDataFiller {
         LinkedList<Page> kaiserpfalzPages = new LinkedList<>();
 
 
-        kaiserpfalzPages.add(new AppetizerPage("missing Appetizer",
-                new Image(1, text1, "kaiserpfalz_teaser.jpg", "Die Kaiserpfalz"), null));
+        kaiserpfalzPages.add(new AppetizerPage("Ein befestigter Stützpunkt in Sachsen – Aufbau und Entwicklung.",
+                new Image(1, text1, "kaiserpfalz_teaser.jpg", "Die Pfalz Karls des Großen"), null));
 
 
         kaiserpfalzPages.add(new ImagePage(new Image(1, "Die Paderborner Kaiserpflaz mit dem Betrachterstandpunkt.", "kaiserpfalz_teaser.jpg", "Kaiserpfalz"), null, null, audio1));
@@ -157,86 +155,89 @@ public class DBDummyDataFiller {
 
 
 
-        Exhibit kaiserpfalz = new Exhibit(1, "Die Kaiserpfalz", "", 51.718953, 8.75583,
+        Exhibit kaiserpfalz = new Exhibit(1, "Die Pfalz Karls des Großen", "", 51.7189826, 8.754652599999986,
                 new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "kaiserpfalz_teaser.jpg", ""), kaiserpfalzPages);
 
 
         LinkedList<Page> mariensaeulePages = new LinkedList<>();
         mariensaeulePages.add(new AppetizerPage("Startpunkt der Rundgänge: Hl. Liborius, Karl der Große, Meinwerk von Paderborn.",
-                new Image(1, text1, "mariensaeule_teaser.jpg", "Die Mariensäule"), null));
-        Exhibit mariensaeule = new Exhibit(2, "Die Mariensäule", "", 51.718955, 8.75583,
-                new String[]{"Kirch"}, new String[]{"Do"}, new Image(1, "", "mariensaeule_teaser.jpg", ""), mariensaeulePages);
+                new Image(2, text1, "mariensaeule_teaser.jpg", "Die Mariensäule"), null));
+        Exhibit mariensaeule = new Exhibit(2, "Die Mariensäule", "", 51.716724, 8.752244000000019,
+                new String[]{"Kirch"}, new String[]{"Do"}, new Image(2, "", "mariensaeule_teaser.jpg", ""), mariensaeulePages);
         insertExhibit(mariensaeule);
 
 
         LinkedList<Page> paderquellen1Pages = new LinkedList<>();
         paderquellen1Pages.add(new AppetizerPage("Die Siedlung an den 200 Quellen. Woher kommt eigentlich der Name Paderborn?",
-                new Image(1, text1, "quellen1_teaser.jpg", "Paderbrunnon, Patresbrun, Paderbrunno"), null));
-        Exhibit paderquellen1 = new Exhibit(3, "Paderbrunnon, Patresbrun, Paderbrunno", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "quellen1_teaser.jpg", ""), paderquellen1Pages);
+                new Image(3, text1, "quellen1_teaser.jpg", "Paderbrunnon, Patresbrun, Paderbrunno"), null));
+        Exhibit paderquellen1 = new Exhibit(3, "Paderbrunnon, Patresbrun, Paderbrunno", "", 51.71861412677083, 8.75122457742691,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(3, "", "quellen1_teaser.jpg", ""), paderquellen1Pages);
         insertExhibit(paderquellen1);
 
         LinkedList<Page> paderquellen2Pages = new LinkedList<>();
         paderquellen2Pages.add(new AppetizerPage("Paderborn – so schön wie das Land, in dem Milch und Honig fließen?",
-                new Image(1, text1, "quellen2_teaser.jpg", "Leben am Wasser"), null));
-        Exhibit paderquellen2 = new Exhibit(4, "Leben am Wasser", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "quellen2_teaser.jpg", ""), paderquellen2Pages);
+                new Image(4, text1, "quellen2_teaser.jpg", "Leben am Wasser"), null));
+        Exhibit paderquellen2 = new Exhibit(4, "Leben am Wasser", "", 51.718811867802174, 8.751070350408554,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(4, "", "quellen2_teaser.jpg", ""), paderquellen2Pages);
         insertExhibit(paderquellen2);
 
         LinkedList<Page> paderquellen3Pages = new LinkedList<>();
         paderquellen3Pages.add(new AppetizerPage("Donar, Wotan und Saxnot – die Abkehr von den alten Göttern.",
-                new Image(1, text1, "quellen3_teaser.jpg", "Taufen an der Pader?"), null));
-        Exhibit paderquellen3 = new Exhibit(5, "Taufen an der Pader?", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "quellen3_teaser.jpg", ""), paderquellen3Pages);
+                new Image(5, text1, "quellen3_teaser.jpg", "Taufen an der Pader?"), null));
+        Exhibit paderquellen3 = new Exhibit(5, "Taufen an der Pader?", "", 51.71955795852887, 8.751071691513062,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(5, "", "quellen3_teaser.jpg", ""), paderquellen3Pages);
         insertExhibit(paderquellen3);
 
         LinkedList<Page> brueckePages = new LinkedList<>();
         brueckePages.add(new AppetizerPage("Karl der Große und die Sachsen – dreißig Jahre Krieg!",
-                new Image(1, text1, "bruecke_teaser.jpg", "Sachsenkriege"), null));
-        Exhibit brueckeBrauhaus = new Exhibit(6, "Sachsenkriege", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "bruecke_teaser.jpg", ""), brueckePages);
+                new Image(6, text1, "bruecke_teaser.jpg", "Sachsenkriege"), null));
+        Exhibit brueckeBrauhaus = new Exhibit(6, "Sachsenkriege", "", 51.719582883396335, 8.751005977392197,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(6, "", "bruecke_teaser.jpg", ""), brueckePages);
         insertExhibit(brueckeBrauhaus);
 
         LinkedList<Page> gartenPages = new LinkedList<>();
         gartenPages.add(new AppetizerPage("Karls neue Strategie: Tod oder Taufe?",
-                new Image(1, text1, "garten_teaser.jpg", "Christianisierung der Sachsen"), null));
-        Exhibit geisselscherGarten = new Exhibit(7, "Christianisierung der Sachsen", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "garten_teaser.jpg", ""), gartenPages);
+                new Image(7, text1, "garten_teaser.jpg", "Christianisierung der Sachsen"), null));
+        Exhibit geisselscherGarten = new Exhibit(7, "Christianisierung der Sachsen", "", 51.72050841708062, 8.75171273946762,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(7, "", "garten_teaser.jpg", ""), gartenPages);
         insertExhibit(geisselscherGarten);
 
         LinkedList<Page> bibliothekPages = new LinkedList<>();
         bibliothekPages.add(new AppetizerPage("Sachsen wird Teil des Frankenreiches.",
-                new Image(1, text1, "bibliothek_teaser.jpg", "Karls Sieg über die Sachsen"), null));
+                new Image(8, text1, "bibliothek_teaser.jpg", "Karls Sieg über die Sachsen"), null));
         Exhibit stadtbibliothek = new Exhibit(8, "Karls Sieg über die Sachsen", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "bibliothek_teaser.jpg", ""), bibliothekPages);
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(8, "", "bibliothek_teaser.jpg", ""), bibliothekPages);
         insertExhibit(stadtbibliothek);
 
         LinkedList<Page> domPages = new LinkedList<>();
         domPages.add(new AppetizerPage("Der Blick auf Karl den Großen: Christ, Frankenkönig, Imperator, Heiliger.",
-                new Image(1, text1, "dom_teaser.jpg", "Karl der Große im Wandel der Zeit"), null));
-        Exhibit dom = new Exhibit(9, "Karl der Große im Wandel der Zeit", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "dom_teaser.jpg", ""), domPages);
+                new Image(9, text1, "dom_teaser.jpg", "Karl der Große im Wandel der Zeit"), null));
+        Exhibit dom = new Exhibit(9, "Karl der Große im Wandel der Zeit", "", 51.7199006, 8.754952000000003,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(9, "", "dom_teaser.jpg", ""), domPages);
         insertExhibit(dom);
 
         LinkedList<Page> theoPages = new LinkedList<>();
         theoPages.add(new AppetizerPage("Was hat Karl der Große mit Schule, Schrift und Bildung zu tun?",
-                new Image(1, text1, "theo_teaser.jpg", "Karl der Große macht Schule!"), null));
-        Exhibit theodoranium = new Exhibit(10, "Karl der Große macht Schule!", "", 51.718953, 8.75583,
-                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(1, "", "theo_teaser.jpg", ""), theoPages);
+                new Image(10, text1, "theo_teaser.jpg", "Karl der Große macht Schule!"), null));
+        Exhibit theodoranium = new Exhibit(10, "Karl der Große macht Schule!", "", 51.71601, 8.754249999999956,
+                new String[]{"Kirche"}, new String[]{"Dom"}, new Image(10, "", "theo_teaser.jpg", ""), theoPages);
         insertExhibit(theodoranium);
 
 
         insertExhibit(kaiserpfalz);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(51.715606, 8.746552, -1));
-        waypoints.add(new Waypoint(51.718178, 8.747164, 9));
-        waypoints.add(new Waypoint(51.722850, 8.750780, -1));
-        waypoints.add(new Waypoint(51.722710, 8.758365, -1));
-        waypoints.add(new Waypoint(51.718789, 8.762699, -1));
-        waypoints.add(new Waypoint(51.715745, 8.757796, -1));
-        waypoints.add(new Waypoint(51.715207, 8.752142, -1));
-        waypoints.add(new Waypoint(51.715606, 8.746552, -1));
+        waypoints.add(new Waypoint(51.7199006, 8.754952000000003, 9));
+        waypoints.add(new Waypoint(51.718953, 8.75583, 8));
+        waypoints.add(new Waypoint(51.7189826, 8.754652599999986, 1));
+        waypoints.add(new Waypoint(51.71601, 8.754249999999956, 10));
+        waypoints.add(new Waypoint(51.716724, 8.752244000000019, 2));
+        waypoints.add(new Waypoint(51.71861412677083, 8.75122457742691, 3));
+        waypoints.add(new Waypoint(51.718811867802174, 8.751070350408554, 4));
+        waypoints.add(new Waypoint(51.71955795852887, 8.751071691513062, 5));
+        waypoints.add(new Waypoint(51.719582883396335, 8.751005977392197, 6));
+        waypoints.add(new Waypoint(51.72050841708062, 8.75171273946762, 7));
+        waypoints.add(new Waypoint(51.7199006, 8.754952000000003, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
         ringrouteTags.add(new RouteTag("bar", "Bar", new Image(101, "", "route_tag_bar", "")));
