@@ -43,6 +43,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,6 +107,25 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
      * mStartTime is used for the audio playing only
      */
     private double mStartTime = 0;
+
+    /**
+     * This object is needed for the handler to connect to the audio progress bar
+     * as well as to manage the progress bar
+     */
+    private Runnable mUpdateSongTime = new Runnable() {
+        public void run() {
+            mStartTime = mMediaPlayerService.getTimeCurrent();
+//            tx1.setText(String.format("%d min, %d sec",
+//
+//                    TimeUnit.MILLISECONDS.toMinutes((long) mStartTime),
+//                    TimeUnit.MILLISECONDS.toSeconds((long) mStartTime) -
+//                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+//                                    toMinutes((long) mStartTime)))
+//            );
+            mAudioProgressBar.setProgress((int)mStartTime);
+            mHandler.postDelayed(this, 100);
+        }
+    };
 
     /**
      * Indicates whether the audio toolbar is currently displayed (true) or not (false)
@@ -194,6 +214,23 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         setSupportActionBar(toolbar);
         mAudioProgressBar = (SeekBar)findViewById(R.id.audio_progress_bar);
+        mAudioProgressBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mMediaPlayerService != null && fromUser){
+                    mMediaPlayerService.seekTo(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -330,20 +367,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     }
 
 
-    private Runnable mUpdateSongTime = new Runnable() {
-        public void run() {
-            mStartTime = mMediaPlayerService.getTimeCurrent();
-//            tx1.setText(String.format("%d min, %d sec",
-//
-//                    TimeUnit.MILLISECONDS.toMinutes((long) mStartTime),
-//                    TimeUnit.MILLISECONDS.toSeconds((long) mStartTime) -
-//                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
-//                                    toMinutes((long) mStartTime)))
-//            );
-            mAudioProgressBar.setProgress((int)mStartTime);
-            mHandler.postDelayed(this, 100);
-        }
-    };
+
 
     /**
      * Displays the current exhibit page

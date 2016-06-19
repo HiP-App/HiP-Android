@@ -145,11 +145,16 @@ public class MediaPlayerService extends Service
     }
 
     public long getTimeTotal(){
+        long time = mMediaPlayer.getDuration();
         return mMediaPlayer.getDuration();
     }
 
     public long getTimeCurrent(){
         return mMediaPlayer.getCurrentPosition();
+    }
+
+    public void seekTo(int time){
+        mMediaPlayer.seekTo(time);
     }
 
     public class MediaPlayerBinder extends Binder {
