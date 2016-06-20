@@ -152,6 +152,10 @@ public class MediaPlayerService extends Service
         return mMediaPlayer.getCurrentPosition();
     }
 
+    public void seekTo(int time){
+        mMediaPlayer.seekTo(time);
+    }
+
     public class MediaPlayerBinder extends Binder {
         public MediaPlayerService getService(){
             return MediaPlayerService.this;
