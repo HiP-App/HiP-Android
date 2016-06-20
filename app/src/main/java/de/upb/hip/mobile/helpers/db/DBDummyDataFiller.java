@@ -227,8 +227,6 @@ public class DBDummyDataFiller {
         insertExhibit(kaiserpfalz);
 
         LinkedList<Waypoint> waypoints = new LinkedList<>();
-        waypoints.add(new Waypoint(51.7199006, 8.754952000000003, 9));
-        waypoints.add(new Waypoint(51.718953, 8.75583, 8));
         waypoints.add(new Waypoint(51.7189826, 8.754652599999986, 1));
         waypoints.add(new Waypoint(51.71601, 8.754249999999956, 10));
         waypoints.add(new Waypoint(51.716724, 8.752244000000019, 2));
@@ -237,7 +235,9 @@ public class DBDummyDataFiller {
         waypoints.add(new Waypoint(51.71955795852887, 8.751071691513062, 5));
         waypoints.add(new Waypoint(51.719582883396335, 8.751005977392197, 6));
         waypoints.add(new Waypoint(51.72050841708062, 8.75171273946762, 7));
-        waypoints.add(new Waypoint(51.7199006, 8.754952000000003, -1));
+        waypoints.add(new Waypoint(51.7199006, 8.754952000000003, 9));
+        waypoints.add(new Waypoint(51.718953, 8.75583, 8));
+        waypoints.add(new Waypoint(51.7189826, 8.754652599999986, -1));
 
         List<RouteTag> ringrouteTags = new LinkedList<>();
         ringrouteTags.add(new RouteTag("bar", "Bar", new Image(101, "", "route_tag_bar", "")));
