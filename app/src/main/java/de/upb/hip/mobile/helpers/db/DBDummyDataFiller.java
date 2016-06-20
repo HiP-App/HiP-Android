@@ -126,7 +126,7 @@ public class DBDummyDataFiller {
         sliderTimes1.add(3L);
         slider1.add(new Image(1, "Blick von Norden nach 1945", "kaiserpfalz_slider_1_5.jpg", "Img1"));
         sliderTimes1.add(4L);
-        kaiserpfalzPages.add(new TimeSliderPage("Gelände nördlich des Doms", "Fotografien des Geländes nördlich des Domes, zu Beginn des 20. Jh., in den 1930er Jahren, in den 1950er Jahren und während der Grabung, Gai / Mecke 2004, S. 8, Abb. 5 und 6, S. 9, Abb. 7, S. 14, Abb. 11, S. 15, Abb. 12.", audio2_2, sliderTimes1, slider1, false));
+        kaiserpfalzPages.add(new TimeSliderPage("Gelände nördlich des Doms", "Fotografien des Geländes nördlich des Domes, zu Beginn des 20. Jh., in den 1930er Jahren, in den 1950er Jahren und während der Grabung, Gai / Mecke 2004, S. 8, Abb. 5 und 6, S. 9, Abb. 7, S. 14, Abb. 11, S. 15, Abb. 12.", audio2_2, sliderTimes1, slider1, true));
 
 
         kaiserpfalzPages.add(new ImagePage(new Image(1, "Die vermutliche Ausdehnung der Befestigungsanlage in karolingischer Zeit.", "kaiserpfalz_image_3_1.jpg", "Befestigungsanlage"), null, null, audio3_1));
