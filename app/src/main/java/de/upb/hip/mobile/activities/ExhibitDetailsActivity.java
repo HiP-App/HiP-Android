@@ -51,7 +51,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 
 import de.upb.hip.mobile.fragments.bottomsheetfragments.BottomSheetFragment;
 import de.upb.hip.mobile.fragments.exhibitpagefragments.ExhibitPageFragment;
@@ -172,6 +172,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private ImageButton btnPlayPause;
     private ImageButton btnPreviousPage;
     private ImageButton btnNextPage;
+    private TextView tvPageIndicator;
 
 
     @Override
@@ -323,6 +324,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             }
         });
 
+        tvPageIndicator = (TextView) findViewById(R.id.tvPageIndicator);
+
+        // set up Floating Action Button (FAB)
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -376,6 +380,9 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         else
             btnNextPage.setVisibility(View.VISIBLE);
 
+        // show page indicator
+        // replace "true" with "!(page instanceof AppetizerPage)" to hide this on the appetizer page
+        displayPageIndicator(true);
 
         // get ExhibitPageFragment for Page
         ExhibitPageFragment pageFragment =
@@ -729,6 +736,18 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private void displayAudioAction(boolean visible) {
         showAudioAction = visible;
         invalidateOptionsMenu();
+    }
+
+    /**
+     * Shows or hides the page indicator at the top based on the provided boolean.
+     * The progress is automatically determined.
+     *
+     * @param visible true displays the page indicator, false hides it.
+     */
+    private void displayPageIndicator(boolean visible) {
+        tvPageIndicator.setVisibility((visible) ? View.VISIBLE : View.GONE);
+        tvPageIndicator.setText(String.format(Locale.GERMANY, "%s %d/%d",
+                getString(R.string.page), currentPageIndex + 1, exhibitPages.size()));
     }
 
     /**

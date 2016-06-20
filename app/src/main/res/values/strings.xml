@@ -98,6 +98,7 @@
     <string name="information">Informationen</string>
 
     <string name="currently_no_further_info">Zurzeit sind keine weiteren Informationen verfügbar!</string>
+    <string name="page">Seite</string>
 
 
     <string-array name="nav_drawer_entries">
