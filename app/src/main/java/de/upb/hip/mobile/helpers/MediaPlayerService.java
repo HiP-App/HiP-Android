@@ -112,11 +112,7 @@ public class MediaPlayerService extends Service
     /** sets a specific audio file*/
     public void setAudioFile(Audio audio){
         try {
-            mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            //may be needed for handling audio files later. until know, leave this commented in here.
-            mMediaPlayer = MediaPlayer.create(this, audio.getAudioDir());
-            mAudioFileIsSet = true;
+            setToNewAudioFile(audio.getAudioDir());
         }catch(Exception e){
 //            add an exception handling
         }
@@ -125,13 +121,17 @@ public class MediaPlayerService extends Service
     /** sets a specific audio file*/
     public void setAudioFile(int audio){
         try {
-            mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            mMediaPlayer = MediaPlayer.create(this, audio);
-            mAudioFileIsSet = true;
+            setToNewAudioFile(audio);
         }catch(Exception e){
 //            add an exception handling
         }
+    }
+
+    private void setToNewAudioFile(int audio){
+        mMediaPlayer.stop();
+        mMediaPlayer.reset();
+        mMediaPlayer = MediaPlayer.create(this, audio);
+        mAudioFileIsSet = true;
     }
 
 
@@ -142,6 +142,18 @@ public class MediaPlayerService extends Service
         //because it couldn't be set before, so this needs to be checked and an audio file can then
         //be set if necessary
         return mAudioFileIsSet;
+    }
+
+    public long getTimeTotal(){
+        return mMediaPlayer.getDuration();
+    }
+
+    public long getTimeCurrent(){
+        return mMediaPlayer.getCurrentPosition();
+    }
+
+    public void seekTo(int time){
+        mMediaPlayer.seekTo(time);
     }
 
     public class MediaPlayerBinder extends Binder {
