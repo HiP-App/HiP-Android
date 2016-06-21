@@ -127,7 +127,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
     private Runnable mUpdateSongTime = new Runnable() {
         public void run() {
             mStartTime = mMediaPlayerService.getTimeCurrent();
-            mAudioProgressBar.setProgress((int)mStartTime);
+            mAudioProgressBar.setProgress((int) mStartTime);
             mHandler.postDelayed(this, 100);
         }
     };
@@ -195,11 +195,11 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
         setSupportActionBar(toolbar);
-        mAudioProgressBar = (SeekBar)findViewById(R.id.audio_progress_bar);
-        mAudioProgressBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
+        mAudioProgressBar = (SeekBar) findViewById(R.id.audio_progress_bar);
+        mAudioProgressBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mMediaPlayerService != null && fromUser){
+                if (mMediaPlayerService != null && fromUser) {
                     mMediaPlayerService.seekTo(progress);
                 }
             }
@@ -350,8 +350,6 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         displayCurrentExhibitPage();
 
     }
-
-
 
 
     /**
@@ -520,10 +518,12 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
             case COLLAPSE:
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 fab.setImageResource(R.drawable.ic_expand_more_white_48dp);
+                displayPageNextAndPreviousButtons(false);
                 break;
             case EXPAND:
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 fab.setImageResource(R.drawable.ic_expand_less_white_48dp);
+                displayPageNextAndPreviousButtons(true);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported FAB action!");
@@ -675,7 +675,7 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
                 mMediaPlayerService.setAudioFile(exhibitPages.get(currentPageIndex).getAudio());
             }
             mMediaPlayerService.startSound();
-            mAudioProgressBar.setMax((int)mMediaPlayerService.getTimeTotal());
+            mAudioProgressBar.setMax((int) mMediaPlayerService.getTimeTotal());
             mHandler.postDelayed(mUpdateSongTime, 100);
         } catch (IllegalStateException e) {
             isAudioPlaying = false;
@@ -748,6 +748,16 @@ public class ExhibitDetailsActivity extends AppCompatActivity {
         tvPageIndicator.setVisibility((visible) ? View.VISIBLE : View.GONE);
         tvPageIndicator.setText(String.format(Locale.GERMANY, "%s %d/%d",
                 getString(R.string.page), currentPageIndex + 1, exhibitPages.size()));
+    }
+
+    /**
+     * Shows or hides the "previous", "next" button for pages according to the provided boolean.
+     *
+     * @param visible true displays the buttons, false hides them
+     */
+    private void displayPageNextAndPreviousButtons(boolean visible) {
+        btnNextPage.setVisibility((visible) ? View.VISIBLE : View.GONE);
+        btnPreviousPage.setVisibility((visible) ? View.VISIBLE : View.GONE);
     }
 
     /**
