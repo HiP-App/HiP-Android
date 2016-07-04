@@ -103,6 +103,7 @@
 
     <string-array name="nav_drawer_entries">
         <item>Übersicht</item>
+        <item>Routen</item>
         <item>@string/licensing_title</item>
     </string-array>
 
