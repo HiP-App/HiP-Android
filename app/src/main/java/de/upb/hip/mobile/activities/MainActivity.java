@@ -132,14 +132,12 @@ public class MainActivity extends BaseActivity {
 
         // TODO Remove this as soon as no needs to run in emulator
         // set default coordinats for emulator
-        //Always enabled for the wissenschaftstage
         if (Build.MODEL.contains("google_sdk") ||
                 Build.MODEL.contains("Emulator") ||
-                Build.MODEL.contains("Android SDK")  || true) {
+                Build.MODEL.contains("Android SDK")) {
             mGeoLocation = new GeoPoint(ExtendedLocationListener.PADERBORN_HBF.latitude,
                     ExtendedLocationListener.PADERBORN_HBF.longitude);
         }
-
 
         // init map and update current location overlay
         setupMap();
