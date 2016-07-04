@@ -1,7 +1,7 @@
 // incompatible API changes
-def versionMajor = 1
+def versionMajor = 2
 // added functionality in a backwards-compatible manner, must be <=99
-def versionMinor = 2
+def versionMinor = 0
 // backwards-compatible bug fixes, must be <=99
 def versionPatch = 0
 
